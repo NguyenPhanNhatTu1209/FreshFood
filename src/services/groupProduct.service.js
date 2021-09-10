@@ -63,7 +63,6 @@ exports.deleteGroupProductAsync = async (id) => {
 		return {
 			message: 'Successfully delete Group',
 			success: true,
-			data: groupProduct
 		};
 	} catch (e) {
 		console.log(e);

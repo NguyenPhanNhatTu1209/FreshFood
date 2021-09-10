@@ -1,10 +1,9 @@
 const controller = require('./controller');
-const userServices = require('../services/user.services');
-const groupProductServices = require('../services/groupProduct.service');
+const cartServices = require('../services/cart.service');
 const { defaultRoles } = require('../config/defineModel');
-exports.createGroupProduct = async (req, res, next) => {
+exports.createCartAsync = async (req, res, next) => {
 	try {
-		const resServices = await groupProductServices.createGroupProductAsync(req.value.body);
+		const resServices = await cartServices.createCartAsync(req.value.body);
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -25,16 +24,21 @@ exports.createGroupProduct = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
-
-exports.findUserByIdAsync = async (req, res, next) => {
+exports.updateCartAsync = async (req, res, next) => {
 	try {
-		const { decodeToken } = req.value.body;
-		const _id = decodeToken.data.id;
-		const resServices = await userServices.findUser(_id);
+		const resServices = await cartServices.updateCartAsync(req.value.body.id,req.value.body);
+		if (resServices.success) {
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
+			);
+		}
 		return controller.sendSuccess(
 			res,
 			resServices.data,
-			200,
+			300,
 			resServices.message
 		);
 	} catch (error) {
@@ -43,27 +47,26 @@ exports.findUserByIdAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
-
-exports.changePasswordAsync = async (req, res, next) => {
+exports.deleteCartAsync = async (req, res, next) => {
 	try {
-		const { decodeToken } = req.value.body;
-		const id = decodeToken.data.id;
-		const resServices = await userServices.changePasswordAsync(id, req.body);
-		if (!resServices.success) {
+		const resServices = await cartServices.deleteCartAsync(req.query.id);
+		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
-				resServices.success,
-				300,
+				resServices.data,
+				200,
 				resServices.message
 			);
 		}
 		return controller.sendSuccess(
 			res,
-			resServices.success,
-			200,
+			resServices.data,
+			300,
 			resServices.message
 		);
 	} catch (error) {
+		// bug
+		console.log(error);
 		return controller.sendError(res);
 	}
 };

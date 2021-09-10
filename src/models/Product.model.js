@@ -8,8 +8,8 @@ const Product = new Schema({
     detail:defaultModel.stringR,
     price:defaultModel.number,
     image:defaultModel.array,
-    status:defaultModel.stringR,
-    groupProductId:defaultModel.string,
+    status:{type: String , default: "ACTIVE"},
+    groupProduct:{name: String, key: String},
     weight:defaultModel.number,
     quantity:defaultModel.number,
 

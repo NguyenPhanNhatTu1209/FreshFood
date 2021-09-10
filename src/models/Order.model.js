@@ -7,8 +7,8 @@ const Schema = mongoose.Schema
 const Order = new Schema({
     customerId:defaultModel.stringR,
     totalMoney:defaultModel.stringR,
-    product:[{productId: String ,price: Number ,quantity: Number, weight: Number ,name: String}],
-    status:defaultModel.array,
+    product:[{price: Number ,quantity: Number, weight: Number ,name: String, nameGroup: String}],
+    status:defaultModel.string,
     address:defaultModel.stringR,
     area:defaultModel.string,
     shipFee:defaultModel.number,

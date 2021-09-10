@@ -28,13 +28,12 @@ exports.uploadImageS3 = async (body,expires = 300) => {
 	}
 };
 
-exports.getImageS3 = async (body,expires = 60*60) => {
+exports.getImageS3 = async (body,expires = 60*60*24) => {
 	try {
 		var s3 = new aws.S3({
 			accessKeyId: configEnv.AWS_ACCESS_KEY,
 			secretAccessKey: configEnv.AWS_SECRET_KEY,
 			region: configEnv.REGION,
-			// endpoint: 'lambiengcode.tk', 
 		});
 		const s3Params = {
 			Bucket: configEnv.BUCKET,

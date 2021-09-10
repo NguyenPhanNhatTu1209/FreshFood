@@ -18,9 +18,10 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "aws-sdk": "^2.978.0",
+    "aws-sdk": "^2.983.0",
     "babel-cli": "^6.26.0",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^1.0.1",
     "dotenv": "^8.2.0",

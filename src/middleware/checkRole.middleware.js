@@ -3,9 +3,7 @@ const USER = require('../models/User.model');
 const checkRole = (roles = [])=> async (req, res, next) => {
   const { decodeToken } = req.value.body;
   const userId = decodeToken.data.id;
-  console.log(userId);
   const user = await USER.findById(userId);
-  console.log(user);
   if(user&&roles.includes(user.role))
   {
     next();

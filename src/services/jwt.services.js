@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken')
 const { configEnv } = require("../config/index")
 const verify = (req, res, next) => {
 	const header = req.headers.authorization;
-  // console.log(`LHA:  ===> file: jwt.services.js ===> line 5 ===> header`, header)
   
 	if (!header) {
 		res.status(403).json({
@@ -25,6 +24,7 @@ const verify = (req, res, next) => {
 			});
 			return;
 		} else {
+			console.log(req.body);
 			req.value = { body: { decodeToken: decodedFromToken, token } };
 			next();
 		}
