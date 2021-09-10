@@ -25,7 +25,7 @@ app.use(cors())
 
 
 app.use(route)
-app.get('/healCheck', (req, res) => res.status(200).json({hello : 'Welcome to FreshFood v1'}))
+app.get('/healCheck', (req, res) => res.status(200).json({hello : 'Welcome to FreshFood v1.0'}))
 app.get('/*', (req, res) => res.send({message: 'cannot access route'}))
 
 
