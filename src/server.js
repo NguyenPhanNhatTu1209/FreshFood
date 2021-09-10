@@ -24,9 +24,9 @@ app.use(cookieParser())
 app.use(cors())
 
 
-app.get('/healCheck', (req, res) => res.status(200).json({hello : 'Welcome to FreshFood'}))
-
 app.use(route)
+app.get('/healCheck', (req, res) => res.status(200).json({hello : 'Welcome to FreshFood v1'}))
+app.get('/*', (req, res) => res.send({message: 'cannot access route'}))
 
 
 // const socket = require('./socket');
