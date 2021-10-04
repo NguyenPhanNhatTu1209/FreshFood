@@ -55,3 +55,37 @@ exports.deleteShipFeeAsync = async (id) => {
 		};
 	}
 };
+exports.getShipFeeByIdAsync = async (id) => {
+	try {
+		const shipFee = await SHIPFEE.findById(id);
+		console.log(shipFee)
+		return {
+			message: 'Successfully Get ShippFee',
+			success: true,
+			data: shipFee
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.getAllShipFee = async (id) => {
+	try {
+		const shipFee = await SHIPFEE.find().sort({ createdAt: -1 });
+		console.log(shipFee)
+		return {
+			message: 'Successfully Get ShippFee',
+			success: true,
+			data: shipFee
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};

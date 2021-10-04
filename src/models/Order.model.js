@@ -6,9 +6,9 @@ const Schema = mongoose.Schema
 
 const Order = new Schema({
     customerId:defaultModel.stringR,
-    totalMoney:defaultModel.stringR,
-    product:[{price: Number ,quantity: Number, weight: Number ,name: String, nameGroup: String}],
-    status:defaultModel.string,
+    totalMoney:defaultModel.number,
+    product:[{productId: String,price: Number ,quantity: Number, weight: Number ,name: String, nameGroup: String}],
+    status:defaultModel.number,
     address:defaultModel.stringR,
     area:defaultModel.string,
     shipFee:defaultModel.number,

@@ -16,6 +16,21 @@ const defaultRoles = {
   User:0,
   Staff:2
 }
+const defaultStatusOrder = {
+  ChoXacNhan: 0,
+  DaXacNhan:1,
+  DangGiao:2,
+  DaGiao:3,
+  DaHuy:4
+}
+const defaultStatusCart = {
+  Active: 1,
+  InActive:0,
+}
+const defaultStatusProduct = {
+  Active: 1,
+  InActive:0,
+}
 const defaultChatSocket={
   sendMessageSSC:"SEND_MESSAGE_SSC",
   sendMessageCSS:"SEND_MESSAGE_CSS", 
@@ -25,5 +40,8 @@ const defaultChatSocket={
 module.exports ={
   defaultModel,
   defaultRoles,
-  defaultChatSocket
+  defaultChatSocket,
+  defaultStatusProduct,
+  defaultStatusCart,
+  defaultStatusOrder
 }

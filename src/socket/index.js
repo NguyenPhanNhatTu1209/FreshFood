@@ -2,10 +2,8 @@ const { defaultChatSocket } = require("../config/defineModel");
 const jwt = require("jsonwebtoken");
 const chatSocket = require("./chat.socket");
 const { configEnv } = require("../config");
-const ACCOUNT = require("../models/Account.model");
-const DEVICE = require("../models/Device.model");
 const USER = require("../models/User.model");
-
+const DEVICE = require("../models/Device.model");
 exports.emitToSocketId = (socketId, eventName, data) => {
   console.log(`Emit ${eventName}`, socketId, data);
   global.io.to(`${socketId}`).emit(eventName, data);
@@ -50,15 +48,15 @@ exports.init = async () => {
           if (err) {
             io.sockets.sockets[socket.id].disconnect();
           } else {
-            const account = await ACCOUNT.findById(decodedFromToken.data.id);
-            if (account) {
+            const user = await USER.findById(decodedFromToken.data.id);
+            if (user) {
               global.listUser.push({
                 socket: socket.id,
                 fcm,
                 userId: decodedFromToken.data.id,
-                role: account.role,
+                role: user.role,
               });
-              console.log(`IVAY CCU: `, global.listUser.length);
+              console.log(`Fresher CCU: `, global.listUser.length);
             }
           }
         }

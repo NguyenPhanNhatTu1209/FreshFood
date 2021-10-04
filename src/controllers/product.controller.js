@@ -16,7 +16,7 @@ exports.createProductAsync = async (req, res, next) => {
 		file.forEach(item => {
 			var timeCurrent = Date.now();
 			var params = {
-				Bucket: 'freshfood-be',
+				Bucket: 'freshfoodbe',
 				Key: `FreshFood/${timeCurrent}${item.originalname}`,
 				Body: item.buffer,
 				ContentType: item.mimetype
@@ -93,7 +93,7 @@ exports.updateProductAsync = async (req, res, next) => {
 			file.forEach(item => {
 				var timeCurrent = Date.now();
 				var params = {
-					Bucket: 'freshfood-be',
+					Bucket: 'freshfoodbe',
 					Key: `FreshFood/${timeCurrent}${item.originalname}`,
 					Body: item.buffer,
 					ContentType: item.mimetype
@@ -206,6 +206,58 @@ exports.deleteProductAsync = async (req, res, next) => {
 			return controller.sendSuccess(
 				res,
 				resServices.data,
+				200,
+				resServices.message
+			);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
+	} catch (error) {
+		// bug
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
+exports.findAllProductAsync = async (req, res, next) => {
+	try {
+		let query = {
+			search: req.query.search || '',
+			limit: req.query.limit || '15',
+			skip: req.query.skip || '1',
+		};
+		const resServices = await productServices.findAllProduct(query);
+		if (resServices.success) {
+			var resultArr =[];
+			for(let i =0;i<resServices.data.length;i++)
+			{
+				var responseData = resServices.data[i].image;
+				var images = [];
+				for (let i = 0; i < responseData.length; i++) {
+					var image = await uploadServices.getImageS3(responseData[i]);
+					images.push(image);
+				}
+				var result = {
+					price: resServices.data[i].price,
+					image: images,
+					status: resServices.data[i].status,
+					weight: resServices.data[i].weight,
+					quantity: resServices.data[i].quantity,
+					_id: resServices.data[i]._id,
+					name: resServices.data[i].name,
+					detail: resServices.data[i].detail,
+					groupProduct: resServices.data[i].groupProduct,
+					createdAt: resServices.data[i].createdAt,
+					updatedAt: resServices.data[i].updatedAt
+				};
+				resultArr.push(result);
+			}
+			return controller.sendSuccess(
+				res,
+				resultArr,
 				200,
 				resServices.message
 			);

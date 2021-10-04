@@ -1,15 +1,33 @@
-const { defaultRoles } = require('../config/defineModel');
+const { defaultRoles, defaultStatusCart } = require('../config/defineModel');
 const CART = require('../models/Cart.model')
+const PRODUCT = require('../models/Product.model')
+const uploadServices = require('../services/uploadS3.service');
+
 
 
 exports.createCartAsync = async body => {
 	try {
+		const productCurrent = await PRODUCT.findById(body.productId);
+		if(productCurrent == null)
+		{
+			return {
+				message: 'An error occurred',
+				success: false
+			};
+		}
+		if(productCurrent.quantity == 0  || productCurrent.quantity < body.quantity)
+		{
+			return {
+				message: 'Do not quantity product',
+				success: false
+			};
+		}
 		const cart = new CART(body);
 		await cart.save();
 		return {
 			message: 'Successfully create Cart',
 			success: true,
-			data: product
+			data: cart
 		};
 	} catch (e) {
 		return {
@@ -46,6 +64,67 @@ exports.deleteCartAsync = async (id) => {
 		return {
 			message: 'Successfully delete Cart',
 			success: true,
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.getCartByIdAsync = async (id) => {
+	try {
+		const cart = await CART.findById(id);
+		return {
+			message: 'Successfully delete Cart',
+			success: true,
+			data: cart
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.getAllCartByIdUser = async (id) => {
+	try {
+		const cartsCurrent = await CART.find({customerId: id, status: defaultStatusCart.Active}).sort({createdAt: -1});
+		console.log(cartsCurrent.length)
+		let arrResult = [];
+		for(let i = 0 ; i < cartsCurrent.length; i++)
+		{
+			var productCurrent = await PRODUCT.findById(cartsCurrent[i].productId);
+			var costCart = 0;
+			var images = [];
+			for (let j = 0; j < productCurrent.image.length; j++) {
+				var image = await uploadServices.getImageS3(productCurrent.image[j]);
+				images.push(image);
+			}
+			costCart = productCurrent.price * cartsCurrent[i].quantity;
+
+			var newCart = {
+				status: cartsCurrent[i].status,
+        quantity: cartsCurrent[i].quantity,
+        name: cartsCurrent[i].name,
+        nameGroup: cartsCurrent[i].nameGroup,
+        _id: cartsCurrent[i].id,
+        productId: cartsCurrent[i].productId,
+        customerId: cartsCurrent[i].customerId,
+				image: images,
+				cost: productCurrent.price,
+				totalCost: costCart,
+        createdAt: cartsCurrent[i].createdAt,
+        updatedAt: cartsCurrent[i].updatedAt,
+			}
+			arrResult.push(newCart)
+		}
+		return {
+			message: 'Successfully Get Cart',
+			success: true,
+			data: arrResult
 		};
 	} catch (e) {
 		console.log(e);

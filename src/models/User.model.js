@@ -10,8 +10,7 @@ const User = new Schema({
     name:defaultModel.stringR,
     address:defaultModel.stringR,
     phone:defaultModel.stringPhone,
-    otp: defaultModel.string,
-    fcm:defaultModel.string,
+    otp: defaultModel.string
 }, { timestamps: true })
 
 

@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors")
 const server = require("http").Server(app);
 var multer = require('multer');
+const socket = require('./socket');
+
 // var upload = multer();
 // app.use(upload.array()); 
 
@@ -29,11 +31,10 @@ app.get('/healCheck', (req, res) => res.status(200).json({hello : 'Welcome to Fr
 app.get('/*', (req, res) => res.send({message: 'cannot access route'}))
 
 
-// const socket = require('./socket');
 
 global.io = require('socket.io').listen(server);
 
-// socket.init();
+socket.init();
 
 
 server.listen(configEnv.PORT, () => {

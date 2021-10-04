@@ -96,3 +96,20 @@ exports.findProductByIdAsync = async id => {
 		};
 	}
 };
+exports.findAllProduct = async body => {
+	try {
+		const { search,skip,limit} = body;
+		const product = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' } }).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
+		return {
+			message: 'Successfully Get Product',
+			success: true,
+			data: product
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};

@@ -145,18 +145,6 @@ exports.fotgotPassword = async body => {
 		const email = body.email;
 		const result = await USER.findOne({ email: email });
 		if (result != null) {
-			// var smtpTransport = nodemailer.createTransport({
-			// 	service: "gmail", //smtp.gmail.com  //in place of service use host...
-			// 	secure: false, //true
-			// 	port: 25, //465
-			// 	auth: {
-			// 		user: configEnv.Email,
-			// 		pass: configEnv.Password,
-			// 	},
-			// 	tls: {
-			// 		rejectUnauthorized: false,
-			// 	},
-			// });
 			const mailOptions = {
 				to: result.email,
 				from: configEnv.Email,
@@ -165,25 +153,6 @@ exports.fotgotPassword = async body => {
 			};
 			const resultSendMail = await sendMail(mailOptions);
 			console.log(resultSendMail);
-			// smtpTransport.sendMail(mailOptions, function (error, response)  {
-			// 	if (error) {
-			// 		console.log(error)
-			// 		 return {
-			// 			message: 'Send Email Failed',
-			// 			success: false
-			// 		};
-			// 	} else {
-			// 		console.log("voo nef")
-			// 		 return {
-			// 			message: 'Send Email Success',
-			// 			success: true
-			// 		};
-			// 	}
-			// });
-			// return {
-			// 	message: 'Send Email Success',
-			// 	success: true
-			// };
 			if (!resultSendMail) {
 				return {
 					message: 'Send Email Failed',

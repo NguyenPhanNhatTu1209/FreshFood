@@ -7,7 +7,10 @@ const Schema = mongoose.Schema
 const Cart = new Schema({
   productId:defaultModel.stringRef,
   customerId:defaultModel.stringRef,
-  quantity:defaultModel.number
+  status: {type: Number, default: 1},
+  quantity:defaultModel.number,
+  name: defaultModel.string,
+  nameGroup: defaultModel.string,
 }, { timestamps: true })
 
 

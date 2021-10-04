@@ -8,11 +8,11 @@ const Product = new Schema({
     detail:defaultModel.stringR,
     price:defaultModel.number,
     image:defaultModel.array,
-    status:{type: String , default: "ACTIVE"},
+    status:{type: Number, default:1},
     groupProduct:{name: String, key: String},
     weight:defaultModel.number,
     quantity:defaultModel.number,
-
+    sold: defaultModel.number
 }, { timestamps: true })
 
 

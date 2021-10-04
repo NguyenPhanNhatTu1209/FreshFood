@@ -27,5 +27,6 @@ var multipleUpload = multer({ storage: storage }).array("image");
 router.post('/createProduct',multipleUpload,jwtServices.verify,checkRole([defaultRoles.Admin]),Controller.createProductAsync)
 router.put('/updateProduct', multipleUpload,jwtServices.verify,checkRole([defaultRoles.Admin]),  Controller.updateProductAsync)
 router.delete('/deleteProduct',  jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.deleteProductAsync)
+router.get('/findAllProduct',  Controller.findAllProductAsync);
 
 module.exports = router

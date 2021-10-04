@@ -72,3 +72,19 @@ exports.deleteGroupProductAsync = async (id) => {
 		};
 	}
 };
+exports.getAllGroupProductAsync = async (id) => {
+	try {
+		const groupProduct = await GROUPPRODUCT.find().sort({ createdAt: -1 });
+		return {
+			message: 'Successfully get all Group',
+			success: true,
+			data: groupProduct
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
