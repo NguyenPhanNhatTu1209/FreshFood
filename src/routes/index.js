@@ -17,6 +17,6 @@ router.use('/order', orderRoute)
 router.use('/chat', chatRoute)
 
 
-router.get('/healCheckw', (req, res) => res.status(200).send('Welcome to FreshFood'))
+router.get('/healCheck', (req, res) => res.status(200).send('Welcome to FreshFood 1'))
 
 module.exports = router
