@@ -42,7 +42,7 @@ jobs:
         password: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          cd ~/file/FreshFood
+          cd ~/FreshFood
           git pull origin master
           yarn
           yarn pm2
