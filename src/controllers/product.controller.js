@@ -6,7 +6,9 @@ const { configEnv } = require('../config');
 var AWS = require('aws-sdk');
 exports.createProductAsync = async (req, res, next) => {
 	try {
+		console.log(req.value.body)
 		const file = req.files;
+		console.log("file ne");
 		console.log(file);
 		let s3bucket = new AWS.S3({
 			accessKeyId: configEnv.AWS_ACCESS_KEY,
@@ -34,7 +36,7 @@ exports.createProductAsync = async (req, res, next) => {
 					if (ResponseData.length == file.length) {
 						req.body.image = ResponseData;
 						const resServices = await productServices.createProductAsync(
-							req.body
+							req.value.body
 						);
 						var images = [];
 						for (let i = 0; i < ResponseData.length; i++) {
@@ -230,6 +232,53 @@ exports.findAllProductAsync = async (req, res, next) => {
 			skip: req.query.skip || '1',
 		};
 		const resServices = await productServices.findAllProduct(query);
+		if (resServices.success) {
+			var resultArr =[];
+			for(let i =0;i<resServices.data.length;i++)
+			{
+				var responseData = resServices.data[i].image;
+				var images = [];
+				for (let i = 0; i < responseData.length; i++) {
+					var image = await uploadServices.getImageS3(responseData[i]);
+					images.push(image);
+				}
+				var result = {
+					price: resServices.data[i].price,
+					image: images,
+					status: resServices.data[i].status,
+					weight: resServices.data[i].weight,
+					quantity: resServices.data[i].quantity,
+					_id: resServices.data[i]._id,
+					name: resServices.data[i].name,
+					detail: resServices.data[i].detail,
+					groupProduct: resServices.data[i].groupProduct,
+					createdAt: resServices.data[i].createdAt,
+					updatedAt: resServices.data[i].updatedAt
+				};
+				resultArr.push(result);
+			}
+			return controller.sendSuccess(
+				res,
+				resultArr,
+				200,
+				resServices.message
+			);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
+	} catch (error) {
+		// bug
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
+exports.GetProductRecommend = async (req, res, next) => {
+	try {
+		const resServices = await productServices.getProductRecommend();
 		if (resServices.success) {
 			var resultArr =[];
 			for(let i =0;i<resServices.data.length;i++)

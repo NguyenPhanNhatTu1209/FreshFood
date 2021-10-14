@@ -1,9 +1,3 @@
-var a = "Thịt bò kobe";
-var b = "thịt dê"
-a= a.toLocaleLowerCase();
-b= b.toLocaleLowerCase();
-let re = new RegExp('bó');
+const { encodeImageToBlurhash } = require("./src/helper");
 
-console.log(b.toLocaleLowerCase())
-var c = a.includes(b);
-console.log(c)
+encodeImageToBlurhash(`D:\\Image\\FreshFood\\thit de.jpg`).then(e=>console.log(e));

@@ -113,3 +113,24 @@ exports.findAllProduct = async body => {
 		};
 	}
 };
+exports.getProductRecommend = async (id) => {
+	try {
+		const products = await PRODUCT.find().sort({sold: -1});
+		var arrResult = [];
+		for(let i=0;i<5;i++)
+		{
+			arrResult.push(products[i]);
+		}
+		return {
+			message: 'Successfully get product recommend',
+			success: true,
+			data: arrResult
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};

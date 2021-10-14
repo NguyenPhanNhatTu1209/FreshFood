@@ -149,7 +149,7 @@ exports.fotgotPassword = async body => {
 				to: result.email,
 				from: configEnv.Email,
 				subject: 'Quên mật khẩu Fresh Food',
-				text: 'Mã OTP của bạn là: ' + result.otp
+				text: 'Mã OTP của bạn là:' + result.otp,
 			};
 			const resultSendMail = await sendMail(mailOptions);
 			console.log(resultSendMail);
