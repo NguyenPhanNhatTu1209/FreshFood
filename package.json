@@ -12,7 +12,8 @@
     "start:prod": "node dist/src/server.js",
     "dev": "nodemon src/server.js",
     "pm2": "yarn build && yarn pm2:start",
-    "pm2:start": "pm2 start ecosystem.config.js"
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "testchoi": "env-cmd -f ./.env nodemon --inspect test.js"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +26,7 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^1.0.1",
+    "dateformat": "^4.5.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "firebase-admin": "^9.11.0",
@@ -37,10 +39,12 @@
     "nodemailer": "^6.6.3",
     "otp-generator": "^2.0.1",
     "path": "^0.12.7",
+    "paypal-rest-sdk": "^1.8.1",
     "sharp": "^0.29.1",
     "socket.io": "^2.3.0",
     "uuid-v4": "^0.1.0",
-    "validator": "^13.5.2"
+    "validator": "^13.5.2",
+    "sha256": "^0.2.0"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",

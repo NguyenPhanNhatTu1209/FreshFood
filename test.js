@@ -1,3 +1,4 @@
-const { encodeImageToBlurhash } = require("./src/helper");
+const { FormatDollar } = require("./src/helper");
 
-encodeImageToBlurhash(`D:\\Image\\FreshFood\\thit de.jpg`).then(e=>console.log(e));
+var a=  FormatDollar(120000);
+console.log(a)

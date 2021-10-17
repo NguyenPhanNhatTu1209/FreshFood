@@ -9,7 +9,9 @@ const configEnv = {
 	AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
 	AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
 	Email: process.env.Email,
-	Password: process.env.Password
+	Password: process.env.Password,
+	ID_Client: process.env.ID_Client,
+	Secret: process.env.Secret
 };
 const DFRoleValue = ["User", "Admin","Staff"]
 module.exports = {

@@ -217,14 +217,21 @@ exports.resetPassword = async body => {
 	}
 };
 
-exports._findAdminByRoleAsync = async () => {
+
+exports.findInformation = async (id) => {
 	try {
-		const user = await ACCOUNT.findOne({
-			role: DFRole.admin
-		});
-		return user;
+		const user = await USER.findById(id,{_id:1, email:1,role:1,name:1,address:1,phone:1}).lean();
+		console.log(user);
+		return {
+			message: 'Successfully Get Information',
+			success: true,
+			data: user
+		};
 	} catch (err) {
-		console.log(err);
-		return null;
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
 	}
 };

@@ -37,11 +37,17 @@ const defaultChatSocket={
   joinRoomCSS:"JOIN_ROOM_CSS",
   leaveRoomCSS:"LEAVE_ROOM_CSS"
 }
+const defaultPayment={
+  COD:0,
+  PayPal:1, 
+  VNPay:2,
+}
 module.exports ={
   defaultModel,
   defaultRoles,
   defaultChatSocket,
   defaultStatusProduct,
   defaultStatusCart,
-  defaultStatusOrder
+  defaultStatusOrder,
+  defaultPayment
 }

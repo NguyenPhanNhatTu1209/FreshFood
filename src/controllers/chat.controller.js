@@ -51,6 +51,28 @@ const getRooms = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+const GetAllChat = async (req, res, next) => {
+	try {
+		const resServices = await chatService.getRoomAdmin(query);
+		if (!resServices.success)
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				300,
+				resServices.message
+			);
+
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			200,
+			resServices.message
+		);
+	} catch (err) {
+		return controller.sendError(res);
+	}
+};
+
 
 
 module.exports = {

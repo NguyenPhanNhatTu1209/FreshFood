@@ -13,6 +13,7 @@ const Order = new Schema({
     area:defaultModel.string,
     shipFee:defaultModel.number,
     history:[{title: String ,createdAt: Date}],
+    typePayment: {type: String, default: "Chưa thanh toán"}
 }, { timestamps: true })
 
 

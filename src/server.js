@@ -9,12 +9,15 @@ const cors = require("cors")
 const server = require("http").Server(app);
 var multer = require('multer');
 const socket = require('./socket');
+const paypal = require("./config/paypal");
 
 // var upload = multer();
 // app.use(upload.array()); 
 
 //connect db
 db.connect()
+//connect Paypal
+paypal.connectPayPal(process.env.ID_Client, process.env.Secret);
 
 app.use(express.urlencoded({
     extended: true
