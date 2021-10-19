@@ -5,6 +5,11 @@ const ORDER = require('../models/Order.model');
 const paypal = require("paypal-rest-sdk");
 const PaypalModel = require('../models/Paypal.model');
 const { sortObject } = require('../helper');
+const { body } = require('../validators');
+var AWS = require('aws-sdk');
+const { configEnv } = require('../config');
+const uploadServices = require('../services/uploadS3.service');
+
 exports.registerAsync = async (req, res, next) => {
 	try {
 		const resServices = await userServices.registerUserAsync(req.value.body);
@@ -280,6 +285,86 @@ exports.getInformation = async (req, res, next) => {
 		);
 	} catch (err) {
 		console.log(err);
+		return controller.sendError(res);
+	}
+};
+exports.updateInformation = async (req, res, next) => {
+	try {
+		const { decodeToken } = req.value.body;
+		const id = decodeToken.data.id;
+		const resServices = await userServices.updateInformation(id,req.value.body);
+		if (!resServices.success) {
+			return controller.sendSuccess(res, {}, 300, resServices.message);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			200,
+			resServices.message
+		);
+	} catch (err) {
+		console.log(err);
+		return controller.sendError(res);
+	}
+};
+exports.uploadImage = async (req, res, next) => {
+	try {
+		const { decodeToken } = req.value.body;
+		const id = decodeToken.data.id;
+		const file = req.file;
+		console.log("file ne");
+		console.log(file);
+		let s3bucket = new AWS.S3({
+			accessKeyId: configEnv.AWS_ACCESS_KEY,
+			secretAccessKey: configEnv.AWS_SECRET_KEY
+		});
+		var timeCurrent = Date.now();
+		var params = {
+			Bucket: 'freshfoodbe',
+			Key: `Avatar/${timeCurrent}${file.originalname}`,
+			Body: file.buffer,
+			ContentType: file.mimetype
+		};
+		s3bucket.upload(params, async function (err, data) {
+			if (err) {
+				return controller.sendSuccess(res, err, 300, 'Upload Image Fail');
+			} else {
+				var name = `Avatar/${timeCurrent}${file.originalname}`;
+					var bodyNew = {
+						avatar: name
+					}
+					const resServices = await userServices.updateInformation(id,
+						bodyNew
+					);
+					var image = await uploadServices.getImageS3(name);
+					if (resServices.success) {
+						var result = {
+							fcm: resServices.data.fcm,
+							image: image,
+							email: resServices.data.email,
+							phone: resServices.data.phone,
+							name: resServices.data.name,
+							_id: resServices.data._id,
+							address: resServices.data.address,
+						};
+						return controller.sendSuccess(
+							res,
+							result,
+							200,
+							resServices.message
+						);
+					}
+					return controller.sendSuccess(
+						res,
+						resServices.data,
+						300,
+						resServices.message
+					);
+			}
+		});
+	} catch (error) {
+		// bug
+		console.log(error);
 		return controller.sendError(res);
 	}
 };

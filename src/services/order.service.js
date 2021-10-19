@@ -92,6 +92,25 @@ exports.updateOrderAsync = async (id, body) => {
 		};
 	}
 };
+exports.updateStatusOrderAsync = async (id, body) => {
+	try {
+		console.log(body)
+		const order = await ORDER.findOneAndUpdate({ _id: id }, body, {
+			new: true
+		});
+		return {
+			message: 'Successfully update status Order',
+			success: true,
+			data: order
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
 exports.cancelOrderAsync = async id => {
 	try {
 		var ordersCurrent = await ORDER.findById(id);

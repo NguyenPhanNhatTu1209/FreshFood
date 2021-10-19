@@ -79,7 +79,8 @@ exports.loginAsync = async body => {
 			message: 'Successfully login',
 			success: true,
 			data: {
-				token: generateToken
+				token: generateToken,
+				role: user.role
 			}
 		};
 	} catch (err) {
@@ -216,14 +217,29 @@ exports.resetPassword = async body => {
 		};
 	}
 };
-
-
 exports.findInformation = async (id) => {
 	try {
-		const user = await USER.findById(id,{_id:1, email:1,role:1,name:1,address:1,phone:1}).lean();
+		const user = await USER.findById(id,{_id:1, email:1,role:1,name:1,address:1,phone:1,avatar:1,fcm:1}).lean();
 		console.log(user);
 		return {
 			message: 'Successfully Get Information',
+			success: true,
+			data: user
+		};
+	} catch (err) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.updateInformation = async (id,body) => {
+	try {
+		const user = await USER.findByIdAndUpdate(id,body);
+		console.log(user);
+		return {
+			message: 'Successfully update Information',
 			success: true,
 			data: user
 		};

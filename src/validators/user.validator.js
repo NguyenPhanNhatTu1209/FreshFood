@@ -20,6 +20,11 @@ const schemas = {
 		password: joi.string().required(),
 		otp:joi.string().required()
 	}),
+	updateInformation: joi.object().keys({
+		phone: joi.string().required(),
+		address: joi.string().required(),
+		name:joi.string().required()
+	}),
 };
 module.exports = schemas;
 

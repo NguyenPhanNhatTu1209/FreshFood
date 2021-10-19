@@ -11,6 +11,10 @@ const schemas = {
     address: joi.string().required(),
     area: joi.string().required(),
 	}),
+	updateStatus: joi.object().keys({
+		id: joi.string().required(),
+    status: joi.number().required(),
+	}),
 };
 module.exports = schemas;
 

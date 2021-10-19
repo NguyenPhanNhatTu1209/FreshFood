@@ -220,6 +220,65 @@ exports.updateOrderAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+exports.changeStatusOrder = async (req, res, next) => {
+	try {
+		var history;
+		if(req.value.body.status === 1)
+		{
+			history = {
+				title: 'Đơn hàng vừa được xác nhận',
+				createdAt: Date.now()
+			};
+		}
+		else if(req.value.body.status === 2)
+		{
+			history = {
+				title: 'Đơn hàng đang được vận chuyển',
+				createdAt: Date.now()
+			};
+		}
+		else if(req.value.body.status === 3)
+		{
+			history = {
+				title: 'Đơn hàng đã giao thành công',
+				createdAt: Date.now()
+			};
+		}
+		else
+		{
+			history = {
+				title: 'Đơn hàng đã bị hủy',
+				createdAt: Date.now()
+			};
+		}
+		var bodyNew = {
+			status: req.value.body.status,
+		}
+		const resServices = await orderServices.updateStatusOrderAsync(
+			req.value.body.id,
+			bodyNew
+		);
+		await resServices.data.history.push(history);
+		if (resServices.success) {
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
+			);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
+	} catch (error) {
+		// bug
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
 exports.deleteCartAsync = async (req, res, next) => {
 	try {
 		console.log(req.query.id);

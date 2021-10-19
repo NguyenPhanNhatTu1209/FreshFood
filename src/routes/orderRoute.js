@@ -10,5 +10,6 @@ router.post('/createOrder', jwtServices.verify, Validate.body(SchemaValidateOrde
 router.put('/updateOrder',  jwtServices.verify, Validate.body(SchemaValidateOrder.updateOrder), Controller.updateOrderAsync)
 router.delete('/cancelOrder',  jwtServices.verify, Controller.deleteCartAsync)
 router.get('/getOrders', jwtServices.verify,Controller.GetOrderByUserAsync)
+router.put('/updateStatusOrder', jwtServices.verify, Validate.body(SchemaValidateOrder.updateStatus),Controller.changeStatusOrder)
 
 module.exports = router
