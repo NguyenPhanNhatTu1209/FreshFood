@@ -323,3 +323,46 @@ exports.GetProductRecommend = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+exports.findDetailProduct = async (req, res, next) => {
+	try {
+		console.log(req.query.id);
+		const resServices = await productServices.findProductByIdAsync(req.query.id);
+		if (resServices.success) {
+			var linkImage =[];
+			for(let i =0;i<resServices.data.image.length;i++)
+			{
+				var image = await uploadServices.getImageS3(resServices.data.image[i]);
+				linkImage.push(image);
+			}
+			var result = {
+				price: resServices.data.price,
+				image: linkImage,
+				status: resServices.data.status,
+				weight: resServices.data.weight,
+				quantity: resServices.data.quantity,
+				_id: resServices.data._id,
+				name: resServices.data.name,
+				detail: resServices.data.detail,
+				groupProduct: resServices.data.groupProduct,
+				createdAt: resServices.data.createdAt,
+				updatedAt: resServices.data.updatedAt
+			};
+			return controller.sendSuccess(
+				res,
+				result,
+				200,
+				resServices.message
+			);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
+	} catch (error) {
+		// bug
+		console.log(error);
+		return controller.sendError(res);
+	}
+};

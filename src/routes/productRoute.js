@@ -32,5 +32,6 @@ router.put('/updateProduct', multipleUpload,jwtServices.verify,checkRole([defaul
 router.delete('/deleteProduct',  jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.deleteProductAsync)
 router.get('/findAllProduct',  Controller.findAllProductAsync);
 router.get('/getProductRecommend', Controller.GetProductRecommend)
+router.get('/getDetailProduct', Controller.findDetailProduct)
 
 module.exports = router
