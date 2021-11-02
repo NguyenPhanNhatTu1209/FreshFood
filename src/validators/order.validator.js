@@ -4,6 +4,7 @@ const schemas = {
 		cartId: joi.array().required(),
     address: joi.string().required(),
     area: joi.string().required(),
+		note: joi.string().required(),
 		typePaymentOrder: joi.number().required()
 	}),
 	updateOrder: joi.object().keys({

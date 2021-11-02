@@ -6,6 +6,7 @@ const PRODUCT = require('../models/Product.model');
 exports.createProductAsync = async body => {
 	try {
 		var groupProduct = await GROUPPRODUCT.findOne({ key: body.groupProduct });
+		console.log(body)
 		if (groupProduct == null)
 			return {
 				message: 'GroupProduct not exit',
@@ -15,6 +16,7 @@ exports.createProductAsync = async body => {
 			name: groupProduct.name,
 			key: groupProduct.key
 		};
+		console.log()
 		const product = new PRODUCT(body);
 		await product.save();
 		return {

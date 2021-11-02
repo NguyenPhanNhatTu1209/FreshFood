@@ -10,7 +10,9 @@ const Order = new Schema({
     product:[{productId: String,price: Number ,quantity: Number, weight: Number ,name: String, nameGroup: String}],
     status:defaultModel.number,
     address:defaultModel.stringR,
+    note: defaultModel.string,
     area:defaultModel.string,
+    orderCode: {type: String, unique: true},
     shipFee:defaultModel.number,
     history:[{title: String ,createdAt: Date}],
     typePayment: {type: String, default: "Chưa thanh toán"}

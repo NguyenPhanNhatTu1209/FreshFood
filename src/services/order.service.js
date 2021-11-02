@@ -46,6 +46,21 @@ exports.createOrderAsync = async body => {
 				session1.commitTransaction();
 				session1.endSession();
 			}
+			let arr = await ORDER.find();
+			if (arr.length >= 1) {
+				var orderCode = arr[arr.length - 1].orderCode;
+				var splitted = orderCode.split('-', 2);
+				let number = splitted[1];
+				let bill = `${Number(number) + 1}`;
+				let newBillCode = '0'.repeat(8 - bill.length) + bill;
+				newBillCode = "FF" + '-' + newBillCode;
+				body.orderCode = newBillCode;
+			} else {
+				let bill = `1`;
+				let newBillCode = '0'.repeat(8 - bill.length) + bill;
+				newBillCode = "FF" + '-' + newBillCode;
+				body.orderCode = newBillCode;
+			}
 			const order = new ORDER(body);
 			await order.save();
 			session.commitTransaction();
@@ -167,6 +182,23 @@ exports.GetOrderByUser = async body => {
 			message: 'Successfully get orders',
 			success: true,
 			data: ordersSearch
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.findOrderByIdAsync = async id => {
+	try {
+		console.log(id);
+		const order = await ORDER.findById(id);
+		return {
+			message: 'Successfully Get Product',
+			success: true,
+			data: order
 		};
 	} catch (e) {
 		console.log(e);

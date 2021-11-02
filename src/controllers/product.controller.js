@@ -1,6 +1,8 @@
 const controller = require('./controller');
 const productServices = require('../services/product.service');
 const uploadServices = require('../services/uploadS3.service');
+const eveluateServices = require('../services/eveluate.service');
+
 const { defaultRoles } = require('../config/defineModel');
 const { configEnv } = require('../config');
 var AWS = require('aws-sdk');
@@ -34,7 +36,7 @@ exports.createProductAsync = async (req, res, next) => {
 					console.log('ResponseData');
 					console.log(ResponseData);
 					if (ResponseData.length == file.length) {
-						req.body.image = ResponseData;
+						req.value.body.image = ResponseData;
 						const resServices = await productServices.createProductAsync(
 							req.value.body
 						);
@@ -334,6 +336,17 @@ exports.findDetailProduct = async (req, res, next) => {
 				var image = await uploadServices.getImageS3(resServices.data.image[i]);
 				linkImage.push(image);
 			}
+			var eveluates = await eveluateServices.getEveluateByProduct(resServices.data.productId)
+			var totalStar = 0;
+			var starAVG = 0;
+			if(eveluates.length>0)
+			{
+				eveluates.forEach(element => {
+					totalStar = element.star+totalStar;
+				});
+				starAVG = totalStar/eveluates.length;
+			}
+		
 			var result = {
 				price: resServices.data.price,
 				image: linkImage,
@@ -345,7 +358,10 @@ exports.findDetailProduct = async (req, res, next) => {
 				detail: resServices.data.detail,
 				groupProduct: resServices.data.groupProduct,
 				createdAt: resServices.data.createdAt,
-				updatedAt: resServices.data.updatedAt
+				updatedAt: resServices.data.updatedAt,
+				eveluates: eveluates.data,
+				starAVG: starAVG,
+				eveluateCount: eveluates.data.length
 			};
 			return controller.sendSuccess(
 				res,

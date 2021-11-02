@@ -2,6 +2,9 @@ const controller = require('./controller');
 const userServices = require('../services/user.services');
 const { defaultRoles } = require('../config/defineModel');
 const ORDER = require('../models/Order.model');
+const USER = require('../models/User.model');
+const otpGenerator = require('otp-generator');
+
 const paypal = require("paypal-rest-sdk");
 const PaypalModel = require('../models/Paypal.model');
 const { sortObject } = require('../helper');
@@ -77,6 +80,18 @@ exports.forgotPasswordAsync = async (req, res, next) => {
 		const { email } = req.query;
 		console.log(email);
 		const resServices = await userServices.fotgotPassword({email: email});
+		var restartOtp = async function  () {
+			const otp = otpGenerator.generate(6, {
+				upperCase: false,
+				specialChars: false
+			});
+			console.log(otp);
+			var user = await USER.findOne({email: email})
+			user.otp = otp;
+			user.save();
+		};
+
+		setTimeout(restartOtp, 300000);
 		if (!resServices.success) {
 			return controller.sendSuccess(
 				res,

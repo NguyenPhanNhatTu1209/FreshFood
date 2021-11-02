@@ -7,23 +7,26 @@ const uploadServices = require('../services/uploadS3.service');
 
 exports.createEveluateAsync = async body => {
 	try {
+		console.log("eveluate ne")
+		console.log(body)
 		const eveluate = new EVELUATE(body);
 		await eveluate.save();
 		return {
 			message: 'Successfully create eveluate',
 			success: true,
-			data: cart
+			data: eveluate
 		};
 	} catch (e) {
+		console.log(e)
 		return {
 			message: 'An error occurred',
 			success: false
 		};
 	}
 };
-exports.updateCartAsync = async (id, body) => {
+exports.updateEveluateAsync = async (id, body) => {
 	try {
-		const cart = await CART.findOneAndUpdate(
+		const eveluate = await EVELUATE.findOneAndUpdate(
 			{ _id: id },
 			body,
 			{
@@ -31,9 +34,9 @@ exports.updateCartAsync = async (id, body) => {
 			}
 		);
 		return {
-			message: 'Successfully update Cart',
+			message: 'Successfully update Eveluate',
 			success: true,
-			data: cart
+			data: eveluate
 		};
 	} catch (e) {
 		console.log(e);
@@ -43,11 +46,11 @@ exports.updateCartAsync = async (id, body) => {
 		};
 	}
 };
-exports.deleteCartAsync = async (id) => {
+exports.deleteEveluateAsync = async (id) => {
 	try {
-		const cart = await CART.deleteOne({_id: id});
+		const eveluate = await EVELUATE.deleteOne({_id: id});
 		return {
-			message: 'Successfully delete Cart',
+			message: 'Successfully delete Eveluate',
 			success: true,
 		};
 	} catch (e) {
@@ -58,58 +61,36 @@ exports.deleteCartAsync = async (id) => {
 		};
 	}
 };
-exports.getCartByIdAsync = async (id) => {
+exports.getEveluateByOrderAndUserAndProductAsync = async (customerId,orderId,productId) => {
 	try {
-		const cart = await CART.findById(id);
-		return {
-			message: 'Successfully delete Cart',
-			success: true,
-			data: cart
-		};
-	} catch (e) {
-		console.log(e);
-		return {
-			message: 'An error occurred',
-			success: false
-		};
-	}
-};
-exports.getAllCartByIdUser = async (id) => {
-	try {
-		const cartsCurrent = await CART.find({customerId: id, status: defaultStatusCart.Active}).sort({createdAt: -1});
-		console.log(cartsCurrent.length)
-		let arrResult = [];
-		for(let i = 0 ; i < cartsCurrent.length; i++)
-		{
-			var productCurrent = await PRODUCT.findById(cartsCurrent[i].productId);
-			var costCart = 0;
-			var images = [];
-			for (let j = 0; j < productCurrent.image.length; j++) {
-				var image = await uploadServices.getImageS3(productCurrent.image[j]);
-				images.push(image);
-			}
-			costCart = productCurrent.price * cartsCurrent[i].quantity;
+		const eveluate = await EVELUATE.find({customerId: customerId,orderId: orderId, productId: productId});
+		console.log("danh gia trc");
+		console.log(customerId)
+		console.log(orderId)
+		console.log(productId)
 
-			var newCart = {
-				status: cartsCurrent[i].status,
-        quantity: cartsCurrent[i].quantity,
-        name: cartsCurrent[i].name,
-        nameGroup: cartsCurrent[i].nameGroup,
-        _id: cartsCurrent[i].id,
-        productId: cartsCurrent[i].productId,
-        customerId: cartsCurrent[i].customerId,
-				image: images,
-				cost: productCurrent.price,
-				totalCost: costCart,
-        createdAt: cartsCurrent[i].createdAt,
-        updatedAt: cartsCurrent[i].updatedAt,
-			}
-			arrResult.push(newCart)
-		}
+		console.log(eveluate)
 		return {
-			message: 'Successfully Get Cart',
+			message: 'Successfully get Eveluate',
 			success: true,
-			data: arrResult
+			data: eveluate
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+
+exports.getEveluateByProduct = async (productId) => {
+	try {
+		const eveluates = await EVELUATE.find({productId: productId}).sort({createdAt: -1});
+		return {
+			message: 'Successfully Get eveluates',
+			success: true,
+			data: eveluates
 		};
 	} catch (e) {
 		console.log(e);

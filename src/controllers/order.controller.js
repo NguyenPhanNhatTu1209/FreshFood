@@ -56,7 +56,7 @@ exports.createOrderAsync = async (req, res, next) => {
 				quantity: cartCurrent.data.quantity,
 				weight: productCurrent.data.weight,
 				name: productCurrent.data.name,
-				nameGroup: productCurrent.data.groupProduct.name
+				nameGroup: productCurrent.data.groupProduct.name,
 			};
 			arrCart.push(cartPush);
 		}

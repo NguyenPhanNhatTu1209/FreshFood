@@ -6,10 +6,10 @@ const Schema = mongoose.Schema
 
 const Eveluate = new Schema({
   productId:defaultModel.string,
-  userId:defaultModel.string,
+  customerId:defaultModel.string,
+  orderId: defaultModel.string,
   image: defaultModel.array,
   content:defaultModel.string,
-  status: {type: Number, default: 1},
   star: defaultModel.number,
 }, { timestamps: true })
 
