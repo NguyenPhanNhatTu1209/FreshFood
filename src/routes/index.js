@@ -7,6 +7,8 @@ const cartRoute = require('./cartRoute')
 const orderRoute = require('./orderRoute')
 const chatRoute = require('./chatRoute')
 const eveluateRoute = require('./eveluateRoute')
+const addressRoute = require('./addressRoute')
+const productUserRoute = require('./productUserRoute')
 
 const router = express.Router()
 router.use('/user', useRoute)
@@ -17,6 +19,8 @@ router.use('/cart', cartRoute)
 router.use('/order', orderRoute)
 router.use('/chat', chatRoute)
 router.use('/eveluate', eveluateRoute)
+router.use('/address', addressRoute)
+router.use('/productUser', productUserRoute)
 
 
 router.get('/healCheck', (req, res) => res.status(200).send('Welcome to FreshFood 1'))

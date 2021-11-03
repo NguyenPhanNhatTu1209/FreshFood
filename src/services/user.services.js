@@ -30,7 +30,6 @@ exports.registerUserAsync = async body => {
 			password: hashedPassword,
 			phone: phone,
 			name: name,
-			address: address,
 			otp: otp
 		});
 		await newUser.save();
@@ -38,10 +37,14 @@ exports.registerUserAsync = async body => {
 			id: newUser._id,
 			role: newUser.role
 		});
+		var result = {
+			token:  generateToken,
+			role: newUser.role
+		}
 		return {
 			message: 'Successfully Register',
 			success: true,
-			data: generateToken
+			data: result
 		};
 	} catch (err) {
 		console.log(err);

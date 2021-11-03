@@ -86,7 +86,13 @@ exports.findProductByIdAsync = async id => {
 	try {
 		console.log(id);
 		const product = await PRODUCT.findById(id);
-		console.log(product)
+		if(product == null)
+		{
+			return {
+				message: 'An error occurred',
+				success: false
+			};
+		}
 		return {
 			message: 'Successfully Get Product',
 			success: true,

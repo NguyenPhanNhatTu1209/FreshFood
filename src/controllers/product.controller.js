@@ -281,6 +281,7 @@ exports.findAllProductAsync = async (req, res, next) => {
 exports.GetProductRecommend = async (req, res, next) => {
 	try {
 		const resServices = await productServices.getProductRecommend();
+		console.log(resServices.data)
 		if (resServices.success) {
 			var resultArr =[];
 			for(let i =0;i<resServices.data.length;i++)

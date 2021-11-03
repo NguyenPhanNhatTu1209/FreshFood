@@ -11,7 +11,8 @@ const configEnv = {
 	Email: process.env.Email,
 	Password: process.env.Password,
 	ID_Client: process.env.ID_Client,
-	Secret: process.env.Secret
+	Secret: process.env.Secret,
+	API_GHTK: process.env.API_GHTK
 };
 const DFRoleValue = ["User", "Admin","Staff"]
 module.exports = {

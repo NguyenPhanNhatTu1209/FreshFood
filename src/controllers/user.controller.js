@@ -292,11 +292,14 @@ exports.getInformation = async (req, res, next) => {
 		if (!resServices.success) {
 			return controller.sendSuccess(res, {}, 300, resServices.message);
 		}
+		var result = resServices.data;
+		var image = await uploadServices.getImageS3(result.avatar);
+		result.avatar = image;
 		return controller.sendSuccess(
 			res,
 			resServices.data,
 			200,
-			resServices.message
+			result
 		);
 	} catch (err) {
 		console.log(err);

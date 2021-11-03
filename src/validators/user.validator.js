@@ -5,7 +5,6 @@ const schemas = {
 		password: joi.string().required(),
 		phone:joi.string().required(),
 		name:joi.string().required(),
-		address:joi.string().required(),
 	}),
 	login: joi.object().keys({
 		email: joi.string().required(),
@@ -22,7 +21,6 @@ const schemas = {
 	}),
 	updateInformation: joi.object().keys({
 		phone: joi.string().required(),
-		address: joi.string().required(),
 		name:joi.string().required()
 	}),
 };

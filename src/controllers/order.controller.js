@@ -4,23 +4,27 @@ const orderServices = require('../services/order.service');
 const productServices = require('../services/product.service');
 const shipFeeServices = require('../services/shipFee.service');
 const ORDER = require('../models/Order.model');
-
+const axios = require('axios').default;
 const {
 	defaultRoles,
 	defaultStatusCart,
 	defaultPayment
 } = require('../config/defineModel');
 const { paymentMethod, FormatDollar, sortObject } = require('../helper');
+const { configEnv } = require('../config');
 exports.createOrderAsync = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
 		console.log(id);
 		req.value.body.customerId = id;
+		console.log("bodyne")
+		// console.log(req.value.body);
 		var arrCart = [];
 		var totalWeight = 0;
 		var totalShip = 0;
 		var totalMoney = 0;
+		var totalMoneyProduct = 0;
 		for (let i = 0; i < req.value.body.cartId.length; i++) {
 			var cartCurrent = await cartServices.getCartByIdAsync(
 				req.value.body.cartId[i]
@@ -46,8 +50,8 @@ exports.createOrderAsync = async (req, res, next) => {
 			}
 			totalWeight =
 				totalWeight + cartCurrent.data.quantity * productCurrent.data.weight;
-			totalMoney =
-				totalMoney + productCurrent.data.price * cartCurrent.data.quantity;
+			totalMoneyProduct =
+				totalMoneyProduct + productCurrent.data.price * cartCurrent.data.quantity;
 			cartCurrent.data.status = defaultStatusCart.InActive;
 			cartCurrent.data.save();
 			var cartPush = {
@@ -56,24 +60,44 @@ exports.createOrderAsync = async (req, res, next) => {
 				quantity: cartCurrent.data.quantity,
 				weight: productCurrent.data.weight,
 				name: productCurrent.data.name,
-				nameGroup: productCurrent.data.groupProduct.name,
+				nameGroup: productCurrent.data.groupProduct.name
 			};
 			arrCart.push(cartPush);
 		}
-
-		var areaShip = await shipFeeServices.getShipFeeByIdAsync(
-			req.value.body.area
-		);
-		totalShip = areaShip.data.fee * totalWeight;
 		var history = {
 			title: 'Đơn hàng vừa mới tạo',
 			createdAt: Date.now()
 		};
+		await axios
+			.get('https://services.giaohangtietkiem.vn/services/shipment/fee', {
+				params: {
+					address: req.value.body.area.address,
+					province: req.value.body.area.province,
+					district: req.value.body.area.district,
+					pick_province: 'Hồ Chí Minh',
+					pick_district: 'Thủ Đức',
+					weight: totalWeight*1000
+				},
+				headers: { Token: configEnv.API_GHTK }
+			})
+			.then( function (response) {
+				totalShip =  response.data.fee.fee;
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.log(error);
+			})
+			.then(function () {
+				// always executed
+			});
+		totalMoney = totalMoneyProduct+ totalShip;
 		req.value.body.area = req.value.body.area;
 		req.value.body.product = arrCart;
 		req.value.body.shipFee = totalShip;
 		req.value.body.totalMoney = totalMoney;
+		req.value.body.totalMoneyProduct = totalMoneyProduct;
 		req.value.body.history = history;
+		console.log(req.value.body);
 		const resServices = await orderServices.createOrderAsync(req.value.body);
 		var changePriceOrder = FormatDollar(totalMoney / 24000);
 		console.log(changePriceOrder);
@@ -169,16 +193,13 @@ exports.createOrderAsync = async (req, res, next) => {
 					200,
 					'Success'
 				);
-			}
-			else
-			{
-				var updateOrder = await ORDER.findOneAndUpdate({_id: idOrderNew},{typePayment:"COD"},{new: true})
-				return controller.sendSuccess(
-					res,
-					updateOrder,
-					200,
-					"Success"
+			} else {
+				var updateOrder = await ORDER.findOneAndUpdate(
+					{ _id: idOrderNew },
+					{ typePayment: 'COD' },
+					{ new: true }
 				);
+				return controller.sendSuccess(res, updateOrder, 200, 'Success');
 			}
 		} else {
 			return controller.sendSuccess(
@@ -223,37 +244,30 @@ exports.updateOrderAsync = async (req, res, next) => {
 exports.changeStatusOrder = async (req, res, next) => {
 	try {
 		var history;
-		if(req.value.body.status === 1)
-		{
+		if (req.value.body.status === 1) {
 			history = {
 				title: 'Đơn hàng vừa được xác nhận',
 				createdAt: Date.now()
 			};
-		}
-		else if(req.value.body.status === 2)
-		{
+		} else if (req.value.body.status === 2) {
 			history = {
 				title: 'Đơn hàng đang được vận chuyển',
 				createdAt: Date.now()
 			};
-		}
-		else if(req.value.body.status === 3)
-		{
+		} else if (req.value.body.status === 3) {
 			history = {
 				title: 'Đơn hàng đã giao thành công',
 				createdAt: Date.now()
 			};
-		}
-		else
-		{
+		} else {
 			history = {
 				title: 'Đơn hàng đã bị hủy',
 				createdAt: Date.now()
 			};
 		}
 		var bodyNew = {
-			status: req.value.body.status,
-		}
+			status: req.value.body.status
+		};
 		const resServices = await orderServices.updateStatusOrderAsync(
 			req.value.body.id,
 			bodyNew

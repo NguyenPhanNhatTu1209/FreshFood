@@ -8,7 +8,6 @@ const User = new Schema({
     password:defaultModel.stringR,
     role:defaultModel.number,
     name:defaultModel.stringR,
-    address:defaultModel.stringR,
     phone:defaultModel.stringPhone,
     avatar: defaultModel.string,
     otp: defaultModel.string

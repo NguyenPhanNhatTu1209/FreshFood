@@ -11,7 +11,7 @@ const Address = new Schema({
   province:defaultModel.stringR,
   district: defaultModel.stringR,
   address: defaultModel.stringR,
-  isMain: defaultModel.boolean
+  isMain: defaultModel.booleanFalse
 }, { timestamps: true })
 
 
