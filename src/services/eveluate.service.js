@@ -84,9 +84,12 @@ exports.getEveluateByOrderAndUserAndProductAsync = async (customerId,orderId,pro
 	}
 };
 
-exports.getEveluateByProduct = async (productId) => {
+exports.getEveluateByProduct = async (body) => {
 	try {
-		const eveluates = await EVELUATE.find({productId: productId}).sort({createdAt: -1});
+		const { productId, skip, limit } = body;
+		console.log("body");
+		console.log(body);
+		const eveluates = await EVELUATE.find({productId: productId}).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit))
 		return {
 			message: 'Successfully Get eveluates',
 			success: true,

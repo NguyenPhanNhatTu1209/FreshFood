@@ -23,6 +23,10 @@ const schemas = {
 		phone: joi.string().required(),
 		name:joi.string().required()
 	}),
+	confirmOtp: joi.object().keys({
+		email: joi.string().required(),
+		otp:joi.string().required()
+	}),
 };
 module.exports = schemas;
 

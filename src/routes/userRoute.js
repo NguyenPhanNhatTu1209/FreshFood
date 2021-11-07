@@ -26,5 +26,6 @@ router.get('/successVnPay', Controller.successVnPayOrder)
 router.get('/getInformation', jwtServices.verify, Controller.getInformation)
 router.put('/updateInformation', jwtServices.verify,Validate.body(SchemaValidateUser.updateInformation), Controller.updateInformation)
 router.post('/updateImage',singleUpload, jwtServices.verify, Controller.uploadImage)
+router.post('/confirmOtp', Validate.body(SchemaValidateUser.confirmOtp), Controller.confirmOtp)
 
 module.exports = router

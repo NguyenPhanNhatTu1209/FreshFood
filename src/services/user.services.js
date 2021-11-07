@@ -9,7 +9,7 @@ const { sendMail } = require('./sendMail.service');
 
 exports.registerUserAsync = async body => {
 	try {
-		const { email, password, phone, name, address } = body;
+		const { email, password, phone, name } = body;
 		//check if email is already in the database
 		const emailExist = await USER.findOne({
 			email: email
@@ -192,7 +192,8 @@ exports.resetPassword = async body => {
 				const hashedPassword = await bcrypt.hash(password, 8);
 				const otp = otpGenerator.generate(6, {
 					upperCase: false,
-					specialChars: false
+					specialChars: false,
+					alphabets: false,
 				});
 				user.password = hashedPassword;
 				user.otp = otp;
@@ -220,9 +221,53 @@ exports.resetPassword = async body => {
 		};
 	}
 };
+exports.confirmOtp = async body => {
+	try {
+		const { otp, email } = body;
+		let user = await USER.findOne({ email: email });
+		if (user != null) {
+			if (otp == user.otp) {
+				const otp = otpGenerator.generate(6, {
+					upperCase: false,
+					specialChars: false,
+					alphabets: false,
+				});
+				user.otp = otp;
+				user.save();
+				const generateToken = jwtServices.createToken({
+					id: user._id,
+					role: user.role
+				});
+				return {
+					message: 'Successfully login',
+					success: true,
+					data: {
+						token: generateToken,
+						role: user.role
+					}
+				};
+			} else {
+				return {
+					message: 'OTP invalid',
+					success: false
+				};
+			}
+		} else {
+			return {
+				message: 'Do not Email',
+				success: false
+			};
+		}
+	} catch (error) {
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
 exports.findInformation = async (id) => {
 	try {
-		const user = await USER.findById(id,{_id:1, email:1,role:1,name:1,address:1,phone:1,avatar:1,fcm:1}).lean();
+		const user = await USER.findById(id,{_id:1, email:1,role:1,name:1,phone:1,avatar:1,fcm:1}).lean();
 		console.log(user);
 		return {
 			message: 'Successfully Get Information',

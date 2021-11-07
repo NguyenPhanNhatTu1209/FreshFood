@@ -10,7 +10,6 @@ const Order = new Schema({
     totalMoneyProduct:defaultModel.number,
     product:[{productId: String,price: Number ,quantity: Number, weight: Number ,name: String, nameGroup: String}],
     status:defaultModel.number,
-    address:defaultModel.stringR,
     note: defaultModel.string,
     area:{name: String,phone: String ,province: String, district: String ,address: String},
     orderCode: {type: String, unique: true},

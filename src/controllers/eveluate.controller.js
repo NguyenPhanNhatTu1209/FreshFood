@@ -104,9 +104,15 @@ exports.deleteEveluate = async (req, res, next) => {
 };
 exports.GetEveluateByProductAsync = async (req, res, next) => {
 	try {
+		console.log(req.query)
+		var query = {
+			productId: req.query.productId,
+			limit:req.query.limit||"15",
+      skip:req.query.skip||"1"
+		}
 		console.log(req.query.productId);
 		const resServices = await eveluateServices.getEveluateByProduct(
-			req.query.productId
+			query
 		);
 		if (resServices.success) {
 			return controller.sendSuccess(

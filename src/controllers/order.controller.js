@@ -215,32 +215,6 @@ exports.createOrderAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
-exports.updateOrderAsync = async (req, res, next) => {
-	try {
-		const resServices = await orderServices.updateOrderAsync(
-			req.value.body.id,
-			req.value.body
-		);
-		if (resServices.success) {
-			return controller.sendSuccess(
-				res,
-				resServices.data,
-				200,
-				resServices.message
-			);
-		}
-		return controller.sendSuccess(
-			res,
-			resServices.data,
-			300,
-			resServices.message
-		);
-	} catch (error) {
-		// bug
-		console.log(error);
-		return controller.sendError(res);
-	}
-};
 exports.changeStatusOrder = async (req, res, next) => {
 	try {
 		var history;

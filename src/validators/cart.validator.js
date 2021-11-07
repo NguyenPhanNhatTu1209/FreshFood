@@ -4,8 +4,9 @@ const schemas = {
 		productId: joi.string().required(),
     quantity: joi.number().required()
 	}),
-	updateCart: joi.object().keys({
+	updateCart: joi.array().items({
     id: joi.string().required(),
+		status: joi.string().required(),
     quantity: joi.number().required()
 	}),
 };

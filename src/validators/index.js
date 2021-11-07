@@ -18,15 +18,23 @@ const body = (schema) => {
 
     if (validatorResult.error)
     {
-      console.log(req.body)
       return res.status(400).json(validatorResult.error.details);
     }
     else {
       if (!req.value) req.value = {};
       if (!req.value['body']) req.value.body = {};
-      const obj=Object.assign(req.value.body,validatorResult.value);
-      req.value.body=obj;
-      next();
+      if(req.body.length == undefined)
+      {
+        const obj=Object.assign(req.value.body,validatorResult.value);
+        req.value.body=obj;
+        next();
+      }
+      else
+      {
+        req.value.body.array = req.body;
+        next();
+
+      }
     }
   };
 }

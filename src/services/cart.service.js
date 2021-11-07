@@ -89,9 +89,10 @@ exports.getCartByIdAsync = async (id) => {
 		};
 	}
 };
-exports.getAllCartByIdUser = async (id) => {
+exports.getAllCartByIdUser = async (body) => {
 	try {
-		const cartsCurrent = await CART.find({customerId: id, status: defaultStatusCart.Active}).sort({createdAt: -1});
+		const { customerId, skip, limit } = body;
+		const cartsCurrent = await CART.find({customerId: customerId, status: defaultStatusCart.Active}).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
 		console.log(cartsCurrent.length)
 		let arrResult = [];
 		for(let i = 0 ; i < cartsCurrent.length; i++)
@@ -125,6 +126,23 @@ exports.getAllCartByIdUser = async (id) => {
 			message: 'Successfully Get Cart',
 			success: true,
 			data: arrResult
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.getCartByProductAndUserAsync = async (body) => {
+	try {
+		const {productId,customerId} = body;
+		const cart = await CART.findOne({productId:productId,customerId: customerId});
+		return {
+			message: 'Successfully delete Cart',
+			success: true,
+			data: cart
 		};
 	} catch (e) {
 		console.log(e);

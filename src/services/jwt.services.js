@@ -24,7 +24,6 @@ const verify = (req, res, next) => {
 			});
 			return;
 		} else {
-			console.log(req.body);
 			req.value = { body: { decodeToken: decodedFromToken, token } };
 			next();
 		}

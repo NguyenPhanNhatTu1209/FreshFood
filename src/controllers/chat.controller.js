@@ -5,7 +5,7 @@ const 	getMessages = async (req, res, next) => {
     const query={
 			idRoom:req.query.idRoom,
       limit:req.query.limit||"15",
-      skip:req.query.skip||"0"
+      skip:req.query.skip||"1"
     }
 		const resServices = await chatService.getMessages(query);
 		if (!resServices.success)

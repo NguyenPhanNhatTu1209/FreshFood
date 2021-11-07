@@ -83,7 +83,8 @@ exports.forgotPasswordAsync = async (req, res, next) => {
 		var restartOtp = async function  () {
 			const otp = otpGenerator.generate(6, {
 				upperCase: false,
-				specialChars: false
+				specialChars: false,
+				alphabets: false
 			});
 			console.log(otp);
 			var user = await USER.findOne({email: email})
@@ -123,6 +124,28 @@ exports.resetPasswordAsync = async (req, res, next) => {
 			);
 		}
 
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			200,
+			resServices.message
+		);
+	} catch (error) {
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
+exports.confirmOtp = async (req, res, next) => {
+	try {
+		const resServices = await userServices.confirmOtp(req.value.body);
+		if (!resServices.success) {
+			return controller.sendSuccess(
+				res,
+				resServices.success,
+				300,
+				resServices.message
+			);
+		}
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -297,7 +320,7 @@ exports.getInformation = async (req, res, next) => {
 		result.avatar = image;
 		return controller.sendSuccess(
 			res,
-			resServices.data,
+			resServices.message,
 			200,
 			result
 		);
@@ -363,7 +386,6 @@ exports.uploadImage = async (req, res, next) => {
 							phone: resServices.data.phone,
 							name: resServices.data.name,
 							_id: resServices.data._id,
-							address: resServices.data.address,
 						};
 						return controller.sendSuccess(
 							res,
