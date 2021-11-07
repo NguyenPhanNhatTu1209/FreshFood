@@ -6,7 +6,7 @@ const schemas = {
 	}),
 	updateCart: joi.array().items({
     id: joi.string().required(),
-		status: joi.string().required(),
+		status: joi.number().required(),
     quantity: joi.number().required()
 	}),
 };

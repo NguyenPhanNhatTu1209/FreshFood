@@ -27,6 +27,10 @@ const schemas = {
 		email: joi.string().required(),
 		otp:joi.string().required()
 	}),
+	changePasswordWithOtp: joi.object().keys({
+		password: joi.string().required(),
+		token:joi.string().required()
+	}),
 };
 module.exports = schemas;
 

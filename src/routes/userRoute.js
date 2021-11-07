@@ -27,5 +27,6 @@ router.get('/getInformation', jwtServices.verify, Controller.getInformation)
 router.put('/updateInformation', jwtServices.verify,Validate.body(SchemaValidateUser.updateInformation), Controller.updateInformation)
 router.post('/updateImage',singleUpload, jwtServices.verify, Controller.uploadImage)
 router.post('/confirmOtp', Validate.body(SchemaValidateUser.confirmOtp), Controller.confirmOtp)
+router.post('/changePasswordWithOtp', Validate.body(SchemaValidateUser.changePasswordWithOtp), Controller.ChangePassWithOtp)
 
 module.exports = router

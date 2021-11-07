@@ -1,6 +1,8 @@
 const USER = require('../models/User.model');
 const bcrypt = require('bcryptjs');
 const jwtServices = require('./jwt.services');
+const jwt = require('jsonwebtoken')
+
 const { defaultRoles } = require('../config/defineModel');
 const otpGenerator = require('otp-generator');
 const { configEnv } = require('../config/index');
@@ -239,11 +241,10 @@ exports.confirmOtp = async body => {
 					role: user.role
 				});
 				return {
-					message: 'Successfully login',
+					message: 'Successfully confirm Otp',
 					success: true,
 					data: {
 						token: generateToken,
-						role: user.role
 					}
 				};
 			} else {
@@ -259,6 +260,35 @@ exports.confirmOtp = async body => {
 			};
 		}
 	} catch (error) {
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.changePasswordWithOtp = async body => {
+	try {
+		const { password, token } = body;
+		jwt.verify(token, configEnv.ACCESS_TOKEN_SECRET, async (err, decodedFromToken)  => {
+			if (err) {
+				return {
+					message: 'Fail Token',
+					success: false
+				}
+			} else {
+				console.log(decodedFromToken);
+				var user = await USER.findById(decodedFromToken.data.id);
+				const hashedPassword = await bcrypt.hash(password, 8);
+				user.password = hashedPassword;
+				user.save();
+			}
+		});
+		return {
+			message: 'Successfully change password',
+			success: true,
+		};
+	} catch (error) {
+		console.log(error)
 		return {
 			message: 'An error occurred',
 			success: false
