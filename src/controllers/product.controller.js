@@ -337,17 +337,28 @@ exports.findDetailProduct = async (req, res, next) => {
 				var image = await uploadServices.getImageS3(resServices.data.image[i]);
 				linkImage.push(image);
 			}
-			var eveluates = await eveluateServices.getEveluateByProduct(resServices.data.productId)
+			var eveluates = await eveluateServices.getAllEveluateByProduct(resServices.data.productId)
 			var totalStar = 0;
 			var starAVG = 0;
-			if(eveluates.length>0)
+			var resultEveluate = [];
+			if(eveluates.data.length <=15)
+			{
+				resultEveluate = eveluates.data;
+			}
+			else
+			{
+				for(let i =0;i<15;i++)
+				{
+					resultEveluate.push(eveluates.data[i]);
+				}
+			}
+			if(eveluates.data.length>0)
 			{
 				eveluates.forEach(element => {
 					totalStar = element.star+totalStar;
 				});
 				starAVG = totalStar/eveluates.length;
 			}
-		
 			var result = {
 				price: resServices.data.price,
 				image: linkImage,
@@ -360,7 +371,7 @@ exports.findDetailProduct = async (req, res, next) => {
 				groupProduct: resServices.data.groupProduct,
 				createdAt: resServices.data.createdAt,
 				updatedAt: resServices.data.updatedAt,
-				eveluates: eveluates.data,
+				eveluates: resultEveluate,
 				starAVG: starAVG,
 				eveluateCount: eveluates.data.length
 			};

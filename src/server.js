@@ -25,7 +25,7 @@ app.use(express.urlencoded({
 app.use(express.json())
 
 app.use(morgan("dev"))
-app.use(cookieParser())
+// app.use(cookieParser())
 app.use(cors())
 
 

@@ -103,3 +103,19 @@ exports.getEveluateByProduct = async (body) => {
 		};
 	}
 };
+exports.getAllEveluateByProduct = async (productId) => {
+	try {
+		const eveluates = await EVELUATE.find({productId: productId}).sort({createdAt: -1});
+		return {
+			message: 'Successfully Get eveluates',
+			success: true,
+			data: eveluates
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
