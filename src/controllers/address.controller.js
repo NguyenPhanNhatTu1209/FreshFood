@@ -30,6 +30,10 @@ exports.createAddressAsync = async (req, res, next) => {
 };
 exports.updateAddressAsync = async (req, res, next) => {
 	try {
+		const { decodeToken } = req.value.body;
+		const id = decodeToken.data.id;
+		console.log(id);
+    req.value.body.customerId = id;
 		const resServices = await addressServices.updateAddressAsync(req.value.body.id,req.value.body);
 		if (resServices.success) {
 			return controller.sendSuccess(

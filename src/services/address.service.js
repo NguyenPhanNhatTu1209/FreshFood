@@ -7,6 +7,18 @@ const uploadServices = require('../services/uploadS3.service');
 
 exports.createAddressAsync = async body => {
 	try {
+		if(body.isMain == true)
+		{
+			listAddress = await ADDRESS.find({customerId: body.customerId});
+			if(listAddress.length >0)
+			{
+				for(let i =0;i<listAddress.length;i++)
+				{
+					listAddress[i].isMain = false;
+					listAddress[i].save();
+				}
+			}
+		}
 		const address = new ADDRESS(body);
 		await address.save();
 		return {
@@ -23,6 +35,22 @@ exports.createAddressAsync = async body => {
 };
 exports.updateAddressAsync = async (id, body) => {
 	try {
+		if(body.isMain == true)
+		{
+			listAddress = await ADDRESS.find({customerId: body.customerId});
+
+			if(listAddress.length >0)
+			{
+				for(let i =0;i<listAddress.length;i++)
+				{
+					if(listAddress[i].id != id)
+					{
+						listAddress[i].isMain = false;
+						listAddress[i].save();
+					}
+				}
+			}
+		}
 		const address = await ADDRESS.findOneAndUpdate(
 			{ _id: id },
 			body,

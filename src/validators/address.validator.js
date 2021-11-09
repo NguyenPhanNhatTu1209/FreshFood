@@ -6,6 +6,7 @@ const schemas = {
     province: joi.string().required(),
     district: joi.string().required(),
     address: joi.string().required(),
+    isMain: joi.bool().required()
 	}),
 	updateAddress: joi.object().keys({
     id: joi.string().required(),
@@ -14,6 +15,7 @@ const schemas = {
     province: joi.string().required(),
     district: joi.string().required(),
     address: joi.string().required(),
+    isMain: joi.bool().required()
 	}),
 };
 module.exports = schemas;
