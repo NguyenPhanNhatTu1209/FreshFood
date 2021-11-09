@@ -105,7 +105,6 @@ exports.getAllCartByIdUser = async (body) => {
 				images.push(image);
 			}
 			costCart = productCurrent.price * cartsCurrent[i].quantity;
-
 			var newCart = {
 				status: cartsCurrent[i].status,
         quantity: cartsCurrent[i].quantity,
@@ -119,6 +118,7 @@ exports.getAllCartByIdUser = async (body) => {
 				totalCost: costCart,
         createdAt: cartsCurrent[i].createdAt,
         updatedAt: cartsCurrent[i].updatedAt,
+				weight: productCurrent.weight,
 			}
 			arrResult.push(newCart)
 		}
