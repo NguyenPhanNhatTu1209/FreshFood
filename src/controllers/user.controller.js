@@ -342,9 +342,9 @@ exports.getInformation = async (req, res, next) => {
 		result.avatar = image;
 		return controller.sendSuccess(
 			res,
-			resServices.message,
+			result,
 			200,
-			result
+			resServices.message
 		);
 	} catch (err) {
 		console.log(err);
