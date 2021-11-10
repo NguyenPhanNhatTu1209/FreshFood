@@ -3,11 +3,12 @@ const bcrypt = require('bcryptjs');
 const jwtServices = require('./jwt.services');
 const jwt = require('jsonwebtoken')
 
-const { defaultRoles } = require('../config/defineModel');
+const { defaultRoles, defaultModel } = require('../config/defineModel');
 const otpGenerator = require('otp-generator');
 const { configEnv } = require('../config/index');
 const nodemailer = require('nodemailer');
 const { sendMail } = require('./sendMail.service');
+const uploadServices = require('../services/uploadS3.service');
 
 exports.registerUserAsync = async body => {
 	try {
@@ -297,7 +298,7 @@ exports.changePasswordWithOtp = async body => {
 };
 exports.findInformation = async (id) => {
 	try {
-		const user = await USER.findById(id,{_id:1, email:1,role:1,name:1,phone:1,avatar:1,fcm:1}).lean();
+		const user = await USER.findById(id,{_id:1, email:1,role:1,name:1,phone:1,avatar:1}).lean();
 		console.log(user);
 		return {
 			message: 'Successfully Get Information',
@@ -329,3 +330,37 @@ exports.updateInformation = async (id,body) => {
 		};
 	}
 };
+exports.getAllUser = async () => {
+	try {
+		const user = await USER.find({role: defaultRoles.User},{_id:1, email:1,role:1,name:1,phone:1,avatar:1}).lean();
+		var result = [];
+		if(user.length>0)
+		{
+			for(let i=0;i< user.length;i++)
+			{
+				var image = await uploadServices.getImageS3(user[i].avatar,60*60*24);
+				var resultUser = {	
+					_id: user[i]._id,
+					email: user[i].email,
+					role: user[i].role,
+					name: user[i].name,
+					phone: user[i].phone,
+					avatar: image,
+				}
+				result.push(resultUser);
+			}
+		}
+		return {
+			message: 'Successfully Get All User',
+			success: true,
+			data: result
+		};
+	} catch (err) {
+		console.log(err);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+

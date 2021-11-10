@@ -8,6 +8,8 @@ const jwtServices = require("../services/jwt.services")
 
 var multer = require("multer");
 const path = require("path");
+const { checkRole } = require('../middleware/checkRole.middleware')
+const { defaultRoles } = require('../config/defineModel')
 var storage = multer.memoryStorage({
   destination: function(req, file, callback) {
       callback(null, '');
@@ -28,5 +30,6 @@ router.put('/updateInformation', jwtServices.verify,Validate.body(SchemaValidate
 router.post('/updateImage',singleUpload, jwtServices.verify, Controller.uploadImage)
 router.post('/confirmOtp', Validate.body(SchemaValidateUser.confirmOtp), Controller.confirmOtp)
 router.post('/changePasswordWithOtp', Validate.body(SchemaValidateUser.changePasswordWithOtp), Controller.ChangePassWithOtp)
+router.get('/getAllUser',jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.findAllUserAsync)
 
 module.exports = router
