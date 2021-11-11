@@ -2,7 +2,7 @@ const joi = require('@hapi/joi');
 const schemas = {
 	createOrder: joi.object().keys({
 		cartId: joi.array().required(),
-		note: joi.string(),
+		note: joi.string().allow(''),
 		area: joi.object().required(),
 		typePaymentOrder: joi.number().required()
 	}),
@@ -17,7 +17,7 @@ const schemas = {
 	creatOrderByWithNow: joi.object().keys({
 		quantity: joi.number().required(),
 		productId: joi.string().required(),
-		note: joi.string(),
+		note: joi.string().allow(''),
 		area: joi.object().required(),
 		typePaymentOrder: joi.number().required()
 	}),
