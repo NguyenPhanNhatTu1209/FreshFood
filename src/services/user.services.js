@@ -1,7 +1,7 @@
 const USER = require('../models/User.model');
 const bcrypt = require('bcryptjs');
 const jwtServices = require('./jwt.services');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 const { defaultRoles, defaultModel } = require('../config/defineModel');
 const otpGenerator = require('otp-generator');
@@ -41,9 +41,9 @@ exports.registerUserAsync = async body => {
 			role: newUser.role
 		});
 		var result = {
-			token:  generateToken,
+			token: generateToken,
 			role: newUser.role
-		}
+		};
 		return {
 			message: 'Successfully Register',
 			success: true,
@@ -156,7 +156,7 @@ exports.fotgotPassword = async body => {
 				to: result.email,
 				from: configEnv.Email,
 				subject: 'Quên mật khẩu Fresh Food',
-				text: 'Mã OTP của bạn là:' + result.otp,
+				text: 'Mã OTP của bạn là:' + result.otp
 			};
 			const resultSendMail = await sendMail(mailOptions);
 			console.log(resultSendMail);
@@ -196,7 +196,7 @@ exports.resetPassword = async body => {
 				const otp = otpGenerator.generate(6, {
 					upperCase: false,
 					specialChars: false,
-					alphabets: false,
+					alphabets: false
 				});
 				user.password = hashedPassword;
 				user.otp = otp;
@@ -233,7 +233,7 @@ exports.confirmOtp = async body => {
 				const otp = otpGenerator.generate(6, {
 					upperCase: false,
 					specialChars: false,
-					alphabets: false,
+					alphabets: false
 				});
 				user.otp = otp;
 				user.save();
@@ -245,7 +245,7 @@ exports.confirmOtp = async body => {
 					message: 'Successfully confirm Otp',
 					success: true,
 					data: {
-						token: generateToken,
+						token: generateToken
 					}
 				};
 			} else {
@@ -270,35 +270,46 @@ exports.confirmOtp = async body => {
 exports.changePasswordWithOtp = async body => {
 	try {
 		const { password, token } = body;
-		jwt.verify(token, configEnv.ACCESS_TOKEN_SECRET, async (err, decodedFromToken)  => {
-			if (err) {
-				return {
-					message: 'Fail Token',
-					success: false
+		jwt.verify(
+			token,
+			configEnv.ACCESS_TOKEN_SECRET,
+			async (err, decodedFromToken) => {
+				if (err) {
+					return {
+						message: 'Fail Token',
+						success: false
+					};
+				} else {
+					console.log(decodedFromToken);
+					var user = await USER.findById(decodedFromToken.data.id);
+					const hashedPassword = await bcrypt.hash(password, 8);
+					user.password = hashedPassword;
+					user.save();
 				}
-			} else {
-				console.log(decodedFromToken);
-				var user = await USER.findById(decodedFromToken.data.id);
-				const hashedPassword = await bcrypt.hash(password, 8);
-				user.password = hashedPassword;
-				user.save();
 			}
-		});
+		);
 		return {
 			message: 'Successfully change password',
-			success: true,
+			success: true
 		};
 	} catch (error) {
-		console.log(error)
+		console.log(error);
 		return {
 			message: 'An error occurred',
 			success: false
 		};
 	}
 };
-exports.findInformation = async (id) => {
+exports.findInformation = async id => {
 	try {
-		const user = await USER.findById(id,{_id:1, email:1,role:1,name:1,phone:1,avatar:1}).lean();
+		const user = await USER.findById(id, {
+			_id: 1,
+			email: 1,
+			role: 1,
+			name: 1,
+			phone: 1,
+			avatar: 1
+		}).lean();
 		console.log(user);
 		return {
 			message: 'Successfully Get Information',
@@ -313,9 +324,9 @@ exports.findInformation = async (id) => {
 		};
 	}
 };
-exports.updateInformation = async (id,body) => {
+exports.updateInformation = async (id, body) => {
 	try {
-		const user = await USER.findByIdAndUpdate(id,body);
+		const user = await USER.findByIdAndUpdate(id, body);
 		console.log(user);
 		return {
 			message: 'Successfully update Information',
@@ -332,21 +343,25 @@ exports.updateInformation = async (id,body) => {
 };
 exports.getAllUser = async () => {
 	try {
-		const user = await USER.find({role: defaultRoles.User},{_id:1, email:1,role:1,name:1,phone:1,avatar:1}).lean();
+		const user = await USER.find(
+			{ role: defaultRoles.User },
+			{ _id: 1, email: 1, role: 1, name: 1, phone: 1, avatar: 1 }
+		).lean();
 		var result = [];
-		if(user.length>0)
-		{
-			for(let i=0;i< user.length;i++)
-			{
-				var image = await uploadServices.getImageS3(user[i].avatar,60*60*24);
-				var resultUser = {	
+		if (user.length > 0) {
+			for (let i = 0; i < user.length; i++) {
+				var image = await uploadServices.getImageS3(
+					user[i].avatar,
+					60 * 60 * 24
+				);
+				var resultUser = {
 					_id: user[i]._id,
 					email: user[i].email,
 					role: user[i].role,
 					name: user[i].name,
 					phone: user[i].phone,
-					avatar: image,
-				}
+					avatar: image
+				};
 				result.push(resultUser);
 			}
 		}
@@ -363,4 +378,35 @@ exports.getAllUser = async () => {
 		};
 	}
 };
-
+exports.getInformationById = async id => {
+	try {
+		const user = await USER.findById(id, {
+			_id: 1,
+			email: 1,
+			role: 1,
+			name: 1,
+			phone: 1,
+			avatar: 1
+		}).lean();
+		var image = await uploadServices.getImageS3(user.avatar, 60 * 60 * 24);
+		var resultUser = {
+			_id: user._id,
+			email: user.email,
+			role: user.role,
+			name: user.name,
+			phone: user.phone,
+			avatar: image
+		};
+		return {
+			message: 'Successfully Get All User',
+			success: true,
+			data: resultUser
+		};
+	} catch (err) {
+		console.log(err);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};

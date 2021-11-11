@@ -31,5 +31,6 @@ router.post('/updateImage',singleUpload, jwtServices.verify, Controller.uploadIm
 router.post('/confirmOtp', Validate.body(SchemaValidateUser.confirmOtp), Controller.confirmOtp)
 router.post('/changePasswordWithOtp', Validate.body(SchemaValidateUser.changePasswordWithOtp), Controller.ChangePassWithOtp)
 router.get('/getAllUser',jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.findAllUserAsync)
+router.get('/getInformationById',jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.getInformationByIdAsync)
 
 module.exports = router

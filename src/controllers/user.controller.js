@@ -434,7 +434,22 @@ exports.uploadImage = async (req, res, next) => {
 exports.findAllUserAsync = async (req, res, next) => {
 	try {
 		const resServices = await userServices.getAllUser();
-		
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			200,
+			resServices.message
+		);
+	} catch (error) {
+		// bug
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
+
+exports.getInformationByIdAsync = async (req, res, next) => {
+	try {
+		const resServices = await userServices.getInformationById(req.query.id);
 		return controller.sendSuccess(
 			res,
 			resServices.data,
