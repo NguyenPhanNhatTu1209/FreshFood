@@ -12,7 +12,6 @@ const { body } = require('../validators');
 var AWS = require('aws-sdk');
 const { configEnv } = require('../config');
 const uploadServices = require('../services/uploadS3.service');
-
 exports.registerAsync = async (req, res, next) => {
 	try {
 		const resServices = await userServices.registerUserAsync(req.value.body);
@@ -79,7 +78,7 @@ exports.forgotPasswordAsync = async (req, res, next) => {
 	try {
 		const { email } = req.query;
 		console.log(email);
-		const resServices = await userServices.fotgotPassword({email: email});
+		const resServices = await userServices.forgotPassword({email: email});
 		var restartOtp = async function  () {
 			const otp = otpGenerator.generate(6, {
 				upperCase: false,

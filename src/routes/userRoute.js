@@ -15,6 +15,7 @@ var storage = multer.memoryStorage({
       callback(null, '');
   }
 });
+
 var singleUpload = multer({ storage: storage }).single("image");
 
 router.post('/changePassword', jwtServices.verify, Validate.body(SchemaValidateUser.changePass), Controller.changePasswordAsync)

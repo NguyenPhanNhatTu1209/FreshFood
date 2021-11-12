@@ -1,8 +1,8 @@
-const otpGenerator = require("otp-generator");
 
-const otp = otpGenerator.generate(6, {
-	upperCase: false,
-	specialChars: false,
-	alphabets: false,
-});
-console.log(otp)
+var SoDienThoai = "0968356159";
+var tachSoDienThoai = "";
+for(let i=1;i<SoDienThoai.length;i++)
+{
+	tachSoDienThoai = tachSoDienThoai+SoDienThoai[i];
+}
+console.log(tachSoDienThoai)

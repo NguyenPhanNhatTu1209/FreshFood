@@ -139,7 +139,7 @@ exports.createOrderAsync = async (req, res, next) => {
 				var tmnCode = 'JCO3SG7X';
 				var secretKey = 'BKPYNKKKBEAZCHZFHLIXKMXXCODHEVSU';
 				var vnpUrl = 'http://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-				var returnUrl = 'http://localhost:3005/user/successVnPay';
+				var returnUrl = 'http://18.140.53.176:3005/user/successVnPay';
 
 				var date = new Date();
 
@@ -426,7 +426,7 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 				var tmnCode = 'JCO3SG7X';
 				var secretKey = 'BKPYNKKKBEAZCHZFHLIXKMXXCODHEVSU';
 				var vnpUrl = 'http://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-				var returnUrl = 'http://localhost:3005/user/successVnPay';
+				var returnUrl = 'http://18.140.53.176:3005/user/successVnPay';
 
 				var date = new Date();
 

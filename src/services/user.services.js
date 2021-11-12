@@ -8,8 +8,9 @@ const otpGenerator = require('otp-generator');
 const { configEnv } = require('../config/index');
 const nodemailer = require('nodemailer');
 const { sendMail } = require('./sendMail.service');
-const uploadServices = require('../services/uploadS3.service');
+const { sendSmsTwilio } = require('./sms.service');
 
+const uploadServices = require('../services/uploadS3.service');
 exports.registerUserAsync = async body => {
 	try {
 		const { email, password, phone, name } = body;
@@ -147,7 +148,7 @@ exports.changePasswordAsync = async (id, body) => {
 		};
 	}
 };
-exports.fotgotPassword = async body => {
+exports.forgotPassword = async body => {
 	try {
 		const email = body.email;
 		const result = await USER.findOne({ email: email });
@@ -158,17 +159,37 @@ exports.fotgotPassword = async body => {
 				subject: 'Quên mật khẩu Fresh Food',
 				text: 'Mã OTP của bạn là:' + result.otp
 			};
-			const resultSendMail = await sendMail(mailOptions);
-			console.log(resultSendMail);
-			if (!resultSendMail) {
+			var bodySms = {
+				phoneSend: result.phone,
+				Otp: result.otp
+			}
+			const resultSendSms = await sendSmsTwilio(bodySms);
+			if (resultSendSms != true) {
 				return {
-					message: 'Send Email Failed',
+					message: 'Send Phone Fail',
+					success: false
+				};
+			}
+			console.log("resultSendSms");
+			console.log(resultSendSms);
+			const resultSendMail = await sendMail(mailOptions);
+			if (resultSendMail != true) {
+				return {
+					message: 'Send Email Fail',
+					success: false
+				};
+			}
+			console.log("resultSendEmail");
+			console.log(resultSendMail);
+			if (!resultSendMail || resultSendSms != true) {
+				return {
+					message: 'Send Email Or Phone Fail',
 					success: false
 				};
 			} else {
 				console.log('voo nef');
 				return {
-					message: 'Send Email Success',
+					message: 'Send Email And Phone Success',
 					success: true
 				};
 			}

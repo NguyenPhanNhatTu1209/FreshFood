@@ -12,7 +12,11 @@ const configEnv = {
 	Password: process.env.Password,
 	ID_Client: process.env.ID_Client,
 	Secret: process.env.Secret,
-	API_GHTK: process.env.API_GHTK
+	API_GHTK: process.env.API_GHTK,
+	Account_SID: process.env.Account_SID,
+	Auth_Token: process.env.Auth_Token,
+	Phone: process.env.Phone,
+
 };
 const DFRoleValue = ["User", "Admin","Staff"]
 module.exports = {
