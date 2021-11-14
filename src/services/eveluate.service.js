@@ -1,14 +1,14 @@
 const { defaultRoles, defaultStatusCart } = require('../config/defineModel');
-const EVELUATE = require('../models/Eveluate.model')
-const PRODUCT = require('../models/Product.model')
+const EVELUATE = require('../models/Eveluate.model');
+const USER = require('../models/User.model');
+
+const PRODUCT = require('../models/Product.model');
 const uploadServices = require('../services/uploadS3.service');
-
-
 
 exports.createEveluateAsync = async body => {
 	try {
-		console.log("eveluate ne")
-		console.log(body)
+		console.log('eveluate ne');
+		console.log(body);
 		const eveluate = new EVELUATE(body);
 		await eveluate.save();
 		return {
@@ -17,7 +17,7 @@ exports.createEveluateAsync = async body => {
 			data: eveluate
 		};
 	} catch (e) {
-		console.log(e)
+		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false
@@ -26,13 +26,9 @@ exports.createEveluateAsync = async body => {
 };
 exports.updateEveluateAsync = async (id, body) => {
 	try {
-		const eveluate = await EVELUATE.findOneAndUpdate(
-			{ _id: id },
-			body,
-			{
-				new: true
-			}
-		);
+		const eveluate = await EVELUATE.findOneAndUpdate({ _id: id }, body, {
+			new: true
+		});
 		return {
 			message: 'Successfully update Eveluate',
 			success: true,
@@ -46,12 +42,12 @@ exports.updateEveluateAsync = async (id, body) => {
 		};
 	}
 };
-exports.deleteEveluateAsync = async (id) => {
+exports.deleteEveluateAsync = async id => {
 	try {
-		const eveluate = await EVELUATE.deleteOne({_id: id});
+		const eveluate = await EVELUATE.deleteOne({ _id: id });
 		return {
 			message: 'Successfully delete Eveluate',
-			success: true,
+			success: true
 		};
 	} catch (e) {
 		console.log(e);
@@ -61,15 +57,23 @@ exports.deleteEveluateAsync = async (id) => {
 		};
 	}
 };
-exports.getEveluateByOrderAndUserAndProductAsync = async (customerId,orderId,productId) => {
+exports.getEveluateByOrderAndUserAndProductAsync = async (
+	customerId,
+	orderId,
+	productId
+) => {
 	try {
-		const eveluate = await EVELUATE.find({customerId: customerId,orderId: orderId, productId: productId});
-		console.log("danh gia trc");
-		console.log(customerId)
-		console.log(orderId)
-		console.log(productId)
+		const eveluate = await EVELUATE.find({
+			customerId: customerId,
+			orderId: orderId,
+			productId: productId
+		});
+		console.log('danh gia trc');
+		console.log(customerId);
+		console.log(orderId);
+		console.log(productId);
 
-		console.log(eveluate)
+		console.log(eveluate);
 		return {
 			message: 'Successfully get Eveluate',
 			success: true,
@@ -84,16 +88,40 @@ exports.getEveluateByOrderAndUserAndProductAsync = async (customerId,orderId,pro
 	}
 };
 
-exports.getEveluateByProduct = async (body) => {
+exports.getEveluateByProduct = async body => {
 	try {
 		const { productId, skip, limit } = body;
-		console.log("body");
+		console.log('body');
 		console.log(body);
-		const eveluates = await EVELUATE.find({productId: productId}).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit))
+		const eveluates = await EVELUATE.find({ productId: productId })
+			.sort({ createdAt: -1 })
+			.skip(Number(limit) * Number(skip) - Number(limit))
+			.limit(Number(limit));
+			var resultEveluate = [];
+			if (eveluates.length > 0) {
+				for (let i = 0; i < eveluates.length; i++) {
+					var userCurrent = await USER.findById(eveluates[i].customerId);
+					var avatar = await uploadServices.getImageS3(userCurrent.avatar);
+					var result = {
+						productId: eveluates[i].productId,
+						customerId: eveluates[i].customerId,
+						orderId: eveluates[i].orderId,
+						image: eveluates[i].image,
+						content: eveluates[i].content,
+						star: eveluates[i].star,
+						_id: eveluates[i]._id,
+						createdAt: eveluates[i].createdAt,
+						updatedAt: eveluates[i].updatedAt,
+						avatar: avatar,
+						name: userCurrent.name
+					};
+					resultEveluate.push(result)
+				}
+			}
 		return {
 			message: 'Successfully Get eveluates',
 			success: true,
-			data: eveluates
+			data: resultEveluate
 		};
 	} catch (e) {
 		console.log(e);
@@ -103,13 +131,39 @@ exports.getEveluateByProduct = async (body) => {
 		};
 	}
 };
-exports.getAllEveluateByProduct = async (productId) => {
+exports.getAllEveluateByProduct = async productId => {
 	try {
-		const eveluates = await EVELUATE.find({productId: productId}).sort({createdAt: -1});
+		console.log('productId');
+
+		console.log(productId);
+		const eveluates = await EVELUATE.find({ productId: productId }).sort({
+			createdAt: -1
+		});
+		var resultEveluate = [];
+		if (eveluates.length > 0) {
+			for (let i = 0; i < eveluates.length; i++) {
+				var userCurrent = await USER.findById(eveluates[i].customerId);
+				var avatar = await uploadServices.getImageS3(userCurrent.avatar);
+				var result = {
+					productId: eveluates[i].productId,
+					customerId: eveluates[i].customerId,
+					orderId: eveluates[i].orderId,
+					image: eveluates[i].image,
+					content: eveluates[i].content,
+					star: eveluates[i].star,
+					_id: eveluates[i]._id,
+					createdAt: eveluates[i].createdAt,
+					updatedAt: eveluates[i].updatedAt,
+					avatar: avatar,
+					name: userCurrent.name
+				};
+				resultEveluate.push(result)
+			}
+		}
 		return {
 			message: 'Successfully Get eveluates',
 			success: true,
-			data: eveluates
+			data: resultEveluate
 		};
 	} catch (e) {
 		console.log(e);

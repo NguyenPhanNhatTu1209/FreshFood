@@ -337,7 +337,7 @@ exports.findDetailProduct = async (req, res, next) => {
 				var image = await uploadServices.getImageS3(resServices.data.image[i]);
 				linkImage.push(image);
 			}
-			var eveluates = await eveluateServices.getAllEveluateByProduct(resServices.data.productId)
+			var eveluates = await eveluateServices.getAllEveluateByProduct(resServices.data.id)
 			var totalStar = 0;
 			var starAVG = 0;
 			var resultEveluate = [];
@@ -354,10 +354,10 @@ exports.findDetailProduct = async (req, res, next) => {
 			}
 			if(eveluates.data.length>0)
 			{
-				eveluates.forEach(element => {
+				eveluates.data.forEach(element => {
 					totalStar = element.star+totalStar;
 				});
-				starAVG = totalStar/eveluates.length;
+				starAVG = totalStar/eveluates.data.length;
 			}
 			var result = {
 				price: resServices.data.price,

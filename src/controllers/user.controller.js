@@ -51,29 +51,6 @@ exports.loginAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
-exports.updateCodeAdminAsync = async (req, res, next) => {
-	try {
-		const code = req.query.code;
-		const resServices = await userServices.updateCodeAdmin({ code: code });
-		if (!resServices.success) {
-			return controller.sendSuccess(
-				res,
-				resServices.success,
-				300,
-				resServices.message
-			);
-		}
-
-		return controller.sendSuccess(
-			res,
-			resServices.data,
-			200,
-			resServices.message
-		);
-	} catch (error) {
-		return controller.sendError(res);
-	}
-};
 exports.forgotPasswordAsync = async (req, res, next) => {
 	try {
 		const { email } = req.query;
