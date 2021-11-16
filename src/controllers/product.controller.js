@@ -253,6 +253,7 @@ exports.findAllProductAsync = async (req, res, next) => {
 					_id: resServices.data[i]._id,
 					name: resServices.data[i].name,
 					detail: resServices.data[i].detail,
+					sold: resServices.data[i].sold,
 					groupProduct: resServices.data[i].groupProduct,
 					createdAt: resServices.data[i].createdAt,
 					updatedAt: resServices.data[i].updatedAt
@@ -300,6 +301,7 @@ exports.GetProductRecommend = async (req, res, next) => {
 					quantity: resServices.data[i].quantity,
 					_id: resServices.data[i]._id,
 					name: resServices.data[i].name,
+					sold: resServices.data[i].sold,
 					detail: resServices.data[i].detail,
 					groupProduct: resServices.data[i].groupProduct,
 					createdAt: resServices.data[i].createdAt,
@@ -364,6 +366,7 @@ exports.findDetailProduct = async (req, res, next) => {
 				image: linkImage,
 				status: resServices.data.status,
 				weight: resServices.data.weight,
+				sold: resServices.data.sold,
 				quantity: resServices.data.quantity,
 				_id: resServices.data._id,
 				name: resServices.data.name,
