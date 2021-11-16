@@ -183,10 +183,6 @@ exports.GetOrderByUser = async body => {
 					}
 			}
 		}
-		console.log("ordersSearch[0].product")
-
-		console.log(ordersSearch[0].product)
-
 		return {
 			message: 'Successfully get orders',
 			success: true,

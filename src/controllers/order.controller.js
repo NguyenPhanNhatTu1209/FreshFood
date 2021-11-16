@@ -304,9 +304,6 @@ exports.GetOrderByUserAsync = async (req, res, next) => {
 			customerId: id
 		};
 		const resServices = await orderServices.GetOrderByUser(query);
-		console.log("result")
-		console.log(resServices.data[0].product)
-
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
