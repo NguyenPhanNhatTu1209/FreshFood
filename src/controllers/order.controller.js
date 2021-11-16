@@ -60,6 +60,7 @@ exports.createOrderAsync = async (req, res, next) => {
 				quantity: cartCurrent.data.quantity,
 				weight: productCurrent.data.weight,
 				name: productCurrent.data.name,
+				image: productCurrent.data.image,
 				nameGroup: productCurrent.data.groupProduct.name
 			};
 			arrCart.push(cartPush);
@@ -303,6 +304,9 @@ exports.GetOrderByUserAsync = async (req, res, next) => {
 			customerId: id
 		};
 		const resServices = await orderServices.GetOrderByUser(query);
+		console.log("result")
+		console.log(resServices.data[0].product)
+
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -348,7 +352,8 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 				quantity: req.value.body.quantity,
 				weight: productCurrent.data.weight,
 				name: productCurrent.data.name,
-				nameGroup: productCurrent.data.groupProduct.name
+				nameGroup: productCurrent.data.groupProduct.name,
+				image: productCurrent.data.image,
 			};
 		arrProduct.push(productPush);
 		var history = {

@@ -1,4 +1,4 @@
-const { number } = require('@hapi/joi')
+const { number, array } = require('@hapi/joi')
 const mongoose = require('mongoose')
 const { defaultModel } = require('../config/defineModel')
 const Schema = mongoose.Schema
@@ -8,7 +8,7 @@ const Order = new Schema({
     customerId:defaultModel.stringR,
     totalMoney:defaultModel.number,
     totalMoneyProduct:defaultModel.number,
-    product:[{productId: String,price: Number ,quantity: Number, weight: Number ,name: String, nameGroup: String}],
+    product:[{productId: String,price: Number ,quantity: Number, weight: Number ,name: String, nameGroup: String, image: Array}],
     status:defaultModel.number,
     note: defaultModel.string,
     area:{name: String,phone: String ,province: String, district: String ,address: String},

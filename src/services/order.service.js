@@ -4,6 +4,8 @@ const ORDER = require('../models/Order.model');
 const PRODUCT = require('../models/Product.model');
 const SHIPFEE =require('../models/ShipFee.model');
 const { body } = require('../validators');
+const uploadServices = require('../services/uploadS3.service');
+
 exports.createOrderAsync = async body => {
 	const session = await ORDER.startSession();
 	session.startTransaction();
@@ -165,19 +167,26 @@ exports.GetOrderByUser = async body => {
 		console.log(ordersCurrent.length)
 		for(let i=0;i<ordersCurrent.length;i++)
 		{
-			console.log("zone")
 			for(let j = 0;j<ordersCurrent[i].product.length;j++)
 			{
 				var convertSearch = search.toLocaleLowerCase();
 				var nameProduct = ordersCurrent[i].product[j].name.toLocaleLowerCase();
 				if(nameProduct.includes(convertSearch) == true)
 					{
-						console.log("1")
+						var resultImage = [];
+						// var productCurrent = await PRODUCT.findById(ordersCurrent[i].product[j].productId);
+						var image = await uploadServices.getImageS3(ordersCurrent[i].product[j].image[0]);
+						resultImage.push(image);
+						ordersCurrent[i].product[j].image = resultImage;						
 						ordersSearch.push(ordersCurrent[i]);
 						break;
 					}
 			}
 		}
+		console.log("ordersSearch[0].product")
+
+		console.log(ordersSearch[0].product)
+
 		return {
 			message: 'Successfully get orders',
 			success: true,
