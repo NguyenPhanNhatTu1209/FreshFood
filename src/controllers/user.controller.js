@@ -5,7 +5,7 @@ const ORDER = require('../models/Order.model');
 const USER = require('../models/User.model');
 const otpGenerator = require('otp-generator');
 
-const paypal = require("paypal-rest-sdk");
+const paypal = require('paypal-rest-sdk');
 const PaypalModel = require('../models/Paypal.model');
 const { sortObject } = require('../helper');
 const { body } = require('../validators');
@@ -55,15 +55,15 @@ exports.forgotPasswordAsync = async (req, res, next) => {
 	try {
 		const { email } = req.query;
 		console.log(email);
-		const resServices = await userServices.forgotPassword({email: email});
-		var restartOtp = async function  () {
+		const resServices = await userServices.forgotPassword({ email: email });
+		var restartOtp = async function () {
 			const otp = otpGenerator.generate(6, {
 				upperCase: false,
 				specialChars: false,
 				alphabets: false
 			});
 			console.log(otp);
-			var user = await USER.findOne({email: email})
+			var user = await USER.findOne({ email: email });
 			user.otp = otp;
 			user.save();
 		};
@@ -135,8 +135,10 @@ exports.confirmOtp = async (req, res, next) => {
 };
 exports.ChangePassWithOtp = async (req, res, next) => {
 	try {
-		const resServices = await userServices.changePasswordWithOtp(req.value.body);
-		console.log(resServices)
+		const resServices = await userServices.changePasswordWithOtp(
+			req.value.body
+		);
+		console.log(resServices);
 		if (!resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -220,91 +222,132 @@ exports.paymentSuccess = (req, res, next) => {
 	const paymentId = req.query.paymentId;
 	const price = req.query.price;
 	const idDonHang = req.query.idDonHang;
-	var update = { typePayment: "PayPal" };
+	var update = { typePayment: 'PayPal' };
 	const execute_payment_json = {
 		payer_id: payerId,
 		transactions: [
 			{
 				amount: {
-					currency: "USD",
-					total: `${price}`,
-				},
-			},
-		],
+					currency: 'USD',
+					total: `${price}`
+				}
+			}
+		]
 	};
 	paypal.payment.execute(
 		paymentId,
 		execute_payment_json,
 		async function (error, payment) {
 			if (error) {
-				res.send("Payment Fail");
+				res.send('Payment Fail');
 			} else {
 				var resultDonHang = await ORDER.findOneAndUpdate(
 					{ _id: idDonHang },
 					update,
 					{
-						new: true,
+						new: true
 					}
 				);
 				await PaypalModel.create({
 					idOrder: idDonHang,
 					Transaction: price,
-					idPaypal: payment.transactions[0].related_resources[0].sale.id,
+					idPaypal: payment.transactions[0].related_resources[0].sale.id
 				});
 				res.send({
-					message: "Success",
+					message: 'Success',
 					paymentId: payment.transactions[0].related_resources[0].sale.id,
-					id_Order: idDonHang,
+					id_Order: idDonHang
 				});
 			}
 		}
 	);
-}
+};
 exports.cancelPayment = (req, res, next) => {
-	res.send("Payment is canceled");
-}
+	res.send('Payment is canceled');
+};
 exports.successVnPayOrder = async (req, res, next) => {
+	// var vnp_Params = req.query;
+	// var secureHash = vnp_Params["vnp_SecureHash"];
+	// var id = vnp_Params["vnp_OrderInfo"];
+	// var amount = vnp_Params["vnp_Amount"] /100;
+	// delete vnp_Params["vnp_SecureHash"];
+	// delete vnp_Params["vnp_SecureHashType"];
+
+	// vnp_Params = sortObject(vnp_Params);
+
+	// var tmnCode = "JCO3SG7X";
+	// var secretKey = "BKPYNKKKBEAZCHZFHLIXKMXXCODHEVSU";
+
+	// var querystring = require("qs");
+	// var signData =
+	// 	secretKey + querystring.stringify(vnp_Params, { encode: false });
+
+	// var sha256 = require("sha256");
+
+	// var checkSum = sha256(signData);
+
+	// if (secureHash === checkSum) {
+	// 	//Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+
+	// 	await ORDER.findOneAndUpdate(
+	// 		{ _id: id },
+	// 		{
+	// 			typePayment: "VnPay",
+	// 		},
+	// 		{
+	// 			new: true,
+	// 		}
+	// 	);
+	// 	res.send({
+	// 		message: "Success",
+	// 		paymentId: id,
+	// 		amount:amount,
+	// 	});
+	// } else {
+	// 	res.render("success", { code: "97" });
+	// }
 	var vnp_Params = req.query;
-	var secureHash = vnp_Params["vnp_SecureHash"];
-	var id = vnp_Params["vnp_OrderInfo"];
+
+	var secureHash = vnp_Params['vnp_SecureHash'];
+
+	delete vnp_Params['vnp_SecureHash'];
+	delete vnp_Params['vnp_SecureHashType'];
 	var amount = vnp_Params["vnp_Amount"] /100;
-	delete vnp_Params["vnp_SecureHash"];
-	delete vnp_Params["vnp_SecureHashType"];
+	var id = vnp_Params["vnp_OrderInfo"];
 
 	vnp_Params = sortObject(vnp_Params);
+	var tmnCode = 'ME42CH34';
+	var secretKey = 'XNMGSWNPSCFQPUFDPXZBERQFLZFBKBKR';
 
-	var tmnCode = "JCO3SG7X";
-	var secretKey = "BKPYNKKKBEAZCHZFHLIXKMXXCODHEVSU";
+	var querystring = require('qs');
+	var signData = querystring.stringify(vnp_Params, { encode: false });
+	var crypto = require('crypto');
+	var hmac = crypto.createHmac('sha512', secretKey);
+	var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest('hex');
 
-	var querystring = require("qs");
-	var signData =
-		secretKey + querystring.stringify(vnp_Params, { encode: false });
-
-	var sha256 = require("sha256");
-
-	var checkSum = sha256(signData);
-
-	if (secureHash === checkSum) {
-		//Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-		
+	if (secureHash === signed) {
 		await ORDER.findOneAndUpdate(
 			{ _id: id },
 			{
-				typePayment: "VnPay",
+				typePayment: 'VnPay'
 			},
 			{
-				new: true,
+				new: true
 			}
 		);
+		// //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+		// res.status(200).json({ code: vnp_Params['vnp_ResponseCode'], data: req.query})
+		// //res.render('success', {code: vnp_Params['vnp_ResponseCode']})
 		res.send({
-			message: "Success",
+			message: 'Success',
 			paymentId: id,
-			amount:amount,
+			amount: amount
 		});
 	} else {
-		res.render("success", { code: "97" });
+		res.status(200).json({ code: '97', data: req.query });
+		//res.render('success', {code: '97'})
 	}
-}
+};
 exports.getInformation = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
@@ -316,12 +359,7 @@ exports.getInformation = async (req, res, next) => {
 		var result = resServices.data;
 		var image = await uploadServices.getImageS3(result.avatar);
 		result.avatar = image;
-		return controller.sendSuccess(
-			res,
-			result,
-			200,
-			resServices.message
-		);
+		return controller.sendSuccess(res, result, 200, resServices.message);
 	} catch (err) {
 		console.log(err);
 		return controller.sendError(res);
@@ -331,7 +369,10 @@ exports.updateInformation = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
-		const resServices = await userServices.updateInformation(id,req.value.body);
+		const resServices = await userServices.updateInformation(
+			id,
+			req.value.body
+		);
 		if (!resServices.success) {
 			return controller.sendSuccess(res, {}, 300, resServices.message);
 		}
@@ -351,7 +392,7 @@ exports.uploadImage = async (req, res, next) => {
 		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
 		const file = req.file;
-		console.log("file ne");
+		console.log('file ne');
 		console.log(file);
 		let s3bucket = new AWS.S3({
 			accessKeyId: configEnv.AWS_ACCESS_KEY,
@@ -369,35 +410,28 @@ exports.uploadImage = async (req, res, next) => {
 				return controller.sendSuccess(res, err, 300, 'Upload Image Fail');
 			} else {
 				var name = `Avatar/${timeCurrent}${file.originalname}`;
-					var bodyNew = {
-						avatar: name
-					}
-					const resServices = await userServices.updateInformation(id,
-						bodyNew
-					);
-					var image = await uploadServices.getImageS3(name);
-					if (resServices.success) {
-						var result = {
-							fcm: resServices.data.fcm,
-							image: image,
-							email: resServices.data.email,
-							phone: resServices.data.phone,
-							name: resServices.data.name,
-							_id: resServices.data._id,
-						};
-						return controller.sendSuccess(
-							res,
-							result,
-							200,
-							resServices.message
-						);
-					}
-					return controller.sendSuccess(
-						res,
-						resServices.data,
-						300,
-						resServices.message
-					);
+				var bodyNew = {
+					avatar: name
+				};
+				const resServices = await userServices.updateInformation(id, bodyNew);
+				var image = await uploadServices.getImageS3(name);
+				if (resServices.success) {
+					var result = {
+						fcm: resServices.data.fcm,
+						image: image,
+						email: resServices.data.email,
+						phone: resServices.data.phone,
+						name: resServices.data.name,
+						_id: resServices.data._id
+					};
+					return controller.sendSuccess(res, result, 200, resServices.message);
+				}
+				return controller.sendSuccess(
+					res,
+					resServices.data,
+					300,
+					resServices.message
+				);
 			}
 		});
 	} catch (error) {

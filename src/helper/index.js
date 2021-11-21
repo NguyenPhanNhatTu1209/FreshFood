@@ -82,20 +82,33 @@ exports.RefundPayment = async (idOrder, next) => {
     }
   );
 }
-exports.sortObject = (o) => {
-  var sorted = {},
-      key, a = [];
+exports.sortObject = (obj) => {
+  // var sorted = {},
+  //     key, a = [];
 
-  for (key in o) {
-      if (o.hasOwnProperty(key)) {
-          a.push(key);
-      }
-  }
+  // for (key in o) {
+  //     if (o.hasOwnProperty(key)) {
+  //         a.push(key);
+  //     }
+  // }
 
-  a.sort();
+  // a.sort();
 
-  for (key = 0; key < a.length; key++) {
-      sorted[a[key]] = o[a[key]];
-  }
-  return sorted;
+  // for (key = 0; key < a.length; key++) {
+  //     sorted[a[key]] = o[a[key]];
+  // }
+  // return sorted;
+  var sorted = {};
+	var str = [];
+	var key;
+	for (key in obj){
+		if (obj.hasOwnProperty(key)) {
+		str.push(encodeURIComponent(key));
+		}
+	}
+	str.sort();
+    for (key = 0; key < str.length; key++) {
+        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+    }
+    return sorted;
 }
