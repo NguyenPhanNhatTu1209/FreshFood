@@ -138,7 +138,7 @@ exports.createOrderAsync = async (req, res, next) => {
 			var tmnCode = 'ME42CH34';
 			var secretKey = 'XNMGSWNPSCFQPUFDPXZBERQFLZFBKBKR';
 			var vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-			var returnUrl = 'http://localhost:3005/user/successVnPay';
+			var returnUrl = 'http://18.140.53.176:3005/user/successVnPay';
 			var date = new Date();
 			var createDate =
 				date.getFullYear() +
@@ -320,6 +320,38 @@ exports.GetOrderByUserAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+exports.GetOrderByAdminAsync = async (req, res, next) => {
+	try {
+		const { decodeToken } = req.value.body;
+		const id = decodeToken.data.id;
+		let query = {
+			search: req.query.search || '',
+			limit: req.query.limit || '15',
+			skip: req.query.skip || '1',
+			status: req.query.status || '',
+			customerId: id
+		};
+		const resServices = await orderServices.GetOrderByAdmin(query);
+		if (resServices.success) {
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
+			);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
+	} catch (error) {
+		// bug
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
 
 exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 	try {
@@ -420,7 +452,7 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 				var tmnCode = 'ME42CH34';
 				var secretKey = 'XNMGSWNPSCFQPUFDPXZBERQFLZFBKBKR';
 				var vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-				var returnUrl = 'http://localhost:3005/user/successVnPay';
+				var returnUrl = 'http://18.140.53.176:3005/user/successVnPay';
 				var date = new Date();
 				var createDate =
 					date.getFullYear() +

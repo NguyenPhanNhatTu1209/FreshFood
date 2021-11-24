@@ -11,5 +11,6 @@ router.delete('/cancelOrder',  jwtServices.verify, Controller.deleteCartAsync)
 router.get('/getOrders', jwtServices.verify,Controller.GetOrderByUserAsync)
 router.put('/updateStatusOrder', jwtServices.verify, Validate.body(SchemaValidateOrder.updateStatus),Controller.changeStatusOrder)
 router.post('/CreateOrderWithByNow', jwtServices.verify, Validate.body(SchemaValidateOrder.creatOrderByWithNow), Controller.CreateOrderWithByNowAsync)
+router.get('/getOrdersByAdmin', jwtServices.verify,checkRole([defaultRoles.Admin]),Controller.GetOrderByAdminAsync)
 
 module.exports = router

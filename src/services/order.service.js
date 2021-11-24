@@ -1,8 +1,12 @@
-const { defaultRoles, defaultStatusProduct, defaultStatusOrder } = require('../config/defineModel');
+const {
+	defaultRoles,
+	defaultStatusProduct,
+	defaultStatusOrder
+} = require('../config/defineModel');
 const CART = require('../models/Cart.model');
 const ORDER = require('../models/Order.model');
 const PRODUCT = require('../models/Product.model');
-const SHIPFEE =require('../models/ShipFee.model');
+const SHIPFEE = require('../models/ShipFee.model');
 const { body } = require('../validators');
 const uploadServices = require('../services/uploadS3.service');
 
@@ -24,7 +28,9 @@ exports.createOrderAsync = async body => {
 				console.log(body.product.length);
 
 				for (let i = 0; i < body.product.length; i++) {
-					var currentProduct = await PRODUCT.findById(body.product[i].productId);
+					var currentProduct = await PRODUCT.findById(
+						body.product[i].productId
+					);
 					console.log(currentProduct.name);
 					var quantityProduct = currentProduct.quantity;
 					if (quantityProduct < body.product[i].quantity) {
@@ -37,13 +43,12 @@ exports.createOrderAsync = async body => {
 					currentProduct.quantity =
 						currentProduct.quantity - body.product[i].quantity;
 					currentProduct.sold = currentProduct.sold + body.product[i].quantity;
-					if(currentProduct.quantity == 0)
-					{
+					if (currentProduct.quantity == 0) {
 						currentProduct.status = defaultStatusProduct.InActive;
 					}
 					console.log(currentProduct.quantity);
 					currentProduct.save();
-					check = check+1;
+					check = check + 1;
 				}
 				session1.commitTransaction();
 				session1.endSession();
@@ -55,12 +60,12 @@ exports.createOrderAsync = async body => {
 				let number = splitted[1];
 				let bill = `${Number(number) + 1}`;
 				let newBillCode = '0'.repeat(8 - bill.length) + bill;
-				newBillCode = "FF" + '-' + newBillCode;
+				newBillCode = 'FF' + '-' + newBillCode;
 				body.orderCode = newBillCode;
 			} else {
 				let bill = `1`;
 				let newBillCode = '0'.repeat(8 - bill.length) + bill;
-				newBillCode = "FF" + '-' + newBillCode;
+				newBillCode = 'FF' + '-' + newBillCode;
 				body.orderCode = newBillCode;
 			}
 			const order = new ORDER(body);
@@ -87,9 +92,10 @@ exports.updateOrderAsync = async (id, body) => {
 		var ordersCurrent = await ORDER.findById(id);
 		let totalWeight = 0;
 		let totalShip = 0;
-		for(let i=0;i<ordersCurrent.product.length;i++)
-		{
-			totalWeight = totalWeight + ordersCurrent.product[i].quantity * ordersCurrent.product[i].weight;
+		for (let i = 0; i < ordersCurrent.product.length; i++) {
+			totalWeight =
+				totalWeight +
+				ordersCurrent.product[i].quantity * ordersCurrent.product[i].weight;
 		}
 		totalShip = address.fee * totalWeight;
 		body.shipFee = totalShip;
@@ -111,7 +117,7 @@ exports.updateOrderAsync = async (id, body) => {
 };
 exports.updateStatusOrderAsync = async (id, body) => {
 	try {
-		console.log(body)
+		console.log(body);
 		const order = await ORDER.findOneAndUpdate({ _id: id }, body, {
 			new: true
 		});
@@ -131,7 +137,7 @@ exports.updateStatusOrderAsync = async (id, body) => {
 exports.cancelOrderAsync = async id => {
 	try {
 		var ordersCurrent = await ORDER.findById(id);
-		console.log(ordersCurrent)
+		console.log(ordersCurrent);
 		var productOrder = ordersCurrent.product;
 		for (let i = 0; i < productOrder.length; i++) {
 			var productCurrent = await PRODUCT.findById(productOrder[i].productId);
@@ -161,26 +167,75 @@ exports.cancelOrderAsync = async id => {
 };
 exports.GetOrderByUser = async body => {
 	try {
-		const { search,skip,limit,status, customerId} = body;
-		var ordersCurrent = await ORDER.find({ customerId: customerId, status: status }).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
-		var ordersSearch  = [];
-		console.log(ordersCurrent.length)
-		for(let i=0;i<ordersCurrent.length;i++)
-		{
-			for(let j = 0;j<ordersCurrent[i].product.length;j++)
-			{
+		const { search, skip, limit, status, customerId } = body;
+		var ordersCurrent = await ORDER.find({
+			customerId: customerId,
+			status: status
+		})
+			.sort({ createdAt: -1 })
+			.skip(Number(limit) * Number(skip) - Number(limit))
+			.limit(Number(limit));
+		var ordersSearch = [];
+		console.log(ordersCurrent.length);
+		for (let i = 0; i < ordersCurrent.length; i++) {
+			for (let j = 0; j < ordersCurrent[i].product.length; j++) {
 				var convertSearch = search.toLocaleLowerCase();
 				var nameProduct = ordersCurrent[i].product[j].name.toLocaleLowerCase();
-				if(nameProduct.includes(convertSearch) == true)
-					{
-						var resultImage = [];
-						// var productCurrent = await PRODUCT.findById(ordersCurrent[i].product[j].productId);
-						var image = await uploadServices.getImageS3(ordersCurrent[i].product[j].image[0]);
-						resultImage.push(image);
-						ordersCurrent[i].product[j].image = resultImage;						
-						ordersSearch.push(ordersCurrent[i]);
-						break;
+				if (nameProduct.includes(convertSearch) == true) {
+					var resultImage = [];
+					// var productCurrent = await PRODUCT.findById(ordersCurrent[i].product[j].productId);
+					var image = await uploadServices.getImageS3(
+						ordersCurrent[i].product[j].image[0]
+					);
+					resultImage.push(image);
+					ordersCurrent[i].product[j].image = resultImage;
+					ordersSearch.push(ordersCurrent[i]);
+					break;
+				}
+			}
+		}
+		return {
+			message: 'Successfully get orders',
+			success: true,
+			data: ordersSearch
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.GetOrderByAdmin = async body => {
+	try {
+		const { search, skip, limit, status } = body;
+		var ordersCurrent = await ORDER.find({
+			status: status,
+			$or: [
+				{
+					orderCode: {
+						$regex: `${search}`,
+						$options: '$i'
 					}
+				}
+			]
+		})
+			.sort({ createdAt: -1 })
+			.skip(Number(limit) * Number(skip) - Number(limit))
+			.limit(Number(limit));
+		var ordersSearch = [];
+		for (let i = 0; i < ordersCurrent.length; i++) {
+			for (let j = 0; j < ordersCurrent[i].product.length; j++) {
+				var resultImage = [];
+				// var productCurrent = await PRODUCT.findById(ordersCurrent[i].product[j].productId);
+				var image = await uploadServices.getImageS3(
+					ordersCurrent[i].product[j].image[0]
+				);
+				resultImage.push(image);
+				ordersCurrent[i].product[j].image = resultImage;
+				ordersSearch.push(ordersCurrent[i]);
+				break;
 			}
 		}
 		return {

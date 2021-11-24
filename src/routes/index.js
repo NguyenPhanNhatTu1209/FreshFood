@@ -9,6 +9,7 @@ const chatRoute = require('./chatRoute')
 const eveluateRoute = require('./eveluateRoute')
 const addressRoute = require('./addressRoute')
 const productUserRoute = require('./productUserRoute')
+const statisticRoute = require('./statisticRoute')
 
 const router = express.Router()
 router.use('/user', useRoute)
@@ -21,6 +22,7 @@ router.use('/chat', chatRoute)
 router.use('/eveluate', eveluateRoute)
 router.use('/address', addressRoute)
 router.use('/productUser', productUserRoute)
+router.use('/statistic', statisticRoute)
 
 
 router.get('/healCheck', (req, res) => res.status(200).send('Welcome to FreshFood 1'))
