@@ -10,5 +10,6 @@ router.post('/createAddress', jwtServices.verify, Validate.body(SchemaValidateAd
 router.put('/updateAddress',  jwtServices.verify, Validate.body(SchemaValidateAddress.updateAddress), Controller.updateAddressAsync)
 router.delete('/deleteAddress',  jwtServices.verify, Controller.deleteAddressAsync)
 router.get('/getAllAddress',  jwtServices.verify, Controller.GetAllAddressByUserAsync)
+router.get('/getPriceAddress',  jwtServices.verify, Controller.GetPriceAddress)
 
 module.exports = router

@@ -2,7 +2,8 @@ const { defaultRoles, defaultStatusCart } = require('../config/defineModel');
 const ADDRESS = require('../models/address.model')
 
 const uploadServices = require('../services/uploadS3.service');
-
+const { configEnv } = require('../config');
+const axios = require('axios').default;
 
 
 exports.createAddressAsync = async body => {
@@ -109,6 +110,48 @@ exports.getAllAddressByIdUser = async (id) => {
 			message: 'Successfully Get Address',
 			success: true,
 			data: arrAddress
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.priceAddrees = async (body) => {
+	try {
+
+		const {address,province,district,weight} = body;
+		var totalShip =0;
+		await axios
+			.get('https://services.giaohangtietkiem.vn/services/shipment/fee', {
+				params: {
+					address: address,
+					province: province,
+					district: district,
+					pick_province: 'Hồ Chí Minh',
+					pick_district: 'Thủ Đức',
+					weight: weight * 1000
+				},
+				headers: { Token: configEnv.API_GHTK }
+			})
+			.then(function (response) {
+				totalShip = response.data.fee.fee;
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.log(error);
+			})
+			.then(function () {
+				// always executed
+			});
+		return {
+			message: 'Successfully Get Address',
+			success: true,
+			data: {
+				totalShip: totalShip
+			}
 		};
 	} catch (e) {
 		console.log(e);

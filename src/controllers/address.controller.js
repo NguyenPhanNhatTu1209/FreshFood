@@ -103,3 +103,32 @@ exports.GetAllAddressByUserAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+exports.GetPriceAddress = async (req, res, next) => {
+	try {
+		var query = {
+			address: req.query.address,
+			province:req.query.province,
+      district:req.query.district,
+			weight: req.query.weight,
+		}
+		const resServices = await addressServices.priceAddrees(query);
+		if (resServices.success) {
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
+			);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
+	} catch (error) {
+		// bug
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
