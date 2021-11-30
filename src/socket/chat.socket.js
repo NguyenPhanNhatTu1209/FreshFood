@@ -74,7 +74,7 @@ exports.chatMessage = async (socket, data) => {
 			var bodyRoom = {
 				idRoom: socket.Room,
 				idLastMessage:message.data._id,
-				name:  userRoom.phone
+				name:  userRoom.name
 			}
 			await ROOM.create(bodyRoom);
 		}

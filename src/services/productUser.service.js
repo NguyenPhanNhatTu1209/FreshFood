@@ -56,7 +56,7 @@ exports.deleteProductUserAsync = async id => {
 exports.findProductByIdUserAsync = async body => {
 	try {
 		const { customerId,skip,limit} = body;
-		const productUser = await PRODUCTUSER.find({customerId: customerId}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
+		const productUser = await PRODUCTUSER.find({customerId: customerId}).sort({updatedAt:-1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
 		return {
 			message: 'Successfully Get Product',
 			success: true,

@@ -232,6 +232,7 @@ exports.findAllProductAsync = async (req, res, next) => {
 			search: req.query.search || '',
 			limit: req.query.limit || '15',
 			skip: req.query.skip || '1',
+			groupProduct: req.query.groupProduct || '',
 		};
 		const resServices = await productServices.findAllProduct(query);
 		if (resServices.success) {

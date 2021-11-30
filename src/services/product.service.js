@@ -108,8 +108,21 @@ exports.findProductByIdAsync = async id => {
 };
 exports.findAllProduct = async body => {
 	try {
-		const { search,skip,limit} = body;
-		const product = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' } }).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
+		const { groupProduct, search,skip,limit} = body;
+		var product;
+		console.log("groupProduct")
+		console.log(groupProduct)
+
+		if(groupProduct === '')
+		{
+			product = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' } }).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
+		}
+		else
+		{
+			product = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' },
+					'groupProduct.key': groupProduct
+			}).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
+		}
 		return {
 			message: 'Successfully Get Product',
 			success: true,

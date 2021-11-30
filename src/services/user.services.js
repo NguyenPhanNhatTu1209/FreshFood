@@ -431,3 +431,30 @@ exports.getInformationById = async id => {
 		};
 	}
 };
+exports.getAvatarAdmin = async id => {
+	try {
+		const user = await USER.findOne({role: 1}, {
+			_id: 1,
+			email: 1,
+			role: 1,
+			name: 1,
+			phone: 1,
+			avatar: 1
+		}).lean();
+		var image = await uploadServices.getImageS3(user.avatar, 60 * 60 * 24);
+		var resultUser = {
+			avatar: image
+		};
+		return {
+			message: 'Successfully Get Image Admin',
+			success: true,
+			data: resultUser
+		};
+	} catch (err) {
+		console.log(err);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};

@@ -33,5 +33,6 @@ router.post('/confirmOtp', Validate.body(SchemaValidateUser.confirmOtp), Control
 router.post('/changePasswordWithOtp', Validate.body(SchemaValidateUser.changePasswordWithOtp), Controller.ChangePassWithOtp)
 router.get('/getAllUser',jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.findAllUserAsync)
 router.get('/getInformationById',jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.getInformationByIdAsync)
+router.get('/getAvatarAdmin',jwtServices.verify, Controller.getImageByAdmin)
 
 module.exports = router

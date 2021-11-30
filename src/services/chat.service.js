@@ -1,5 +1,8 @@
 const CHAT = require('../models/Chat.model');
 const ROOM = require('../models/Room.model');
+const USER = require('../models/User.model');
+const uploadServices = require('../services/uploadS3.service');
+
 exports.createChat = async body => {
 	try {
 		console.log(body);
@@ -103,10 +106,7 @@ exports.getMessages = async body => {
 exports.getRoomAdmin = async body => {
 	try {
 		const { skip, limit } = body;
-		const getRoomByAdmin = await ROOM.find(
-			{},
-			{ _id: 1, createdAt: 0, __v: 0, updatedAt: 0 }
-		)
+		const getRoomByAdmin = await ROOM.find()
 			.sort({
 				updatedAt: -1
 			})
@@ -115,12 +115,16 @@ exports.getRoomAdmin = async body => {
 		let arrResult = [];
 		for (let i = 0; i < getRoomByAdmin.length; i++) {
 			let chat = await CHAT.findById(getRoomByAdmin[i].idLastMessage);
+			var userChat = await USER.findById(getRoomByAdmin[i].idRoom);
+			var avatarUser = await uploadServices.getImageS3(userChat.avatar);
 			var roomNew = {
 				idRoom: getRoomByAdmin[i].idRoom,
 				idLastMessage: getRoomByAdmin[i].idLastMessage,
 				name: getRoomByAdmin[i].name,
 				seenByUser: chat.seenByUser,
-				message: chat.message
+				message: chat.message,
+				avatar: avatarUser,
+				updatedAt: getRoomByAdmin[i].updatedAt
 			};
 			arrResult.push(roomNew);
 		}
