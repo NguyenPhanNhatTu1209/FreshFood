@@ -301,9 +301,10 @@ exports.GetOrderByUserAsync = async (req, res, next) => {
 		};
 		const resServices = await orderServices.GetOrderByUser(query);
 		if (resServices.success) {
-			return controller.sendSuccess(
+			return controller.sendSuccessPaging(
 				res,
 				resServices.data,
+				resServices.numberPage,
 				200,
 				resServices.message
 			);
@@ -333,9 +334,10 @@ exports.GetOrderByAdminAsync = async (req, res, next) => {
 		};
 		const resServices = await orderServices.GetOrderByAdmin(query);
 		if (resServices.success) {
-			return controller.sendSuccess(
+			return controller.sendSuccessPaging(
 				res,
 				resServices.data,
+				resServices.numberPage,
 				200,
 				resServices.message
 			);

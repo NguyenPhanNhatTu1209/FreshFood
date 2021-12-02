@@ -261,9 +261,10 @@ exports.findAllProductAsync = async (req, res, next) => {
 				};
 				resultArr.push(result);
 			}
-			return controller.sendSuccess(
+			return controller.sendSuccessPaging(
 				res,
 				resultArr,
+				resServices.numberPage,
 				200,
 				resServices.message
 			);

@@ -110,9 +110,8 @@ exports.findAllProduct = async body => {
 	try {
 		const { groupProduct, search,skip,limit} = body;
 		var product;
-		console.log("groupProduct")
-		console.log(groupProduct)
-
+		var totalProduct = await PRODUCT.find();
+		var numberPage = Math.ceil(totalProduct.length/limit);
 		if(groupProduct === '')
 		{
 			product = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' } }).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
@@ -126,7 +125,8 @@ exports.findAllProduct = async body => {
 		return {
 			message: 'Successfully Get Product',
 			success: true,
-			data: product
+			data: product,
+			numberPage: numberPage
 		};
 	} catch (e) {
 		console.log(e);

@@ -12,4 +12,13 @@ const sendError = (res, message) => {
 	});
 };
 
-module.exports = { sendSuccess, sendError };
+const sendSuccessPaging = (res, data, numberPage, status = 200, message = 'success') => {
+	return res.status(status).json({
+		message: message,
+		data: data,
+		numberPage: numberPage,
+		statusCode: status,
+	});
+};
+
+module.exports = { sendSuccess, sendError , sendSuccessPaging};

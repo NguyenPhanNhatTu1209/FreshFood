@@ -176,28 +176,42 @@ exports.GetOrderByUser = async body => {
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
 		var ordersSearch = [];
-		console.log(ordersCurrent.length);
+		var totalOrder = await ORDER.find({
+			customerId: customerId,
+			status: status
+		});
+		var numberPage = Math.ceil(totalOrder.length / limit) ;
 		for (let i = 0; i < ordersCurrent.length; i++) {
 			for (let j = 0; j < ordersCurrent[i].product.length; j++) {
 				var convertSearch = search.toLocaleLowerCase();
 				var nameProduct = ordersCurrent[i].product[j].name.toLocaleLowerCase();
 				if (nameProduct.includes(convertSearch) == true) {
-					var resultImage = [];
-					// var productCurrent = await PRODUCT.findById(ordersCurrent[i].product[j].productId);
-					var image = await uploadServices.getImageS3(
-						ordersCurrent[i].product[j].image[0]
-					);
-					resultImage.push(image);
-					ordersCurrent[i].product[j].image = resultImage;
 					ordersSearch.push(ordersCurrent[i]);
 					break;
 				}
 			}
 		}
+		
+		var orderResult = []
+		for (let i = 0; i < ordersSearch.length; i++) {
+			for (let j = 0; j < ordersSearch[i].product.length; j++) {
+				var resultImage = [];
+				console.log(ordersSearch[i].product[j].image[0])
+				var image = await uploadServices.getImageS3(
+					ordersSearch[i].product[j].image[0]
+				);
+				resultImage.push(image);
+				ordersSearch[i].product[j].image = resultImage;
+				orderResult.push(ordersSearch[i]);
+			}
+		}
+
+
 		return {
 			message: 'Successfully get orders',
 			success: true,
-			data: ordersSearch
+			data: orderResult,
+			numberPage: numberPage
 		};
 	} catch (e) {
 		console.log(e);
@@ -221,27 +235,28 @@ exports.GetOrderByAdmin = async body => {
 				}
 			]
 		})
-			.sort({ createdAt: -1 })
+			.sort({createdAt: -1 })
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
 		var ordersSearch = [];
+		var totalOrder = await ORDER.find({status: status});
+		var numberPage = Math.ceil(totalOrder.length / limit) ;
 		for (let i = 0; i < ordersCurrent.length; i++) {
 			for (let j = 0; j < ordersCurrent[i].product.length; j++) {
 				var resultImage = [];
-				// var productCurrent = await PRODUCT.findById(ordersCurrent[i].product[j].productId);
 				var image = await uploadServices.getImageS3(
 					ordersCurrent[i].product[j].image[0]
 				);
 				resultImage.push(image);
 				ordersCurrent[i].product[j].image = resultImage;
 				ordersSearch.push(ordersCurrent[i]);
-				break;
 			}
 		}
 		return {
 			message: 'Successfully get orders',
 			success: true,
-			data: ordersSearch
+			data: ordersSearch,
+			numberPage: numberPage
 		};
 	} catch (e) {
 		console.log(e);
