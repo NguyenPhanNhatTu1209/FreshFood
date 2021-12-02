@@ -203,6 +203,7 @@ exports.GetOrderByUser = async body => {
 				resultImage.push(image);
 				ordersSearch[i].product[j].image = resultImage;
 				orderResult.push(ordersSearch[i]);
+				break;
 			}
 		}
 
@@ -250,6 +251,7 @@ exports.GetOrderByAdmin = async body => {
 				resultImage.push(image);
 				ordersCurrent[i].product[j].image = resultImage;
 				ordersSearch.push(ordersCurrent[i]);
+				break;
 			}
 		}
 		return {
