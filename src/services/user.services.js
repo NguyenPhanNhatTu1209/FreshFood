@@ -347,7 +347,7 @@ exports.findInformation = async id => {
 };
 exports.updateInformation = async (id, body) => {
 	try {
-		const user = await USER.findByIdAndUpdate(id, body);
+		const user = await USER.findByIdAndUpdate(id, body,{new: true});
 		console.log(user);
 		return {
 			message: 'Successfully update Information',

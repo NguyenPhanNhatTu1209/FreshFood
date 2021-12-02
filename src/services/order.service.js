@@ -202,9 +202,8 @@ exports.GetOrderByUser = async body => {
 				);
 				resultImage.push(image);
 				ordersSearch[i].product[j].image = resultImage;
-				orderResult.push(ordersSearch[i]);
-				break;
 			}
+			orderResult.push(ordersSearch[i]);
 		}
 
 
@@ -249,10 +248,9 @@ exports.GetOrderByAdmin = async body => {
 					ordersCurrent[i].product[j].image[0]
 				);
 				resultImage.push(image);
-				ordersCurrent[i].product[j].image = resultImage;
-				ordersSearch.push(ordersCurrent[i]);
-				break;
+				ordersCurrent[i].product[j].image = resultImage;				
 			}
+			ordersSearch.push(ordersCurrent[i]);
 		}
 		return {
 			message: 'Successfully get orders',
