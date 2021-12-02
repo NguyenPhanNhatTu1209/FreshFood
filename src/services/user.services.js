@@ -34,7 +34,8 @@ exports.registerUserAsync = async body => {
 			password: hashedPassword,
 			phone: phone,
 			name: name,
-			otp: otp
+			otp: otp,
+			avatar: "Avatar/1638466795493avatar.png",
 		});
 		await newUser.save();
 		const generateToken = jwtServices.createToken({

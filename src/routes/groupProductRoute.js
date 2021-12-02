@@ -9,6 +9,6 @@ const jwtServices=require('../services/jwt.services')
 router.post('/createGroupProduct', jwtServices.verify,checkRole([defaultRoles.Admin]), Validate.body(SchemaValidateGroupProduct.createGroupProduct), Controller.createGroupProductAsync)
 router.put('/updateGroupProduct',  jwtServices.verify,checkRole([defaultRoles.Admin]), Validate.body(SchemaValidateGroupProduct.updateGroupProduct), Controller.updateGroupProductAsync)
 router.delete('/deleteGroupProduct',  jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.deleteGroupProductAsync)
-router.get('/getAllGroupProduct',  jwtServices.verify, Controller.GetAllGroupProductAsync)
+router.get('/getAllGroupProduct', Controller.GetAllGroupProductAsync)
 
 module.exports = router
