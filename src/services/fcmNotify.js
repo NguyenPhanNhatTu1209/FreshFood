@@ -6,11 +6,6 @@ admin.initializeApp({
 const pushNotification = async (title, body, image, data, tokenReceive) => {
   try {
     if (data.history) data.history = "";
-    // if (data.destinationPackage)
-    // 	data.destinationPackage = data.destinationPackage.address;
-    // if (data.sourcePackage)
-    // 	data.sourcePackage = data.sourcePackage.address;
-    // console.log('data', data);
     const payload = {
       notification: {
         title,
@@ -21,26 +16,9 @@ const pushNotification = async (title, body, image, data, tokenReceive) => {
       android: {
         notification: {
           channel_id: "cnid",
-          // sound: "alarm.mp3"
         },
       },
       token: tokenReceive,
-      // apns: {
-      //   payload: {
-      //     aps: {
-      //       "mutable-content": 1,
-      //     },
-      //   },
-      //   fcm_options: {
-      //     image: "https://foo.bar.pizza-monster.png",
-      //   },
-      // },
-      // webpush: {
-      //   headers: {
-      //     image: "https://foo.bar.pizza-monster.png",
-      //   },
-      // },
-      // token: tokens[2],
     };
     admin
       .messaging()

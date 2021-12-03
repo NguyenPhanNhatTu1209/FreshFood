@@ -4,6 +4,9 @@ const orderServices = require('../services/order.service');
 const productServices = require('../services/product.service');
 const shipFeeServices = require('../services/shipFee.service');
 const ORDER = require('../models/Order.model');
+const USER = require('../models/User.model');
+const DEVICE = require('../models/Device.model');
+
 const axios = require('axios').default;
 const {
 	defaultRoles,
@@ -18,13 +21,12 @@ exports.createOrderAsync = async (req, res, next) => {
 		const id = decodeToken.data.id;
 		console.log(id);
 		req.value.body.customerId = id;
-		console.log('bodyne');
-		// console.log(req.value.body);
 		var arrCart = [];
 		var totalWeight = 0;
 		var totalShip = 0;
 		var totalMoney = 0;
 		var totalMoneyProduct = 0;
+		const admin = await USER.findOne({ role: 1 });
 		for (let i = 0; i < req.value.body.cartId.length; i++) {
 			var cartCurrent = await cartServices.getCartByIdAsync(
 				req.value.body.cartId[i]
@@ -102,7 +104,6 @@ exports.createOrderAsync = async (req, res, next) => {
 		console.log(req.value.body);
 		const resServices = await orderServices.createOrderAsync(req.value.body);
 		var changePriceOrder = FormatDollar(totalMoney / 24000);
-		console.log(changePriceOrder);
 		var resultPayment;
 		if (resServices.success) {
 			var idOrderNew = resServices.data._id;
@@ -129,6 +130,25 @@ exports.createOrderAsync = async (req, res, next) => {
 						}
 					}
 				);
+				if (admin) {
+					const devices = await DEVICE.find({
+						creatorUser: admin._id,
+						statusDevice: 1
+					});
+					var newArr = devices.map(val => {
+						return val.fcm;
+					});
+					pushMultipleNotification(
+						'Khách hàng mới tạo đơn',
+						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+						'',
+						{
+							action: 'NEW_ORDER',
+							_id: `${idOrderNew}`
+						},
+						newArr
+					);
+				}
 			} else if (req.value.body.typePaymentOrder == defaultPayment.VNPay) {
 				var ipAddr =
 				req.headers['x-forwarded-for'] ||
@@ -183,7 +203,25 @@ exports.createOrderAsync = async (req, res, next) => {
 			vnp_Params['vnp_SecureHash'] = signed;
 			vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
 
-			// res.status(200).json({ code: '00', data: vnpUrl });
+			if (admin) {
+				const devices = await DEVICE.find({
+					creatorUser: admin._id,
+					statusDevice: 1
+				});
+				var newArr = devices.map(val => {
+					return val.fcm;
+				});
+				pushMultipleNotification(
+					'Khách hàng mới tạo đơn',
+					'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+					'',
+					{
+						action: 'NEW_ORDER',
+						_id: `${idOrderNew}`
+					},
+					newArr
+				);
+			}
 			return controller.sendSuccess(
 				res,
 				{ link: vnpUrl },
@@ -196,6 +234,25 @@ exports.createOrderAsync = async (req, res, next) => {
 					{ typePayment: 'COD' },
 					{ new: true }
 				);
+				if (admin) {
+					const devices = await DEVICE.find({
+						creatorUser: admin._id,
+						statusDevice: 1
+					});
+					var newArr = devices.map(val => {
+						return val.fcm;
+					});
+					pushMultipleNotification(
+						'Khách hàng mới tạo đơn',
+						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+						'',
+						{
+							action: 'NEW_ORDER',
+							_id: `${idOrderNew}`
+						},
+						newArr
+					);
+				}
 				return controller.sendSuccess(res, updateOrder, 200, 'Success');
 			}
 		} else {
@@ -244,6 +301,27 @@ exports.changeStatusOrder = async (req, res, next) => {
 			bodyNew
 		);
 		await resServices.data.history.push(history);
+		const userCreateOrder = await USER.findOne({ id: resServices.data.customerId });
+
+		if (userCreateOrder) {
+			const devices = await DEVICE.find({
+				creatorUser: userCreateOrder._id,
+				statusDevice: 1
+			});
+			var newArr = devices.map(val => {
+				return val.fcm;
+			});
+			pushMultipleNotification(
+				'Đơn hàng của bạn mới chuyển trạng thái',
+				'Hãy kiểm tra đơn hàng ngay',
+				'',
+				{
+					action: 'UPDATE_STATUS_ORDER',
+					_id: `${resServices.data._id}`
+				},
+				newArr
+			);
+		}
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,

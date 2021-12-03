@@ -98,7 +98,7 @@ exports.chatMessage = async (socket, data) => {
 			})
 			console.log(newArr);
 			console.log(user1)
-			pushMultipleNotification(`Tin nhắn từ ${user1.phone}`,`${message.data.message}`,'',datafcm,newArr);
+			pushMultipleNotification(`Tin nhắn từ ${user1.email}`,`${message.data.message}`,'',datafcm,newArr);
 		} else if (user.role === 1) {
 			console.log('Admin');
 			const deviceUser = await DEVICE.find({creatorUser: socket.Room});
