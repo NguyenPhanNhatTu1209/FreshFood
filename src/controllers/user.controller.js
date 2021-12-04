@@ -15,13 +15,19 @@ const uploadServices = require('../services/uploadS3.service');
 exports.registerAsync = async (req, res, next) => {
 	try {
 		const resServices = await userServices.registerUserAsync(req.value.body);
+		console.log("resServices")
+		console.log(resServices)
+
 		if (!resServices.success)
-			return controller.sendSuccess(
+		{
+			console.log("vone2")
+			return controller.sendError(
 				res,
 				resServices.data,
 				300,
 				resServices.message
 			);
+		}
 		return controller.sendSuccess(
 			res,
 			resServices.data,
