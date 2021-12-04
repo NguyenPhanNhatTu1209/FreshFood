@@ -218,7 +218,7 @@ exports.GetOrderByUser = async body => {
 					note: ordersSearch[i].note,
 					shipFee: ordersSearch[i].shipFee,
 					typePayment: ordersSearch[i].typePayment,
-					id: ordersSearch[i].id,
+					_id: ordersSearch[i].id,
 					customerId: ordersSearch[i].customerId,
 					product: ordersSearch[i].product,
 					history: ordersSearch[i].history,
