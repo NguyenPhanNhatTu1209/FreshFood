@@ -7,6 +7,7 @@ const CART = require('../models/Cart.model');
 const ORDER = require('../models/Order.model');
 const PRODUCT = require('../models/Product.model');
 const SHIPFEE = require('../models/ShipFee.model');
+const EVELUATE = require('../models/Eveluate.model');
 const { body } = require('../validators');
 const uploadServices = require('../services/uploadS3.service');
 
@@ -203,7 +204,30 @@ exports.GetOrderByUser = async body => {
 				resultImage.push(image);
 				ordersSearch[i].product[j].image = resultImage;
 			}
-			orderResult.push(ordersSearch[i]);
+			var eveluateOrder = await EVELUATE.findOne({orderId: ordersSearch[i].id});
+			var checkEveluate = false;
+			if(eveluateOrder)
+			{
+				checkEveluate = true;
+			}
+			var orderClone = {		
+					area:ordersSearch[i].area,
+					totalMoney: ordersSearch[i].totalMoney,
+					totalMoneyProduct: ordersSearch[i].totalMoneyProduct,
+					status: ordersSearch[i].status,
+					note: ordersSearch[i].note,
+					shipFee: ordersSearch[i].shipFee,
+					typePayment: ordersSearch[i].typePayment,
+					id: ordersSearch[i].id,
+					customerId: ordersSearch[i].customerId,
+					product: ordersSearch[i].product,
+					history: ordersSearch[i].history,
+					orderCode: ordersSearch[i].orderCode,
+					createdAt: ordersSearch[i].createdAt,
+					updatedAt: ordersSearch[i].updatedAt,
+					checkEveluate: checkEveluate
+			}
+			orderResult.push(orderClone);
 		}
 
 
