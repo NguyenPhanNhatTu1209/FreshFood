@@ -35,7 +35,7 @@ exports.registerUserAsync = async body => {
 			phone: phone,
 			name: name,
 			otp: otp,
-			avatar: "Avatar/1638466795493avatar.png",
+			avatar: 'Avatar/1638466795493avatar.png'
 		});
 		await newUser.save();
 		const generateToken = jwtServices.createToken({
@@ -163,7 +163,7 @@ exports.forgotPassword = async body => {
 			var bodySms = {
 				phoneSend: result.phone,
 				Otp: result.otp
-			}
+			};
 			const resultSendSms = await sendSmsTwilio(bodySms);
 			if (resultSendSms != true) {
 				return {
@@ -171,7 +171,7 @@ exports.forgotPassword = async body => {
 					success: false
 				};
 			}
-			console.log("resultSendSms");
+			console.log('resultSendSms');
 			console.log(resultSendSms);
 			const resultSendMail = await sendMail(mailOptions);
 			if (resultSendMail != true) {
@@ -180,7 +180,7 @@ exports.forgotPassword = async body => {
 					success: false
 				};
 			}
-			console.log("resultSendEmail");
+			console.log('resultSendEmail');
 			console.log(resultSendMail);
 			if (!resultSendMail || resultSendSms != true) {
 				return {
@@ -348,7 +348,7 @@ exports.findInformation = async id => {
 };
 exports.updateInformation = async (id, body) => {
 	try {
-		const user = await USER.findByIdAndUpdate(id, body,{new: true});
+		const user = await USER.findByIdAndUpdate(id, body, { new: true });
 		console.log(user);
 		return {
 			message: 'Successfully update Information',
@@ -363,12 +363,39 @@ exports.updateInformation = async (id, body) => {
 		};
 	}
 };
-exports.getAllUser = async () => {
+exports.getAllUser = async query => {
 	try {
+		const { skip, limit,search } = query;
+		console.log(search)
 		const user = await USER.find(
-			{ role: defaultRoles.User },
+			{
+				role: defaultRoles.User,
+				$or: [
+					{
+						name: {
+							$regex: `${search}`,
+							$options: '$i'
+						}
+					},
+					{
+						email: {
+							$regex: `${search}`,
+							$options: '$i'
+						}
+					},
+					{
+						phone: {
+							$regex: `${search}`,
+							$options: '$i'
+						}
+					}
+				]
+			},
 			{ _id: 1, email: 1, role: 1, name: 1, phone: 1, avatar: 1 }
-		).lean();
+		)
+			.sort({ createdAt: -1 })
+			.skip(Number(limit) * Number(skip) - Number(limit))
+			.limit(Number(limit));
 		var result = [];
 		if (user.length > 0) {
 			for (let i = 0; i < user.length; i++) {
@@ -434,14 +461,17 @@ exports.getInformationById = async id => {
 };
 exports.getAvatarAdmin = async id => {
 	try {
-		const user = await USER.findOne({role: 1}, {
-			_id: 1,
-			email: 1,
-			role: 1,
-			name: 1,
-			phone: 1,
-			avatar: 1
-		}).lean();
+		const user = await USER.findOne(
+			{ role: 1 },
+			{
+				_id: 1,
+				email: 1,
+				role: 1,
+				name: 1,
+				phone: 1,
+				avatar: 1
+			}
+		).lean();
 		var image = await uploadServices.getImageS3(user.avatar, 60 * 60 * 24);
 		var resultUser = {
 			avatar: image

@@ -449,7 +449,13 @@ exports.uploadImage = async (req, res, next) => {
 
 exports.findAllUserAsync = async (req, res, next) => {
 	try {
-		const resServices = await userServices.getAllUser();
+		let query = {
+			search: req.query.search || '',
+			limit: req.query.limit || '15',
+			skip: req.query.skip || '1',
+		};
+		console.log(query)
+		const resServices = await userServices.getAllUser(query);
 		return controller.sendSuccess(
 			res,
 			resServices.data,

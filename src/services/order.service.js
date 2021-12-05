@@ -173,7 +173,7 @@ exports.GetOrderByUser = async body => {
 			customerId: customerId,
 			status: status
 		})
-			.sort({ createdAt: -1 })
+			.sort({ updatedAt: -1 })
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
 		var ordersSearch = [];
@@ -259,7 +259,7 @@ exports.GetOrderByAdmin = async body => {
 				}
 			]
 		})
-			.sort({createdAt: -1 })
+			.sort({updatedAt: -1 })
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
 		var ordersSearch = [];

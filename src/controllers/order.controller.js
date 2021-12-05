@@ -301,6 +301,7 @@ exports.changeStatusOrder = async (req, res, next) => {
 			bodyNew
 		);
 		await resServices.data.history.push(history);
+		await resServices.data.save();
 		const userCreateOrder = await USER.findOne({ id: resServices.data.customerId });
 
 		if (userCreateOrder) {
