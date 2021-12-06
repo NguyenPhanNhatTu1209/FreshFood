@@ -8,11 +8,19 @@ const sendSuccess = (res, data, status = 200, message = 'success') => {
 
 const sendError = (res, message) => {
 	return res.status(500).json({
-		message: message || 'internal server error'
+		message: message || 'Internal server error'
+	});
+};
+const sendSuccessError = (res, data, status = 300, message = 'Unknown error') => {
+	return res.status(status).json({
+		message: message,
+		data: data,
+		statusCode: status,
 	});
 };
 
-const sendSuccessPaging = (res, data, numberPage, status = 200, message = 'success') => {
+
+const sendSuccessPaging = (res, data, numberPage, status = 200, message = 'Success') => {
 	return res.status(status).json({
 		message: message,
 		data: data,
@@ -21,4 +29,4 @@ const sendSuccessPaging = (res, data, numberPage, status = 200, message = 'succe
 	});
 };
 
-module.exports = { sendSuccess, sendError , sendSuccessPaging};
+module.exports = { sendSuccess, sendError , sendSuccessPaging,sendSuccessError};

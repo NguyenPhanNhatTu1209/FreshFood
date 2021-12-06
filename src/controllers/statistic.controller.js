@@ -27,7 +27,7 @@ exports.statisticByOrder = async (req, res, next) => {
       changeDays = changeDays +1;
     for(let i = 0; i<changeDays;i++)
     {
-      var dayCurrent = new Date();
+      var dayCurrent = new Date(timeStart);
       dayCurrent = dayCurrent.setDate(start.getDate()+i);
       var formatDayCurrent = formatDateYYMMDD(dayCurrent);
       console.log(formatDayCurrent)

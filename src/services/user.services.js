@@ -18,7 +18,7 @@ exports.registerUserAsync = async body => {
 		const emailExist = await USER.findOne({
 			email: email
 		});
-		if (emailExist)
+		if (emailExist._id != null)
 			return {
 				message: 'Email already exists',
 				success: false
@@ -485,6 +485,55 @@ exports.getAvatarAdmin = async id => {
 		console.log(err);
 		return {
 			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.registerStaffAsync = async body => {
+	try {
+		const { email, password, phone, name } = body;
+		//check if email is already in the database
+		const emailExist = await USER.findOne({
+			email: email
+		});
+		if (emailExist._id != null)
+			return {
+				message: 'Email already exists',
+				success: false
+			};
+		var otp = otpGenerator.generate(6, {
+			upperCase: false,
+			specialChars: false
+		});
+		console.log(otp);
+		const hashedPassword = await bcrypt.hash(password, 8);
+		const newUser = new USER({
+			email: email,
+			password: hashedPassword,
+			phone: phone,
+			name: name,
+			otp: otp,
+			avatar: 'Avatar/1638807317930staff.jfif',
+			role: defaultRoles.Staff
+		});
+		await newUser.save();
+		const generateToken = jwtServices.createToken({
+			id: newUser._id,
+			role: newUser.role
+		});
+		var result = {
+			token: generateToken,
+			role: newUser.role
+		};
+		return {
+			message: 'Successfully Register',
+			success: true,
+			data: result
+		};
+	} catch (err) {
+		console.log(err);
+		return {
+			error: 'Internal Server',
 			success: false
 		};
 	}

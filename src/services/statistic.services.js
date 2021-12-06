@@ -12,6 +12,8 @@ exports.staticByOrder = async body => {
     const start = new Date(currentTime.getTime()-7*3600*1000);
 		let endTimeByDay = new Date(timeEnd).setHours(23, 59, 59, 999);
 		const end = new Date(new Date(endTimeByDay).getTime()-7*3600*1000);
+		console.log(start)
+		console.log(end)
     var listOrder = await ORDER.find({
       status: { $in: [0, 1, 2, 3] },
 			createdAt: {

@@ -21,7 +21,7 @@ exports.registerAsync = async (req, res, next) => {
 		if (!resServices.success)
 		{
 			console.log("vone2")
-			return controller.sendError(
+			return controller.sendSuccessError(
 				res,
 				resServices.data,
 				300,
@@ -272,46 +272,6 @@ exports.cancelPayment = (req, res, next) => {
 	res.send('Payment is canceled');
 };
 exports.successVnPayOrder = async (req, res, next) => {
-	// var vnp_Params = req.query;
-	// var secureHash = vnp_Params["vnp_SecureHash"];
-	// var id = vnp_Params["vnp_OrderInfo"];
-	// var amount = vnp_Params["vnp_Amount"] /100;
-	// delete vnp_Params["vnp_SecureHash"];
-	// delete vnp_Params["vnp_SecureHashType"];
-
-	// vnp_Params = sortObject(vnp_Params);
-
-	// var tmnCode = "JCO3SG7X";
-	// var secretKey = "BKPYNKKKBEAZCHZFHLIXKMXXCODHEVSU";
-
-	// var querystring = require("qs");
-	// var signData =
-	// 	secretKey + querystring.stringify(vnp_Params, { encode: false });
-
-	// var sha256 = require("sha256");
-
-	// var checkSum = sha256(signData);
-
-	// if (secureHash === checkSum) {
-	// 	//Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-
-	// 	await ORDER.findOneAndUpdate(
-	// 		{ _id: id },
-	// 		{
-	// 			typePayment: "VnPay",
-	// 		},
-	// 		{
-	// 			new: true,
-	// 		}
-	// 	);
-	// 	res.send({
-	// 		message: "Success",
-	// 		paymentId: id,
-	// 		amount:amount,
-	// 	});
-	// } else {
-	// 	res.render("success", { code: "97" });
-	// }
 	var vnp_Params = req.query;
 
 	var secureHash = vnp_Params['vnp_SecureHash'];
@@ -500,3 +460,27 @@ exports.getImageByAdmin = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+exports.createStaff = async (req, res, next) => {
+	try {
+		const resServices = await userServices.registerStaffAsync(req.value.body);
+		if (!resServices.success)
+		{
+			return controller.sendSuccessError(
+				res,
+				resServices.data,
+				300,
+				resServices.message
+			);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			200,
+			resServices.message
+		);
+	} catch (err) {
+		console.log(err);
+		return controller.sendError(res);
+	}
+};
+
