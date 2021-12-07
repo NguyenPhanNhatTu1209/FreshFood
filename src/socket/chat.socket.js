@@ -82,7 +82,8 @@ exports.chatMessage = async (socket, data) => {
 			{},
 			JSON.parse(JSON.stringify(message.data)),
 			{
-				action: 'MESSAGE'
+				action: 'MESSAGE',
+				name: userRoom.name
 			}
 		);
 		if (user.role === 0) {
