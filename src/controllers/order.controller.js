@@ -6,7 +6,7 @@ const shipFeeServices = require('../services/shipFee.service');
 const ORDER = require('../models/Order.model');
 const USER = require('../models/User.model');
 const DEVICE = require('../models/Device.model');
-
+const { pushNotification, pushMultipleNotification } = require('../services/fcmNotify');
 const axios = require('axios').default;
 const {
 	defaultRoles,
@@ -499,6 +499,7 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 		var changePriceOrder = FormatDollar(totalMoney / 24000);
 		console.log(changePriceOrder);
 		var resultPayment;
+		const admin = await USER.findOne({ role: 1 });
 		if (resServices.success) {
 			var idOrderNew = resServices.data._id;
 			if (req.value.body.typePaymentOrder == defaultPayment.PayPal) {
@@ -524,6 +525,25 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 						}
 					}
 				);
+				if (admin) {
+					const devices = await DEVICE.find({
+						creatorUser: admin._id,
+						statusDevice: 1
+					});
+					var newArr = devices.map(val => {
+						return val.fcm;
+					});
+					pushMultipleNotification(
+						'Khách hàng mới tạo đơn',
+						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+						'',
+						{
+							action: 'NEW_ORDER',
+							_id: `${idOrderNew}`
+						},
+						newArr
+					);
+				}
 			} else if (req.value.body.typePaymentOrder == defaultPayment.VNPay) {
 				var ipAddr =
 					req.headers['x-forwarded-for'] ||
@@ -577,7 +597,25 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 				var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 				vnp_Params['vnp_SecureHash'] = signed;
 				vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-
+				if (admin) {
+					const devices = await DEVICE.find({
+						creatorUser: admin._id,
+						statusDevice: 1
+					});
+					var newArr = devices.map(val => {
+						return val.fcm;
+					});
+					pushMultipleNotification(
+						'Khách hàng mới tạo đơn',
+						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+						'',
+						{
+							action: 'NEW_ORDER',
+							_id: `${idOrderNew}`
+						},
+						newArr
+					);
+				}
 				// res.status(200).json({ code: '00', data: vnpUrl });
 				return controller.sendSuccess(
 					res,
@@ -594,6 +632,25 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 				return controller.sendSuccess(res, updateOrder, 200, 'Success');
 			}
 		} else {
+			if (admin) {
+				const devices = await DEVICE.find({
+					creatorUser: admin._id,
+					statusDevice: 1
+				});
+				var newArr = devices.map(val => {
+					return val.fcm;
+				});
+				pushMultipleNotification(
+					'Khách hàng mới tạo đơn',
+					'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+					'',
+					{
+						action: 'NEW_ORDER',
+						_id: `${idOrderNew}`
+					},
+					newArr
+				);
+			}
 			return controller.sendSuccess(
 				res,
 				resServices.data,

@@ -4,7 +4,6 @@ const app = express()
 const db = require('./config/db')
 const route = require('./routes/index')
 const morgan = require("morgan")
-const cookieParser = require("cookie-parser")
 const cors = require("cors")
 const server = require("http").Server(app);
 var multer = require('multer');

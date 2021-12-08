@@ -8,17 +8,7 @@ const Validate = require("../validators")
 const SchemaValidateProduct = require("../validators/product.validator")
 
 var multer = require("multer");
-const path = require("path");
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "./src/uploads");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
-//   },
-// });
-// const upload = multer({ storage: storage });
-// var cpUpload = multipleUpload.fields([{ name: 'image', maxCount: 10 }]);
+
 
 var storage = multer.memoryStorage({
   destination: function(req, file, callback) {

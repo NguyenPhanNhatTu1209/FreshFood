@@ -7,7 +7,6 @@ const jwtServices = require("../services/jwt.services")
 
 
 var multer = require("multer");
-const path = require("path");
 const { checkRole } = require('../middleware/checkRole.middleware')
 const { defaultRoles } = require('../config/defineModel')
 var storage = multer.memoryStorage({
