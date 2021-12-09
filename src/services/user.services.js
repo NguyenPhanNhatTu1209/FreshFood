@@ -18,7 +18,8 @@ exports.registerUserAsync = async body => {
 		const emailExist = await USER.findOne({
 			email: email
 		});
-		if (emailExist._id != null)
+		console.log(emailExist);
+		if (emailExist != null)
 			return {
 				message: 'Email already exists',
 				success: false
@@ -496,7 +497,7 @@ exports.registerStaffAsync = async body => {
 		const emailExist = await USER.findOne({
 			email: email
 		});
-		if (emailExist._id != null)
+		if (emailExist != null)
 			return {
 				message: 'Email already exists',
 				success: false

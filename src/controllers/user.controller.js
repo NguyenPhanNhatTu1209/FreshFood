@@ -25,7 +25,7 @@ exports.registerAsync = async (req, res, next) => {
 				res,
 				resServices.data,
 				300,
-				resServices.message
+				"ValidatorError: Path `phone` is invalid"
 			);
 		}
 		return controller.sendSuccess(
@@ -469,7 +469,7 @@ exports.createStaff = async (req, res, next) => {
 				res,
 				resServices.data,
 				300,
-				resServices.message
+				"ValidatorError: Path `phone` is invalid"
 			);
 		}
 		return controller.sendSuccess(
