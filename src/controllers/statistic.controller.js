@@ -139,3 +139,27 @@ exports.statisticByProduct = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+exports.statisticByUser = async (req, res, next) => {
+	try {
+    var result = await statisticServices.staticByUser(req.query.id);
+    if(result.success == true)
+    {
+      return controller.sendSuccess(
+        res,
+        result.data,
+        200,
+        "Get statistic order success"
+      );
+    }
+		return controller.sendSuccess(
+			res,
+			null,
+			300,
+			result.message
+		);
+	} catch (error) {
+		// bug
+		console.log(error);
+		return controller.sendError(res);
+	}
+};

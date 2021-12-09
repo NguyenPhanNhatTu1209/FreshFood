@@ -410,6 +410,7 @@ exports.uploadImage = async (req, res, next) => {
 exports.findAllUserAsync = async (req, res, next) => {
 	try {
 		let query = {
+			role: req.query.role || 0,
 			search: req.query.search || '',
 			limit: req.query.limit || '15',
 			skip: req.query.skip || '1',

@@ -82,3 +82,29 @@ exports.staticByProduct = async body => {
 		};
 	}
 };
+exports.staticByUser = async id => {
+	try {
+		var listProduct = await ORDER.find({customerId: id});
+		var totalMoney =  0;
+		var totalOrder = 0;
+		listProduct.forEach(element => {
+			totalMoney = element.totalMoney+ totalMoney;
+			totalOrder = totalOrder +1;
+		});
+		var result = {
+			totalMoney: totalMoney,
+			totalOrder: totalOrder
+		}
+		return {
+			message: 'Successfully Statistic By Time',
+			success: true,
+			data: result
+		};
+	} catch (err) {
+		console.log(err);
+		return {
+			error: 'Internal Server',
+			success: false
+		};
+	}
+};

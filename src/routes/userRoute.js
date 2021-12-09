@@ -34,5 +34,4 @@ router.get('/getAllUser',jwtServices.verify,checkRole([defaultRoles.Admin]), Con
 router.get('/getInformationById',jwtServices.verify,checkRole([defaultRoles.Admin]), Controller.getInformationByIdAsync)
 router.get('/getAvatarAdmin',jwtServices.verify, Controller.getImageByAdmin)
 router.post('/createStaff',jwtServices.verify,checkRole([defaultRoles.Admin]),Validate.body(SchemaValidateUser.register), Controller.createStaff)
-
 module.exports = router

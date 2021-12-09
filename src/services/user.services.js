@@ -366,11 +366,11 @@ exports.updateInformation = async (id, body) => {
 };
 exports.getAllUser = async query => {
 	try {
-		const { skip, limit,search } = query;
+		const { role,skip, limit,search } = query;
 		console.log(search)
 		const user = await USER.find(
 			{
-				role: defaultRoles.User,
+				role: role,
 				$or: [
 					{
 						name: {
