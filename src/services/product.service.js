@@ -114,13 +114,17 @@ exports.findAllProduct = async body => {
 		var numberPage = Math.ceil(totalProduct.length/limit);
 		if(groupProduct === '')
 		{
+			totalProduct = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' } });
 			product = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' } }).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
+			numberPage = Math.ceil(totalProduct.length/limit);
 		}
-		else
+		else 
 		{
+			totalProduct = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' },'groupProduct.key': groupProduct});
 			product = await PRODUCT.find({ name: { $regex: `${search}`, $options: '$i' },
 					'groupProduct.key': groupProduct
 			}).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
+			numberPage = Math.ceil(product.length/limit);
 		}
 		return {
 			message: 'Successfully Get Product',

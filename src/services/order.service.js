@@ -177,11 +177,13 @@ exports.GetOrderByUser = async body => {
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
 		var ordersSearch = [];
+		var ordersSearchTotal = [];
 		var totalOrder = await ORDER.find({
 			customerId: customerId,
 			status: status
 		});
-		var numberPage = Math.ceil(totalOrder.length / limit) ;
+		var numberPage = Math.ceil(totalOrder.length / limit);
+		// search có skip và limit
 		for (let i = 0; i < ordersCurrent.length; i++) {
 			for (let j = 0; j < ordersCurrent[i].product.length; j++) {
 				var convertSearch = search.toLocaleLowerCase();
@@ -192,45 +194,55 @@ exports.GetOrderByUser = async body => {
 				}
 			}
 		}
-		
-		var orderResult = []
+		// search k có skip và limit
+		for (let i = 0; i < totalOrder.length; i++) {
+			for (let j = 0; j < totalOrder[i].product.length; j++) {
+				var convertSearch = search.toLocaleLowerCase();
+				var nameProduct = totalOrder[i].product[j].name.toLocaleLowerCase();
+				if (nameProduct.includes(convertSearch) == true) {
+					ordersSearchTotal.push(ordersCurrent[i]);
+					break;
+				}
+			}
+		}
+		numberPage = Math.ceil(ordersSearchTotal.length / limit);
+		var orderResult = [];
 		for (let i = 0; i < ordersSearch.length; i++) {
 			for (let j = 0; j < ordersSearch[i].product.length; j++) {
 				var resultImage = [];
-				console.log(ordersSearch[i].product[j].image[0])
+				console.log(ordersSearch[i].product[j].image[0]);
 				var image = await uploadServices.getImageS3(
 					ordersSearch[i].product[j].image[0]
 				);
 				resultImage.push(image);
 				ordersSearch[i].product[j].image = resultImage;
 			}
-			var eveluateOrder = await EVELUATE.findOne({orderId: ordersSearch[i].id});
+			var eveluateOrder = await EVELUATE.findOne({
+				orderId: ordersSearch[i].id
+			});
 			var checkEveluate = false;
-			if(eveluateOrder)
-			{
+			if (eveluateOrder) {
 				checkEveluate = true;
 			}
-			var orderClone = {		
-					area:ordersSearch[i].area,
-					totalMoney: ordersSearch[i].totalMoney,
-					totalMoneyProduct: ordersSearch[i].totalMoneyProduct,
-					status: ordersSearch[i].status,
-					note: ordersSearch[i].note,
-					shipFee: ordersSearch[i].shipFee,
-					typePayment: ordersSearch[i].typePayment,
-					_id: ordersSearch[i].id,
-					customerId: ordersSearch[i].customerId,
-					product: ordersSearch[i].product,
-					history: ordersSearch[i].history,
-					orderCode: ordersSearch[i].orderCode,
-					createdAt: ordersSearch[i].createdAt,
-					updatedAt: ordersSearch[i].updatedAt,
-					checkEveluate: checkEveluate
-			}
+			var orderClone = {
+				area: ordersSearch[i].area,
+				totalMoney: ordersSearch[i].totalMoney,
+				totalMoneyProduct: ordersSearch[i].totalMoneyProduct,
+				status: ordersSearch[i].status,
+				note: ordersSearch[i].note,
+				shipFee: ordersSearch[i].shipFee,
+				typePayment: ordersSearch[i].typePayment,
+				_id: ordersSearch[i].id,
+				customerId: ordersSearch[i].customerId,
+				product: ordersSearch[i].product,
+				history: ordersSearch[i].history,
+				orderCode: ordersSearch[i].orderCode,
+				createdAt: ordersSearch[i].createdAt,
+				updatedAt: ordersSearch[i].updatedAt,
+				checkEveluate: checkEveluate
+			};
 			orderResult.push(orderClone);
 		}
-
-
 		return {
 			message: 'Successfully get orders',
 			success: true,
@@ -259,12 +271,22 @@ exports.GetOrderByAdmin = async body => {
 				}
 			]
 		})
-			.sort({updatedAt: -1 })
+			.sort({ updatedAt: -1 })
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
 		var ordersSearch = [];
-		var totalOrder = await ORDER.find({status: status});
-		var numberPage = Math.ceil(totalOrder.length / limit) ;
+		var totalOrder = await ORDER.find({
+			status: status,
+			$or: [
+				{
+					orderCode: {
+						$regex: `${search}`,
+						$options: '$i'
+					}
+				}
+			]
+		});
+		var numberPage = Math.ceil(totalOrder.length / limit);
 		for (let i = 0; i < ordersCurrent.length; i++) {
 			for (let j = 0; j < ordersCurrent[i].product.length; j++) {
 				var resultImage = [];
@@ -272,7 +294,7 @@ exports.GetOrderByAdmin = async body => {
 					ordersCurrent[i].product[j].image[0]
 				);
 				resultImage.push(image);
-				ordersCurrent[i].product[j].image = resultImage;				
+				ordersCurrent[i].product[j].image = resultImage;
 			}
 			ordersSearch.push(ordersCurrent[i]);
 		}
