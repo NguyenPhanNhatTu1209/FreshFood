@@ -26,7 +26,7 @@ exports.createOrderAsync = async (req, res, next) => {
 		var totalShip = 0;
 		var totalMoney = 0;
 		var totalMoneyProduct = 0;
-		const admin = await USER.findOne({ role: 1 });
+		const staff = await USER.find({ role: 2 });
 		for (let i = 0; i < req.value.body.cartId.length; i++) {
 			var cartCurrent = await cartServices.getCartByIdAsync(
 				req.value.body.cartId[i]
@@ -130,14 +130,20 @@ exports.createOrderAsync = async (req, res, next) => {
 						}
 					}
 				);
-				if (admin) {
-					const devices = await DEVICE.find({
-						creatorUser: admin._id,
-						statusDevice: 1
-					});
-					var newArr = devices.map(val => {
-						return val.fcm;
-					});
+				if (staff.length != 0) {
+					var allDevice = [];
+					for (let i = 0; i < staff.length; i++) {
+						const devices = await DEVICE.find({
+							creatorUser: staff[i]._id,
+							statusDevice: 1
+						});
+						devices.forEach(element => {
+							allDevice.push(element.fcm);
+						});
+						console.log("allDevice");
+	
+						console.log(allDevice);
+					}
 					pushMultipleNotification(
 						'Khách hàng mới tạo đơn',
 						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
@@ -146,7 +152,7 @@ exports.createOrderAsync = async (req, res, next) => {
 							action: 'NEW_ORDER',
 							_id: `${idOrderNew}`
 						},
-						newArr
+						allDevice
 					);
 				}
 			} else if (req.value.body.typePaymentOrder == defaultPayment.VNPay) {
@@ -203,14 +209,20 @@ exports.createOrderAsync = async (req, res, next) => {
 			vnp_Params['vnp_SecureHash'] = signed;
 			vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
 
-			if (admin) {
-				const devices = await DEVICE.find({
-					creatorUser: admin._id,
-					statusDevice: 1
-				});
-				var newArr = devices.map(val => {
-					return val.fcm;
-				});
+			if (staff.length != 0) {
+				var allDevice = [];
+				for (let i = 0; i < staff.length; i++) {
+					const devices = await DEVICE.find({
+						creatorUser: staff[i]._id,
+						statusDevice: 1
+					});
+					devices.forEach(element => {
+						allDevice.push(element.fcm);
+					});
+					console.log("allDevice");
+
+					console.log(allDevice);
+				}
 				pushMultipleNotification(
 					'Khách hàng mới tạo đơn',
 					'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
@@ -219,7 +231,7 @@ exports.createOrderAsync = async (req, res, next) => {
 						action: 'NEW_ORDER',
 						_id: `${idOrderNew}`
 					},
-					newArr
+					allDevice
 				);
 			}
 			return controller.sendSuccess(
@@ -234,14 +246,20 @@ exports.createOrderAsync = async (req, res, next) => {
 					{ typePayment: 'COD' },
 					{ new: true }
 				);
-				if (admin) {
-					const devices = await DEVICE.find({
-						creatorUser: admin._id,
-						statusDevice: 1
-					});
-					var newArr = devices.map(val => {
-						return val.fcm;
-					});
+				if (staff.length != 0) {
+					var allDevice = [];
+					for (let i = 0; i < staff.length; i++) {
+						const devices = await DEVICE.find({
+							creatorUser: staff[i]._id,
+							statusDevice: 1
+						});
+						devices.forEach(element => {
+							allDevice.push(element.fcm);
+						});
+						console.log("allDevice");
+	
+						console.log(allDevice);
+					}
 					pushMultipleNotification(
 						'Khách hàng mới tạo đơn',
 						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
@@ -250,7 +268,7 @@ exports.createOrderAsync = async (req, res, next) => {
 							action: 'NEW_ORDER',
 							_id: `${idOrderNew}`
 						},
-						newArr
+						allDevice
 					);
 				}
 				return controller.sendSuccess(res, updateOrder, 200, 'Success');
@@ -499,7 +517,7 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 		var changePriceOrder = FormatDollar(totalMoney / 24000);
 		console.log(changePriceOrder);
 		var resultPayment;
-		const admin = await USER.findOne({ role: 1 });
+		const staff = await USER.find({ role: 2 });
 		if (resServices.success) {
 			var idOrderNew = resServices.data._id;
 			if (req.value.body.typePaymentOrder == defaultPayment.PayPal) {
@@ -525,14 +543,20 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 						}
 					}
 				);
-				if (admin) {
-					const devices = await DEVICE.find({
-						creatorUser: admin._id,
-						statusDevice: 1
-					});
-					var newArr = devices.map(val => {
-						return val.fcm;
-					});
+				if (staff.length != 0) {
+					var allDevice = [];
+					for (let i = 0; i < staff.length; i++) {
+						const devices = await DEVICE.find({
+							creatorUser: staff[i]._id,
+							statusDevice: 1
+						});
+						devices.forEach(element => {
+							allDevice.push(element.fcm);
+						});
+						console.log("allDevice");
+	
+						console.log(allDevice);
+					}
 					pushMultipleNotification(
 						'Khách hàng mới tạo đơn',
 						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
@@ -541,7 +565,7 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 							action: 'NEW_ORDER',
 							_id: `${idOrderNew}`
 						},
-						newArr
+						allDevice
 					);
 				}
 			} else if (req.value.body.typePaymentOrder == defaultPayment.VNPay) {
@@ -597,14 +621,20 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 				var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 				vnp_Params['vnp_SecureHash'] = signed;
 				vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-				if (admin) {
-					const devices = await DEVICE.find({
-						creatorUser: admin._id,
-						statusDevice: 1
-					});
-					var newArr = devices.map(val => {
-						return val.fcm;
-					});
+				if (staff.length != 0) {
+					var allDevice = [];
+					for (let i = 0; i < staff.length; i++) {
+						const devices = await DEVICE.find({
+							creatorUser: staff[i]._id,
+							statusDevice: 1
+						});
+						devices.forEach(element => {
+							allDevice.push(element.fcm);
+						});
+						console.log("allDevice");
+	
+						console.log(allDevice);
+					}
 					pushMultipleNotification(
 						'Khách hàng mới tạo đơn',
 						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
@@ -613,7 +643,7 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 							action: 'NEW_ORDER',
 							_id: `${idOrderNew}`
 						},
-						newArr
+						allDevice
 					);
 				}
 				// res.status(200).json({ code: '00', data: vnpUrl });
@@ -629,28 +659,34 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 					{ typePayment: 'COD' },
 					{ new: true }
 				);
+				if (staff.length != 0) {
+					var allDevice = [];
+					for (let i = 0; i < staff.length; i++) {
+						const devices = await DEVICE.find({
+							creatorUser: staff[i]._id,
+							statusDevice: 1
+						});
+						devices.forEach(element => {
+							allDevice.push(element.fcm);
+						});
+						console.log("allDevice");
+	
+						console.log(allDevice);
+					}
+					pushMultipleNotification(
+						'Khách hàng mới tạo đơn',
+						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+						'',
+						{
+							action: 'NEW_ORDER',
+							_id: `${idOrderNew}`
+						},
+						allDevice
+					);
+				}
 				return controller.sendSuccess(res, updateOrder, 200, 'Success');
 			}
 		} else {
-			if (admin) {
-				const devices = await DEVICE.find({
-					creatorUser: admin._id,
-					statusDevice: 1
-				});
-				var newArr = devices.map(val => {
-					return val.fcm;
-				});
-				pushMultipleNotification(
-					'Khách hàng mới tạo đơn',
-					'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
-					'',
-					{
-						action: 'NEW_ORDER',
-						_id: `${idOrderNew}`
-					},
-					newArr
-				);
-			}
 			return controller.sendSuccess(
 				res,
 				resServices.data,
