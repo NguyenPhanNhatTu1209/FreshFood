@@ -362,6 +362,7 @@ exports.findDetailProduct = async (req, res, next) => {
 					totalStar = element.star+totalStar;
 				});
 				starAVG = totalStar/eveluates.data.length;
+				starAVG = starAVG.toFixed(1);
 			}
 			var result = {
 				price: resServices.data.price,
