@@ -13,7 +13,7 @@ const {
 	defaultStatusCart,
 	defaultPayment
 } = require('../config/defineModel');
-const { paymentMethod, FormatDollar, sortObject } = require('../helper');
+const { paymentMethod, FormatDollar, sortObject, RefundPayment } = require('../helper');
 const { configEnv } = require('../config');
 exports.createOrderAsync = async (req, res, next) => {
 	try {
@@ -119,6 +119,31 @@ exports.createOrderAsync = async (req, res, next) => {
 								if (payment.links[i].rel === 'approval_url') {
 									resultPayment = payment.links[i].href;
 									console.log(resultPayment);
+									if (staff.length != 0) {
+										var allDevice = [];
+										for (let i = 0; i < staff.length; i++) {
+											const devices = await DEVICE.find({
+												creatorUser: staff[i]._id,
+												statusDevice: 1
+											});
+											devices.forEach(element => {
+												allDevice.push(element.fcm);
+											});
+											console.log("allDevice");
+						
+											console.log(allDevice);
+										}
+										pushMultipleNotification(
+											'Khách hàng mới tạo đơn',
+											'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+											'',
+											{
+												action: 'NEW_ORDER',
+												_id: `${idOrderNew}`
+											},
+											allDevice
+										);
+									}
 									return controller.sendSuccess(
 										res,
 										{ link: resultPayment },
@@ -130,31 +155,7 @@ exports.createOrderAsync = async (req, res, next) => {
 						}
 					}
 				);
-				if (staff.length != 0) {
-					var allDevice = [];
-					for (let i = 0; i < staff.length; i++) {
-						const devices = await DEVICE.find({
-							creatorUser: staff[i]._id,
-							statusDevice: 1
-						});
-						devices.forEach(element => {
-							allDevice.push(element.fcm);
-						});
-						console.log("allDevice");
-	
-						console.log(allDevice);
-					}
-					pushMultipleNotification(
-						'Khách hàng mới tạo đơn',
-						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
-						'',
-						{
-							action: 'NEW_ORDER',
-							_id: `${idOrderNew}`
-						},
-						allDevice
-					);
-				}
+				
 			} else if (req.value.body.typePaymentOrder == defaultPayment.VNPay) {
 				var ipAddr =
 				req.headers['x-forwarded-for'] ||
@@ -289,6 +290,8 @@ exports.createOrderAsync = async (req, res, next) => {
 };
 exports.changeStatusOrder = async (req, res, next) => {
 	try {
+		const { decodeToken } = req.value.body;
+		const idUser = decodeToken.data.id;
 		var history;
 		if (req.value.body.status === 1) {
 			history = {
@@ -314,47 +317,291 @@ exports.changeStatusOrder = async (req, res, next) => {
 		var bodyNew = {
 			status: req.value.body.status
 		};
-		const resServices = await orderServices.updateStatusOrderAsync(
-			req.value.body.id,
-			bodyNew
-		);
-		await resServices.data.history.push(history);
-		await resServices.data.save();
-		const userCreateOrder = await USER.findOne({ id: resServices.data.customerId });
-
-		if (userCreateOrder) {
-			const devices = await DEVICE.find({
-				creatorUser: userCreateOrder._id,
-				statusDevice: 1
-			});
-			var newArr = devices.map(val => {
-				return val.fcm;
-			});
-			pushMultipleNotification(
-				'Đơn hàng của bạn mới chuyển trạng thái',
-				'Hãy kiểm tra đơn hàng ngay',
-				'',
-				{
-					action: 'UPDATE_STATUS_ORDER',
-					_id: `${resServices.data._id}`
-				},
-				newArr
-			);
-		}
-		if (resServices.success) {
+		var orderCurrent = await ORDER.findById(req.value.body.id);
+		if (orderCurrent == null)
 			return controller.sendSuccess(
 				res,
-				resServices.data,
-				200,
-				resServices.message
+				null,
+				404,
+				"Order not found"
 			);
+		if(req.value.body.status === 4)
+		{
+			var user =await USER.findById(idUser);
+			if(user == null)
+				return controller.sendSuccess(
+					res,
+					null,
+					404,
+					"User not found"
+				);
+			if(user.role == defaultRoles.Staff)
+			{
+				const userCreateOrder = await USER.findById(orderCurrent.customerId);
+				if (userCreateOrder == null) {
+					return controller.sendSuccess(
+						res,
+						null,
+						404,
+						"User not found"
+					);
+				}
+				if(orderCurrent.typePayment == 'PayPal')
+				{
+					console.log("vo ne")
+					await RefundPayment(req.value.body.id, async function (error, refund) {
+						if (error) {
+							resultRefund = error;
+							return controller.sendSuccess(
+								res,
+								null,
+								300,
+								resultRefund
+							);
+						} else {
+							resultRefund = refund;
+							resultRefund = refund;
+							bodyNew = {
+								status: req.value.body.status,
+								typePayment: "Đã hoàn tiền"
+							};
+								const devices = await DEVICE.find({
+									creatorUser: userCreateOrder._id,
+									statusDevice: 1
+								});
+								var newArr = devices.map(val => {
+									return val.fcm;
+								});
+								pushMultipleNotification(
+									`Đơn hàng bị hủy bởi FreshFood`,
+									`Kiểm tra ngay`,
+									'',
+									{
+										action: 'UPDATE_STATUS_ORDER',
+										_id: `${orderCurrent._id}`
+									},
+									newArr
+								);
+							const resServices = await orderServices.updateStatusOrderAsync(
+								req.value.body.id,
+								bodyNew,
+							);
+							await resServices.data.history.push(history);
+							await resServices.data.save();
+							if (resServices.success) {
+								return controller.sendSuccess(
+									res,
+									resServices.data,
+									200,
+									resServices.message
+								);
+							}
+							return controller.sendSuccess(
+								res,
+								resServices.data,
+								300,
+								resServices.message
+							);
+						}
+					});
+				}
+					const devices = await DEVICE.find({
+						creatorUser: userCreateOrder._id,
+						statusDevice: 1
+					});
+					var newArr = devices.map(val => {
+						return val.fcm;
+					});
+					pushMultipleNotification(
+						`Đơn hàng bị hủy bởi FreshFood`,
+						`Kiểm tra ngay`,
+						'',
+						{
+							action: 'UPDATE_STATUS_ORDER',
+							_id: `${orderCurrent._id}`
+						},
+						newArr
+					);
+				const resServices = await orderServices.updateStatusOrderAsync(
+					req.value.body.id,
+					bodyNew,
+				);
+				await resServices.data.history.push(history);
+				await resServices.data.save();
+				if (resServices.success) {
+					return controller.sendSuccess(
+						res,
+						resServices.data,
+						200,
+						resServices.message
+					);
+				}
+				return controller.sendSuccess(
+					res,
+					resServices.data,
+					300,
+					resServices.message
+				);				
+			}
+			else if(user.role == defaultRoles.User)
+			{	
+				const staff = await USER.find({ role: defaultRoles.Staff });
+				if (staff.length == 0) {
+					return controller.sendSuccess(
+						res,
+						null,
+						404,
+						"Staff not found push FCM"
+					);
+				}
+				if(orderCurrent.typePayment == 'PayPal')
+				{
+					await RefundPayment(req.value.body.id, async function (error, refund) {
+						if (error) {
+							resultRefund = error;
+							return controller.sendSuccess(
+								res,
+								null,
+								300,
+								resultRefund
+							);
+						} else {
+							resultRefund = refund;
+							bodyNew = {
+								status: req.value.body.status,
+								typePayment: "Đã hoàn tiền"
+							};
+							var allDevice = [];
+							for (let i = 0; i < staff.length; i++) {
+								const devices = await DEVICE.find({
+									creatorUser: staff[i]._id,
+									statusDevice: 1
+								});
+								devices.forEach(element => {
+									allDevice.push(element.fcm);
+								});			
+							}
+							pushMultipleNotification(
+								`Đơn hàng bị hủy bởi khách hàng`,
+								`Đơn có mã ${orderCurrent.orderCode} đã bị hủy`,
+								'',
+								{
+									action: 'UPDATE_STATUS_ORDER',
+									_id: `${orderCurrent._id}`
+								},
+								allDevice
+							);
+							const resServices = await orderServices.updateStatusOrderAsync(
+								req.value.body.id,
+								bodyNew,
+							);
+							await resServices.data.history.push(history);
+							await resServices.data.save();
+							if (resServices.success) {
+								return controller.sendSuccess(
+									res,
+									resServices.data,
+									200,
+									resServices.message
+								);
+							}
+							return controller.sendSuccess(
+								res,
+								resServices.data,
+								300,
+								resServices.message
+							);
+						}
+					});
+				}
+				console.log("Huy ne")
+				var allDevice = [];
+				for (let i = 0; i < staff.length; i++) {
+					const devices = await DEVICE.find({
+						creatorUser: staff[i]._id,
+						statusDevice: 1
+					});
+					devices.forEach(element => {
+						allDevice.push(element.fcm);
+					});			
+				}
+				pushMultipleNotification(
+					`Đơn hàng bị hủy bởi khách hàng`,
+					`Đơn có mã ${orderCurrent.orderCode} đã bị hủy`,
+					'',
+					{
+						action: 'UPDATE_STATUS_ORDER',
+						_id: `${orderCurrent._id}`
+					},
+					allDevice
+				);
+				const resServices = await orderServices.updateStatusOrderAsync(
+					req.value.body.id,
+					bodyNew,
+				);
+				await resServices.data.history.push(history);
+				await resServices.data.save();
+				if (resServices.success) {
+					return controller.sendSuccess(
+						res,
+						resServices.data,
+						200,
+						resServices.message
+					);
+				}
+				return controller.sendSuccess(
+					res,
+					resServices.data,
+					300,
+					resServices.message
+				);
+			}
 		}
-		return controller.sendSuccess(
-			res,
-			resServices.data,
-			300,
-			resServices.message
-		);
+		else
+		{
+			const userCreateOrder = await USER.findById(orderCurrent.customerId);
+			console.log(userCreateOrder)
+			if (userCreateOrder) {
+				const devices = await DEVICE.find({
+					creatorUser: userCreateOrder._id,
+					statusDevice: 1
+				});
+				var newArr = devices.map(val => {
+					return val.fcm;
+				});
+				pushMultipleNotification(
+					'Đơn hàng của bạn mới chuyển trạng thái',
+					'Hãy kiểm tra đơn hàng ngay',
+					'',
+					{
+						action: 'UPDATE_STATUS_ORDER',
+						_id: `${orderCurrent._id}`
+					},
+					newArr
+				);
+				const resServices = await orderServices.updateStatusOrderAsync(
+					req.value.body.id,
+					bodyNew,
+				);
+				await resServices.data.history.push(history);
+				await resServices.data.save();
+				if (resServices.success) {
+					return controller.sendSuccess(
+						res,
+						resServices.data,
+						200,
+						resServices.message
+					);
+				}
+				return controller.sendSuccess(
+					res,
+					resServices.data,
+					300,
+					resServices.message
+				);
+			}
+		}
+
 	} catch (error) {
 		// bug
 		console.log(error);
@@ -532,6 +779,31 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 								if (payment.links[i].rel === 'approval_url') {
 									resultPayment = payment.links[i].href;
 									console.log(resultPayment);
+									if (staff.length != 0) {
+										var allDevice = [];
+										for (let i = 0; i < staff.length; i++) {
+											const devices = await DEVICE.find({
+												creatorUser: staff[i]._id,
+												statusDevice: 1
+											});
+											devices.forEach(element => {
+												allDevice.push(element.fcm);
+											});
+											console.log("allDevice");
+						
+											console.log(allDevice);
+										}
+										pushMultipleNotification(
+											'Khách hàng mới tạo đơn',
+											'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
+											'',
+											{
+												action: 'NEW_ORDER',
+												_id: `${idOrderNew}`
+											},
+											allDevice
+										);
+									}
 									return controller.sendSuccess(
 										res,
 										{ link: resultPayment },
@@ -543,31 +815,6 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 						}
 					}
 				);
-				if (staff.length != 0) {
-					var allDevice = [];
-					for (let i = 0; i < staff.length; i++) {
-						const devices = await DEVICE.find({
-							creatorUser: staff[i]._id,
-							statusDevice: 1
-						});
-						devices.forEach(element => {
-							allDevice.push(element.fcm);
-						});
-						console.log("allDevice");
-	
-						console.log(allDevice);
-					}
-					pushMultipleNotification(
-						'Khách hàng mới tạo đơn',
-						'Hãy kiểm tra yêu cầu và xác nhận đơn hàng',
-						'',
-						{
-							action: 'NEW_ORDER',
-							_id: `${idOrderNew}`
-						},
-						allDevice
-					);
-				}
 			} else if (req.value.body.typePaymentOrder == defaultPayment.VNPay) {
 				var ipAddr =
 					req.headers['x-forwarded-for'] ||

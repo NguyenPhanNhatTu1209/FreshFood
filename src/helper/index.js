@@ -75,7 +75,7 @@ exports.RefundPayment = async (idOrder, next) => {
   };
 
   paypal.sale.refund(
-    resultPaypal.id_Paypal,
+    resultPaypal.idPaypal,
     data,
     async function (error, refund) {
       await next(error, refund);
