@@ -37,8 +37,8 @@ exports.paymentMethod = async (price, idOrder, next) => {
       payment_method: "paypal",
     },
     redirect_urls: {
-      return_url: `http://18.140.53.176:3005/user/successPayPal?price=${price}&idDonHang=${idOrder}`,
-      cancel_url: "http://18.140.53.176:3005/user/cancelPayPal",
+      return_url: `https://befreshfood.tk/user/successPayPal?price=${price}&idDonHang=${idOrder}`,
+      cancel_url: "https://befreshfood.tk/user/cancelPayPal",
     },
     transactions: [
       {
