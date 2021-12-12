@@ -165,14 +165,13 @@ exports.forgotPassword = async body => {
 				phoneSend: result.phone,
 				Otp: result.otp
 			};
-			// const resultSendSms = await sendSmsTwilio(bodySms);
-			// if (resultSendSms != true) {
-			// 	return {
-			// 		message: 'Send Phone Fail',
-			// 		success: false
-			// 	};
-			// }
-			const resultSendSms = true;
+			const resultSendSms = await sendSmsTwilio(bodySms);
+			if (resultSendSms != true) {
+				return {
+					message: 'Send Phone Fail',
+					success: false
+				};
+			}
 			console.log('resultSendSms');
 			console.log(resultSendSms);
 			const resultSendMail = await sendMail(mailOptions);
