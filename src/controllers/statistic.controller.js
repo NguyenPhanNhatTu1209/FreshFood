@@ -77,10 +77,15 @@ exports.statisticByOrderPhone = async (req, res, next) => {
 
     const currentTime = new Date(timeStart);
 
-    const start = new Date(currentTime.getTime()-7*3600*1000);
+    // const start = new Date(currentTime.getTime()-7*3600*1000);
+
+		// let endTimeByDay = new Date(timeEnd).setHours(23, 59, 59, 999);
+		// const end = new Date(new Date(endTimeByDay).getTime()-7*3600*1000);
+    const start = new Date(currentTime.getTime());
 
 		let endTimeByDay = new Date(timeEnd).setHours(23, 59, 59, 999);
-		const end = new Date(new Date(endTimeByDay).getTime()-7*3600*1000);
+		const end = new Date(new Date(endTimeByDay).getTime());
+
 
     var day = new Date(end.getTime() - start.getTime());
     var difference= Math.abs(end-start);
