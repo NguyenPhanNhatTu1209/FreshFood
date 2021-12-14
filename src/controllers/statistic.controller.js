@@ -22,12 +22,15 @@ exports.statisticByOrder = async (req, res, next) => {
     var difference= Math.abs(end-start);
     var days = difference/(1000 * 3600 * 24);
     var changeDays = Math.floor(days);
+    console.log(changeDays)
+    console.log(days)
+
     var result = [];
     if(changeDays < days)
       changeDays = changeDays +1;
     for(let i = 0; i<changeDays;i++)
     {
-      var dayCurrent = new Date(timeStart);
+      var dayCurrent = new Date(start);
       dayCurrent = dayCurrent.setDate(start.getDate()+i);
       var formatDayCurrent = formatDateYYMMDD(dayCurrent);
       console.log(formatDayCurrent)

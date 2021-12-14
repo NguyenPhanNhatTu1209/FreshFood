@@ -18,7 +18,6 @@ exports.registerUserAsync = async body => {
 		const emailExist = await USER.findOne({
 			email: email
 		});
-		console.log(emailExist);
 		if (emailExist != null)
 			return {
 				message: 'Email already exists',
@@ -28,7 +27,6 @@ exports.registerUserAsync = async body => {
 			upperCase: false,
 			specialChars: false
 		});
-		console.log(otp);
 		const hashedPassword = await bcrypt.hash(password, 8);
 		const newUser = new USER({
 			email: email,
@@ -53,7 +51,6 @@ exports.registerUserAsync = async body => {
 			data: result
 		};
 	} catch (err) {
-		console.log(err);
 		return {
 			error: 'Internal Server',
 			success: false
@@ -165,7 +162,8 @@ exports.forgotPassword = async body => {
 				phoneSend: result.phone,
 				Otp: result.otp
 			};
-			const resultSendSms = await sendSmsTwilio(bodySms);
+			// const resultSendSms = await sendSmsTwilio(bodySms);
+			const resultSendSms = true;
 			if (resultSendSms != true) {
 				return {
 					message: 'Send Phone Fail',
