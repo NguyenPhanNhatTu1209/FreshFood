@@ -162,8 +162,8 @@ exports.forgotPassword = async body => {
 				phoneSend: result.phone,
 				Otp: result.otp
 			};
-			// const resultSendSms = await sendSmsTwilio(bodySms);
-			const resultSendSms = true;
+			const resultSendSms = await sendSmsTwilio(bodySms);
+			// const resultSendSms = true;
 			if (resultSendSms != true) {
 				return {
 					message: 'Send Phone Fail',

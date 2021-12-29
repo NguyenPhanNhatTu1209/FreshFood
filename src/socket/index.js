@@ -36,10 +36,13 @@ exports.init = async () => {
   global.io.on("connection", async (socket) => {
     const header = socket.handshake.query.token;
     const fcm = socket.handshake.query.fcm;
-
+    console.log("header ne");
+    console.log(header);
     if (!header) {
+      console.log("ko lay dc header");
       io.sockets.sockets[socket.id].disconnect();
     } else {
+      console.log("lay dc header");
       const token = header.split(" ")[1];
       jwt.verify(
         token,
