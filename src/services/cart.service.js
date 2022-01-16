@@ -1,22 +1,21 @@
 const { defaultRoles, defaultStatusCart } = require('../config/defineModel');
-const CART = require('../models/Cart.model')
-const PRODUCT = require('../models/Product.model')
+const CART = require('../models/Cart.model');
+const PRODUCT = require('../models/Product.model');
 const uploadServices = require('../services/uploadS3.service');
-
-
 
 exports.createCartAsync = async body => {
 	try {
 		const productCurrent = await PRODUCT.findById(body.productId);
-		if(productCurrent == null)
-		{
+		if (productCurrent == null) {
 			return {
 				message: 'An error occurred',
 				success: false
 			};
 		}
-		if(productCurrent.quantity == 0  || productCurrent.quantity < body.quantity)
-		{
+		if (
+			productCurrent.quantity == 0 ||
+			productCurrent.quantity < body.quantity
+		) {
 			return {
 				message: 'Do not quantity product',
 				success: false
@@ -36,34 +35,32 @@ exports.createCartAsync = async body => {
 		};
 	}
 };
+
 exports.updateCartAsync = async (id, body) => {
 	try {
-		const cart = await CART.findOneAndUpdate(
-			{ _id: id },
-			body,
-			{
-				new: true
-			}
-		);
+		const cart = await CART.findOneAndUpdate({ _id: id }, body, {
+			new: true
+		});
+
 		return {
 			message: 'Successfully update Cart',
 			success: true,
 			data: cart
 		};
 	} catch (e) {
-		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false
 		};
 	}
 };
-exports.deleteCartAsync = async (id) => {
+
+exports.deleteCartAsync = async id => {
 	try {
-		const cart = await CART.deleteOne({_id: id});
+		const cart = await CART.deleteOne({ _id: id });
 		return {
 			message: 'Successfully delete Cart',
-			success: true,
+			success: true
 		};
 	} catch (e) {
 		console.log(e);
@@ -73,7 +70,8 @@ exports.deleteCartAsync = async (id) => {
 		};
 	}
 };
-exports.getCartByIdAsync = async (id) => {
+
+exports.getCartByIdAsync = async id => {
 	try {
 		const cart = await CART.findById(id);
 		return {
@@ -89,14 +87,20 @@ exports.getCartByIdAsync = async (id) => {
 		};
 	}
 };
-exports.getAllCartByIdUser = async (body) => {
+
+exports.getAllCartByIdUser = async body => {
 	try {
 		const { customerId, skip, limit } = body;
-		const cartsCurrent = await CART.find({customerId: customerId, status: defaultStatusCart.Active}).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
-		console.log(cartsCurrent.length)
+		const cartsCurrent = await CART.find({
+			customerId: customerId,
+			status: defaultStatusCart.Active
+		})
+			.sort({ createdAt: -1 })
+			.skip(Number(limit) * Number(skip) - Number(limit))
+			.limit(Number(limit));
+		console.log(cartsCurrent.length);
 		let arrResult = [];
-		for(let i = 0 ; i < cartsCurrent.length; i++)
-		{
+		for (let i = 0; i < cartsCurrent.length; i++) {
 			var productCurrent = await PRODUCT.findById(cartsCurrent[i].productId);
 			var costCart = 0;
 			var images = [];
@@ -107,21 +111,23 @@ exports.getAllCartByIdUser = async (body) => {
 			costCart = productCurrent.price * cartsCurrent[i].quantity;
 			var newCart = {
 				status: cartsCurrent[i].status,
-        quantity: cartsCurrent[i].quantity,
-        name: cartsCurrent[i].name,
-        nameGroup: cartsCurrent[i].nameGroup,
-        _id: cartsCurrent[i].id,
-        productId: cartsCurrent[i].productId,
-        customerId: cartsCurrent[i].customerId,
+				quantity: cartsCurrent[i].quantity,
+				name: cartsCurrent[i].name,
+				nameGroup: cartsCurrent[i].nameGroup,
+				_id: cartsCurrent[i].id,
+				productId: cartsCurrent[i].productId,
+				customerId: cartsCurrent[i].customerId,
 				image: images,
 				cost: productCurrent.price,
 				totalCost: costCart,
-        createdAt: cartsCurrent[i].createdAt,
-        updatedAt: cartsCurrent[i].updatedAt,
-				weight: productCurrent.weight,
-			}
-			arrResult.push(newCart)
+				createdAt: cartsCurrent[i].createdAt,
+				updatedAt: cartsCurrent[i].updatedAt,
+				weight: productCurrent.weight
+			};
+
+			arrResult.push(newCart);
 		}
+
 		return {
 			message: 'Successfully Get Cart',
 			success: true,
@@ -135,10 +141,14 @@ exports.getAllCartByIdUser = async (body) => {
 		};
 	}
 };
-exports.getCartByProductAndUserAsync = async (body) => {
+exports.getCartByProductAndUserAsync = async body => {
 	try {
-		const {productId,customerId} = body;
-		const cart = await CART.findOne({productId:productId,customerId: customerId});
+		const { productId, customerId } = body;
+		const cart = await CART.findOne({
+			productId: productId,
+			customerId: customerId
+		});
+		
 		return {
 			message: 'Successfully delete Cart',
 			success: true,

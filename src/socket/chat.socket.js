@@ -87,7 +87,7 @@ exports.chatMessage = async (socket, data) => {
 			}
 		);
 		if (user.role === 0) {
-			//user
+			//User
 			const admin = await USER.findOne({
 				role: 1
 			});
@@ -97,18 +97,19 @@ exports.chatMessage = async (socket, data) => {
 			var newArr = devicesAdmin.map((val) => {
 				return val.fcm;
 			})
-			console.log(newArr);
-			console.log(user1)
+
 			pushMultipleNotification(`Tin nhắn từ ${user1.email}`,`${message.data.message}`,'',datafcm,newArr);
 		} else if (user.role === 1) {
-			console.log('Admin');
+			//Admin
 			const deviceUser = await DEVICE.find({creatorUser: socket.Room});
 			const datafcm = convertObjectFieldString(
 				Object.assign(dataMessage)
 			);
+
 			var newArr = deviceUser.map((val) => {
 				return val.fcm;
 			})
+			
 			pushMultipleNotification(`CSKH Trực Tuyến`,`${message.data.message}`,'',datafcm,newArr);
 		}
 	} else {

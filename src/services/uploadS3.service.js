@@ -1,25 +1,15 @@
 const { configEnv } = require('../config');
 const aws = require("aws-sdk");
-const { optional } = require('@hapi/joi');
-const { ConnectionStates } = require('mongoose');
 
 exports.uploadImageS3 = async (body,expires = 300) => {
 	try {
-		console.log(body.name)
-		console.log(body.type)
-		var s3 = new aws.S3({
-			accessKeyId: configEnv.AWS_ACCESS_KEY,
-			secretAccessKey: configEnv.AWS_SECRET_KEY,
-			region: configEnv.REGION,
-			// endpoint: 'lambiengcode.tk', 
-		});
+		var s3 = SetUpS3();
 		const s3Params = {
 			Bucket: configEnv.BUCKET,
 			Key: body.name,
 			Expires: expires,
 			ContentType: body.type
 		};
-		console.log(s3Params)
 		const signedUrl = await s3.getSignedUrl('putObject', s3Params);
 		return signedUrl;
 	} catch (e) {
@@ -30,11 +20,7 @@ exports.uploadImageS3 = async (body,expires = 300) => {
 
 exports.getImageS3 = async (body,expires = 60*60*24) => {
 	try {
-		var s3 = new aws.S3({
-			accessKeyId: configEnv.AWS_ACCESS_KEY,
-			secretAccessKey: configEnv.AWS_SECRET_KEY,
-			region: configEnv.REGION,
-		});
+		var s3 = SetUpS3();
 		const s3Params = {
 			Bucket: configEnv.BUCKET,
 			Key: body,
@@ -47,3 +33,12 @@ exports.getImageS3 = async (body,expires = 60*60*24) => {
 		return null;
 	}
 };
+
+function SetUpS3() {
+	return new aws.S3({
+		accessKeyId: configEnv.AWS_ACCESS_KEY,
+		secretAccessKey: configEnv.AWS_SECRET_KEY,
+		region: configEnv.REGION,
+	});
+}
+

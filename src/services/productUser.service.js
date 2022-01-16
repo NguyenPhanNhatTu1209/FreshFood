@@ -4,7 +4,6 @@ const PRODUCTUSER = require('../models/ProductUser.model');
 
 exports.createProductUserAsync = async body => {
 	try {
-
 		const productUser = new PRODUCTUSER(body);
 		await productUser.save();
 		return {
@@ -13,7 +12,6 @@ exports.createProductUserAsync = async body => {
 			data: productUser
 		};
 	} catch (e) {
-		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false
@@ -31,7 +29,6 @@ exports.updateProductUserAsync = async ( body) => {
 			data: productUser
 		};
 	} catch (e) {
-		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false
@@ -46,7 +43,6 @@ exports.deleteProductUserAsync = async id => {
 			success: true,
 		};
 	} catch (e) {
-		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false

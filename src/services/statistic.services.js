@@ -2,7 +2,6 @@ const USER = require('../models/User.model');
 const ORDER = require('../models/Order.model');
 const PRODUCT = require('../models/Product.model');
 const uploadServices = require('../services/uploadS3.service');
-
 const { defaultRoles, defaultModel } = require('../config/defineModel');
 
 exports.staticByOrder = async body => {
@@ -12,8 +11,7 @@ exports.staticByOrder = async body => {
     const start = new Date(currentTime.getTime()-7*3600*1000);
 		let endTimeByDay = new Date(timeEnd).setHours(23, 59, 59, 999);
 		const end = new Date(new Date(endTimeByDay).getTime()-7*3600*1000);
-		console.log(start)
-		console.log(end)
+
     var listOrder = await ORDER.find({
       status: { $in: [0, 1, 2, 3] },
 			createdAt: {
@@ -26,6 +24,7 @@ exports.staticByOrder = async body => {
     listOrder.forEach(e => {
       totalMoney =  e.totalMoney + totalMoney;
     });
+
 		var result = {
 			totalOrder: totalOrder,
 			totalMoney: totalMoney
@@ -91,6 +90,7 @@ exports.staticByUser = async id => {
 			totalMoney = element.totalMoney+ totalMoney;
 			totalOrder = totalOrder +1;
 		});
+		
 		var result = {
 			totalMoney: totalMoney,
 			totalOrder: totalOrder

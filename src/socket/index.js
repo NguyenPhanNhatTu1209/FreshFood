@@ -39,10 +39,8 @@ exports.init = async () => {
     console.log("header ne");
     console.log(header);
     if (!header) {
-      console.log("ko lay dc header");
       io.sockets.sockets[socket.id].disconnect();
     } else {
-      console.log("lay dc header");
       const token = header.split(" ")[1];
       jwt.verify(
         token,
@@ -68,6 +66,7 @@ exports.init = async () => {
 
     socket.on("UPDATE_DEVICE_CSS", async (data) => {
       const user = this.findUserBySocket(socket.id);
+
       const device = await DEVICE.findOneAndUpdate(
         {
           deviceUUid: data.deviceUUid,
@@ -79,6 +78,7 @@ exports.init = async () => {
         },
         { new: true }
       );
+      
       if (!device) {
         data.fcm = user.fcm;
         data.statusDevice = 1;
@@ -89,6 +89,7 @@ exports.init = async () => {
 
     socket.on("DELETE_DEVICE_CSS", async (data) => {
       const user = this.findUserBySocket(socket.id);
+
       await DEVICE.findOneAndUpdate(
         {
           deviceUUid: data.deviceUUid,
@@ -99,7 +100,6 @@ exports.init = async () => {
       );
     });
 
-    console.log("connect Socket", global.listUser.length);
     socket.on(defaultChatSocket.sendMessageCSS, (data) =>
       chatSocket.chatMessage(socket, data)
     );

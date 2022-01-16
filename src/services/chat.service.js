@@ -5,19 +5,13 @@ const uploadServices = require('../services/uploadS3.service');
 
 exports.createChat = async body => {
 	try {
-		console.log(body);
 		const newChat = await CHAT.create(body);
-		console.log(
-			`LHA:  ===> file: chat.service.js ===> line 6 ===> newChat`,
-			newChat
-		);
 		return {
 			message: 'Successfully create chat',
 			success: true,
 			data: newChat
 		};
 	} catch (error) {
-		console.log(error);
 		return {
 			message: 'An error occurred',
 			success: false
@@ -52,7 +46,6 @@ exports.updateChat = async (body, optional = {}) => {
 
 exports.updateSendByUser = async idUser => {
 	try {
-		console.log('co run khong ');
 		const chats = await CHAT.find({
 			seenByUser: {
 				$exists: true,
@@ -96,7 +89,6 @@ exports.getMessages = async body => {
 			data: chatGetByRoom
 		};
 	} catch (err) {
-		console.log(err);
 		return {
 			message: 'An error occurred',
 			success: false
@@ -112,6 +104,7 @@ exports.getRoomAdmin = async body => {
 			})
 			.skip(Number(skip))
 			.limit(Number(limit));
+
 		let arrResult = [];
 		for (let i = 0; i < getRoomByAdmin.length; i++) {
 			let chat = await CHAT.findById(getRoomByAdmin[i].idLastMessage);
@@ -128,13 +121,13 @@ exports.getRoomAdmin = async body => {
 			};
 			arrResult.push(roomNew);
 		}
+
 		return {
 			message: 'Successfully get room',
 			success: true,
 			data: arrResult
 		};
 	} catch (err) {
-		console.log(err);
 		return {
 			message: 'An error occurred',
 			success: false

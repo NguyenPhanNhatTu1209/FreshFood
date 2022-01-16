@@ -91,54 +91,11 @@ exports.getEveluateByOrderAndUserAndProductAsync = async (
 exports.getEveluateByProduct = async body => {
 	try {
 		const { productId, skip, limit } = body;
-		console.log('body');
-		console.log(body);
 		const eveluates = await EVELUATE.find({ productId: productId })
 			.sort({ createdAt: -1 })
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
-			var resultEveluate = [];
-			if (eveluates.length > 0) {
-				for (let i = 0; i < eveluates.length; i++) {
-					var userCurrent = await USER.findById(eveluates[i].customerId);
-					var avatar = await uploadServices.getImageS3(userCurrent.avatar);
-					var result = {
-						productId: eveluates[i].productId,
-						customerId: eveluates[i].customerId,
-						orderId: eveluates[i].orderId,
-						image: eveluates[i].image,
-						content: eveluates[i].content,
-						star: eveluates[i].star,
-						_id: eveluates[i]._id,
-						createdAt: eveluates[i].createdAt,
-						updatedAt: eveluates[i].updatedAt,
-						avatar: avatar,
-						name: userCurrent.name
-					};
-					resultEveluate.push(result)
-				}
-			}
-		return {
-			message: 'Successfully Get eveluates',
-			success: true,
-			data: resultEveluate
-		};
-	} catch (e) {
-		console.log(e);
-		return {
-			message: 'An error occurred',
-			success: false
-		};
-	}
-};
-exports.getAllEveluateByProduct = async productId => {
-	try {
-		console.log('productId');
 
-		console.log(productId);
-		const eveluates = await EVELUATE.find({ productId: productId }).sort({
-			createdAt: -1
-		});
 		var resultEveluate = [];
 		if (eveluates.length > 0) {
 			for (let i = 0; i < eveluates.length; i++) {
@@ -157,16 +114,56 @@ exports.getAllEveluateByProduct = async productId => {
 					avatar: avatar,
 					name: userCurrent.name
 				};
-				resultEveluate.push(result)
+				resultEveluate.push(result);
 			}
 		}
+
 		return {
 			message: 'Successfully Get eveluates',
 			success: true,
 			data: resultEveluate
 		};
 	} catch (e) {
-		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+exports.getAllEveluateByProduct = async productId => {
+	try {
+		const eveluates = await EVELUATE.find({ productId: productId }).sort({
+			createdAt: -1
+		});
+
+		var resultEveluate = [];
+		if (eveluates.length > 0) {
+			for (let i = 0; i < eveluates.length; i++) {
+				var userCurrent = await USER.findById(eveluates[i].customerId);
+				var avatar = await uploadServices.getImageS3(userCurrent.avatar);
+				var result = {
+					productId: eveluates[i].productId,
+					customerId: eveluates[i].customerId,
+					orderId: eveluates[i].orderId,
+					image: eveluates[i].image,
+					content: eveluates[i].content,
+					star: eveluates[i].star,
+					_id: eveluates[i]._id,
+					createdAt: eveluates[i].createdAt,
+					updatedAt: eveluates[i].updatedAt,
+					avatar: avatar,
+					name: userCurrent.name
+				};
+				resultEveluate.push(result);
+			}
+		}
+		
+		return {
+			message: 'Successfully Get eveluates',
+			success: true,
+			data: resultEveluate
+		};
+	} catch (e) {
 		return {
 			message: 'An error occurred',
 			success: false

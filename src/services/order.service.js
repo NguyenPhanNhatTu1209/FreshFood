@@ -6,9 +6,7 @@ const {
 const CART = require('../models/Cart.model');
 const ORDER = require('../models/Order.model');
 const PRODUCT = require('../models/Product.model');
-const SHIPFEE = require('../models/ShipFee.model');
 const EVELUATE = require('../models/Eveluate.model');
-const { body } = require('../validators');
 const uploadServices = require('../services/uploadS3.service');
 
 exports.createOrderAsync = async body => {
@@ -87,19 +85,17 @@ exports.createOrderAsync = async body => {
 		}
 	}
 };
+
 exports.updateOrderAsync = async (id, body) => {
 	try {
-		var address = await SHIPFEE.findById(body.area);
 		var ordersCurrent = await ORDER.findById(id);
 		let totalWeight = 0;
-		let totalShip = 0;
 		for (let i = 0; i < ordersCurrent.product.length; i++) {
 			totalWeight =
 				totalWeight +
 				ordersCurrent.product[i].quantity * ordersCurrent.product[i].weight;
 		}
-		totalShip = address.fee * totalWeight;
-		body.shipFee = totalShip;
+
 		const order = await ORDER.findOneAndUpdate({ _id: id }, body, {
 			new: true
 		});
@@ -116,6 +112,7 @@ exports.updateOrderAsync = async (id, body) => {
 		};
 	}
 };
+
 exports.updateStatusOrderAsync = async (id, body) => {
 	try {
 		console.log(body);
@@ -135,6 +132,7 @@ exports.updateStatusOrderAsync = async (id, body) => {
 		};
 	}
 };
+
 exports.cancelOrderAsync = async id => {
 	try {
 		var ordersCurrent = await ORDER.findById(id);
@@ -166,6 +164,7 @@ exports.cancelOrderAsync = async id => {
 		};
 	}
 };
+
 exports.GetOrderByUser = async body => {
 	try {
 		const { search, skip, limit, status, customerId } = body;
@@ -182,6 +181,7 @@ exports.GetOrderByUser = async body => {
 			customerId: customerId,
 			status: status
 		});
+
 		var numberPage = Math.ceil(totalOrder.length / limit);
 		// search có skip và limit
 		for (let i = 0; i < ordersCurrent.length; i++) {
@@ -194,6 +194,7 @@ exports.GetOrderByUser = async body => {
 				}
 			}
 		}
+
 		// search k có skip và limit
 		for (let i = 0; i < totalOrder.length; i++) {
 			for (let j = 0; j < totalOrder[i].product.length; j++) {
@@ -217,6 +218,7 @@ exports.GetOrderByUser = async body => {
 				resultImage.push(image);
 				ordersSearch[i].product[j].image = resultImage;
 			}
+
 			var eveluateOrder = await EVELUATE.findOne({
 				orderId: ordersSearch[i].id
 			});
@@ -224,6 +226,7 @@ exports.GetOrderByUser = async body => {
 			if (eveluateOrder) {
 				checkEveluate = true;
 			}
+
 			var orderClone = {
 				area: ordersSearch[i].area,
 				totalMoney: ordersSearch[i].totalMoney,
@@ -243,6 +246,7 @@ exports.GetOrderByUser = async body => {
 			};
 			orderResult.push(orderClone);
 		}
+
 		return {
 			message: 'Successfully get orders',
 			success: true,
@@ -257,6 +261,7 @@ exports.GetOrderByUser = async body => {
 		};
 	}
 };
+
 exports.GetOrderByAdmin = async body => {
 	try {
 		const { search, skip, limit, status } = body;
@@ -274,6 +279,7 @@ exports.GetOrderByAdmin = async body => {
 			.sort({ updatedAt: -1 })
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
+
 		var ordersSearch = [];
 		var totalOrder = await ORDER.find({
 			status: status,
@@ -286,6 +292,7 @@ exports.GetOrderByAdmin = async body => {
 				}
 			]
 		});
+
 		var numberPage = Math.ceil(totalOrder.length / limit);
 		for (let i = 0; i < ordersCurrent.length; i++) {
 			for (let j = 0; j < ordersCurrent[i].product.length; j++) {
@@ -298,6 +305,7 @@ exports.GetOrderByAdmin = async body => {
 			}
 			ordersSearch.push(ordersCurrent[i]);
 		}
+
 		return {
 			message: 'Successfully get orders',
 			success: true,
@@ -312,9 +320,9 @@ exports.GetOrderByAdmin = async body => {
 		};
 	}
 };
+
 exports.findOrderByIdAsync = async id => {
 	try {
-		console.log(id);
 		const order = await ORDER.findById(id);
 		return {
 			message: 'Successfully Get Product',

@@ -1,13 +1,15 @@
 const controller = require('./controller');
 const addressServices = require('../services/address.service');
 const { defaultRoles } = require('../config/defineModel');
+
 exports.createAddressAsync = async (req, res, next) => {
 	try {
-    const { decodeToken } = req.value.body;
+		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
-		console.log(id);
-    req.value.body.customerId = id;
-		const resServices = await addressServices.createAddressAsync(req.value.body);
+		req.value.body.customerId = id;
+		const resServices = await addressServices.createAddressAsync(
+			req.value.body
+		);
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -16,6 +18,7 @@ exports.createAddressAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -23,18 +26,20 @@ exports.createAddressAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
+
 exports.updateAddressAsync = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
-		console.log(id);
-    req.value.body.customerId = id;
-		const resServices = await addressServices.updateAddressAsync(req.value.body.id,req.value.body);
+		req.value.body.customerId = id;
+		const resServices = await addressServices.updateAddressAsync(
+			req.value.body.id,
+			req.value.body
+		);
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -43,6 +48,7 @@ exports.updateAddressAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -50,7 +56,6 @@ exports.updateAddressAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
@@ -66,6 +71,7 @@ exports.deleteAddressAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -73,14 +79,13 @@ exports.deleteAddressAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
 exports.GetAllAddressByUserAsync = async (req, res, next) => {
 	try {
-    const { decodeToken } = req.value.body;
+		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
 		const resServices = await addressServices.getAllAddressByIdUser(id);
 		if (resServices.success) {
@@ -91,6 +96,7 @@ exports.GetAllAddressByUserAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -98,19 +104,20 @@ exports.GetAllAddressByUserAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
+
 exports.GetPriceAddress = async (req, res, next) => {
 	try {
 		var query = {
 			address: req.query.address,
-			province:req.query.province,
-      district:req.query.district,
-			weight: req.query.weight,
-		}
+			province: req.query.province,
+			district: req.query.district,
+			weight: req.query.weight
+		};
+
 		const resServices = await addressServices.priceAddrees(query);
 		if (resServices.success) {
 			return controller.sendSuccess(
@@ -120,6 +127,7 @@ exports.GetPriceAddress = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -127,7 +135,6 @@ exports.GetPriceAddress = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}

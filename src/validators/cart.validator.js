@@ -4,6 +4,7 @@ const schemas = {
 		productId: joi.string().required(),
     quantity: joi.number().required()
 	}),
+	
 	updateCart: joi.array().items({
     id: joi.string().required(),
 		status: joi.number().required(),

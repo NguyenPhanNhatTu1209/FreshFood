@@ -1,17 +1,18 @@
 const controller = require('./controller');
 const cartServices = require('../services/cart.service');
 const productServices = require('../services/product.service');
-const { defaultRoles,defaultStatusCart } = require('../config/defineModel');
+const { defaultRoles, defaultStatusCart } = require('../config/defineModel');
 exports.createCartAsync = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
-		console.log(id)
 		req.value.body.customerId = id;
 		var resServices;
-		const productCurrent = await productServices.findProductByIdAsync(req.value.body.productId);
-		if(productCurrent.success != true)
-		{
+		const productCurrent = await productServices.findProductByIdAsync(
+			req.value.body.productId
+		);
+
+		if (productCurrent.success != true) {
 			return controller.sendSuccess(
 				res,
 				productCurrent.data,
@@ -19,14 +20,15 @@ exports.createCartAsync = async (req, res, next) => {
 				productCurrent.message
 			);
 		}
-		if(productCurrent.data.quantity >= req.value.body.quantity)
-		{
+
+		if (productCurrent.data.quantity >= req.value.body.quantity) {
 			req.value.body.name = productCurrent.data.name;
 			req.value.body.nameGroup = productCurrent.data.groupProduct.name;
-			console.log(req.value.body);
-			const cartCurrent = await cartServices.getCartByProductAndUserAsync(req.value.body);
-			if(cartCurrent.success == true && cartCurrent.data == null )
-			{
+			const cartCurrent = await cartServices.getCartByProductAndUserAsync(
+				req.value.body
+			);
+
+			if (cartCurrent.success == true && cartCurrent.data == null) {
 				resServices = await cartServices.createCartAsync(req.value.body);
 				if (resServices.success) {
 					return controller.sendSuccess(
@@ -36,13 +38,14 @@ exports.createCartAsync = async (req, res, next) => {
 						resServices.message
 					);
 				}
-			}
-			else if(cartCurrent.success == true && cartCurrent.data != null)
-			{
-				if(cartCurrent.data.status == defaultStatusCart.Active)
-				{
-					req.value.body.quantity = cartCurrent.data.quantity+ req.value.body.quantity;
-					resServices = await cartServices.updateCartAsync(cartCurrent.data.id,req.value.body);
+			} else if (cartCurrent.success == true && cartCurrent.data != null) {
+				if (cartCurrent.data.status == defaultStatusCart.Active) {
+					req.value.body.quantity =
+						cartCurrent.data.quantity + req.value.body.quantity;
+					resServices = await cartServices.updateCartAsync(
+						cartCurrent.data.id,
+						req.value.body
+					);
 					if (resServices.success) {
 						return controller.sendSuccess(
 							res,
@@ -51,11 +54,12 @@ exports.createCartAsync = async (req, res, next) => {
 							resServices.message
 						);
 					}
-				}
-				else
-				{
+				} else {
 					req.value.body.status = defaultStatusCart.Active;
-					resServices = await cartServices.updateCartAsync(cartCurrent.data.id,req.value.body);
+					resServices = await cartServices.updateCartAsync(
+						cartCurrent.data.id,
+						req.value.body
+					);
 					if (resServices.success) {
 						return controller.sendSuccess(
 							res,
@@ -66,36 +70,29 @@ exports.createCartAsync = async (req, res, next) => {
 					}
 				}
 			}
+
 			return controller.sendSuccess(
 				res,
 				cartCurrent.data,
 				300,
 				cartCurrent.message
 			);
-		}
-		else
-		{
-			return controller.sendSuccess(
-				res,
-				null,
-				400,
-				"Don't quantity product"
-			);
+		} else {
+			return controller.sendSuccess(res, null, 400, "Don't quantity product");
 		}
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
+
 exports.updateCartAsync = async (req, res, next) => {
 	try {
-		console.log("req.value.body");
-		console.log(req.value.body);
 		var resultUpdate = [];
-		for(let i=0;i<req.value.body.array.length;i++)
-		{
-			var cartCurrent = await cartServices.getCartByIdAsync(req.value.body.array[i].id);
+		for (let i = 0; i < req.value.body.array.length; i++) {
+			var cartCurrent = await cartServices.getCartByIdAsync(
+				req.value.body.array[i].id
+			);
 			if (cartCurrent.success == false) {
 				return controller.sendSuccess(
 					res,
@@ -104,8 +101,9 @@ exports.updateCartAsync = async (req, res, next) => {
 					cartCurrent.message
 				);
 			}
-			console.log(req.value.body.array[i].id)
-			var productCurrent = await productServices.findProductByIdAsync(cartCurrent.data.productId);
+			var productCurrent = await productServices.findProductByIdAsync(
+				cartCurrent.data.productId
+			);
 			if (productCurrent.success == false) {
 				return controller.sendSuccess(
 					res,
@@ -114,16 +112,14 @@ exports.updateCartAsync = async (req, res, next) => {
 					productCurrent.message
 				);
 			}
-			if(productCurrent.data.quantity < req.value.body.array[i].quantity)
-			{
-				return controller.sendSuccess(
-					res,
-					null,
-					400,
-					"Don't quantity product"
-				);
+
+			if (productCurrent.data.quantity < req.value.body.array[i].quantity) {
+				return controller.sendSuccess(res, null, 400, "Don't quantity product");
 			}
-			const resServices = await cartServices.updateCartAsync(req.value.body.array[i].id,req.value.body.array[i]);
+			const resServices = await cartServices.updateCartAsync(
+				req.value.body.array[i].id,
+				req.value.body.array[i]
+			);
 			if (resServices.success == false) {
 				return controller.sendSuccess(
 					res,
@@ -132,42 +128,35 @@ exports.updateCartAsync = async (req, res, next) => {
 					resServices.message
 				);
 			}
+
 			resultUpdate.push(resServices.data);
 		}
-		if(resultUpdate.length == req.value.body.array.length)
-		{
+		if (resultUpdate.length == req.value.body.array.length) {
 			return controller.sendSuccess(
 				res,
 				resultUpdate,
 				200,
-				"Update Success Cart"
+				'Update Success Cart'
 			);
+		} else {
+			return controller.sendSuccess(res, null, 300, "Don't update Cart");
 		}
-		else
-		{
-			return controller.sendSuccess(
-				res,
-				null,
-				300,
-				"Don't update Cart"
-			);
-		}
-
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
+
 exports.GetCartAsync = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
 		var query = {
 			customerId: id,
-			limit:req.query.limit||"15",
-      skip:req.query.skip||"1"
-		}
+			limit: req.query.limit || '15',
+			skip: req.query.skip || '1'
+		};
+
 		const resServices = await cartServices.getAllCartByIdUser(query);
 		if (resServices.success) {
 			return controller.sendSuccess(
@@ -177,6 +166,7 @@ exports.GetCartAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -184,11 +174,11 @@ exports.GetCartAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
+
 exports.deleteCartAsync = async (req, res, next) => {
 	try {
 		const resServices = await cartServices.deleteCartAsync(req.query.id);
@@ -200,6 +190,7 @@ exports.deleteCartAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -207,7 +198,6 @@ exports.deleteCartAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}

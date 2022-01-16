@@ -1,20 +1,16 @@
 const { defaultRoles, defaultStatusCart } = require('../config/defineModel');
-const ADDRESS = require('../models/address.model')
+const ADDRESS = require('../models/address.model');
 
 const uploadServices = require('../services/uploadS3.service');
 const { configEnv } = require('../config');
 const axios = require('axios').default;
 
-
 exports.createAddressAsync = async body => {
 	try {
-		if(body.isMain == true)
-		{
-			listAddress = await ADDRESS.find({customerId: body.customerId});
-			if(listAddress.length >0)
-			{
-				for(let i =0;i<listAddress.length;i++)
-				{
+		if (body.isMain == true) {
+			listAddress = await ADDRESS.find({ customerId: body.customerId });
+			if (listAddress.length > 0) {
+				for (let i = 0; i < listAddress.length; i++) {
 					listAddress[i].isMain = false;
 					listAddress[i].save();
 				}
@@ -34,50 +30,44 @@ exports.createAddressAsync = async body => {
 		};
 	}
 };
+
 exports.updateAddressAsync = async (id, body) => {
 	try {
-		if(body.isMain == true)
-		{
-			listAddress = await ADDRESS.find({customerId: body.customerId});
+		if (body.isMain == true) {
+			listAddress = await ADDRESS.find({ customerId: body.customerId });
 
-			if(listAddress.length >0)
-			{
-				for(let i =0;i<listAddress.length;i++)
-				{
-					if(listAddress[i].id != id)
-					{
+			if (listAddress.length > 0) {
+				for (let i = 0; i < listAddress.length; i++) {
+					if (listAddress[i].id != id) {
 						listAddress[i].isMain = false;
 						listAddress[i].save();
 					}
 				}
 			}
 		}
-		const address = await ADDRESS.findOneAndUpdate(
-			{ _id: id },
-			body,
-			{
-				new: true
-			}
-		);
+
+		const address = await ADDRESS.findOneAndUpdate({ _id: id }, body, {
+			new: true
+		});
 		return {
 			message: 'Successfully update Address',
 			success: true,
 			data: address
 		};
 	} catch (e) {
-		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false
 		};
 	}
 };
-exports.deleteAddressAsync = async (id) => {
+
+exports.deleteAddressAsync = async id => {
 	try {
-		const address = await ADDRESS.deleteOne({_id: id});
+		const address = await ADDRESS.deleteOne({ _id: id });
 		return {
 			message: 'Successfully delete Cart',
-			success: true,
+			success: true
 		};
 	} catch (e) {
 		console.log(e);
@@ -87,7 +77,8 @@ exports.deleteAddressAsync = async (id) => {
 		};
 	}
 };
-exports.getAddressByIdAsync = async (id) => {
+
+exports.getAddressByIdAsync = async id => {
 	try {
 		const address = await ADDRESS.findById(id);
 		return {
@@ -96,34 +87,35 @@ exports.getAddressByIdAsync = async (id) => {
 			data: address
 		};
 	} catch (e) {
-		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false
 		};
 	}
 };
-exports.getAllAddressByIdUser = async (id) => {
+
+exports.getAllAddressByIdUser = async id => {
 	try {
-		const arrAddress = await ADDRESS.find({customerId: id}).sort({createdAt: -1});
+		const arrAddress = await ADDRESS.find({ customerId: id }).sort({
+			createdAt: -1
+		});
 		return {
 			message: 'Successfully Get Address',
 			success: true,
 			data: arrAddress
 		};
 	} catch (e) {
-		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false
 		};
 	}
 };
-exports.priceAddrees = async (body) => {
-	try {
 
-		const {address,province,district,weight} = body;
-		var totalShip =0;
+exports.priceAddrees = async body => {
+	try {
+		const { address, province, district, weight } = body;
+		var totalShip = 0;
 		await axios
 			.get('https://services.giaohangtietkiem.vn/services/shipment/fee', {
 				params: {
@@ -138,7 +130,6 @@ exports.priceAddrees = async (body) => {
 			})
 			.then(function (response) {
 				totalShip = response.data.fee.fee;
-				console.log(response.data);
 			})
 			.catch(function (error) {
 				console.log(error);
@@ -154,7 +145,6 @@ exports.priceAddrees = async (body) => {
 			}
 		};
 	} catch (e) {
-		console.log(e);
 		return {
 			message: 'An error occurred',
 			success: false

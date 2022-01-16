@@ -1,6 +1,5 @@
 const param = (schema, id) => {
   return (req, res, next) => {
-    console.log(`LHA:  ===> file: index.js ===> line 9 ===> req.params[id]`, req.params[id])
     const validatorResult = schema.validate({ param: req.params[id] });
     if (validatorResult.error)
       return res.status(400).json(validatorResult.error);
@@ -33,12 +32,10 @@ const body = (schema) => {
       {
         req.value.body.array = req.body;
         next();
-
       }
     }
   };
 }
-
 
 const bodySocket=((schema,data)=>{
   const validatorResult=schema.validate(data)

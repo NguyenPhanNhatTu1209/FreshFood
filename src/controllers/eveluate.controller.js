@@ -3,15 +3,12 @@ const cartServices = require('../services/cart.service');
 const orderServices = require('../services/order.service');
 const productServices = require('../services/product.service');
 const eveluateServices = require('../services/eveluate.service');
-
 const { defaultRoles, defaultStatusOrder } = require('../config/defineModel');
+
 exports.createEveluateAsync = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
-		console.log(id);
-		console.log('req.body');
-
 		var resultEveluate = [];
 		for (let i = 0; i < req.body.length; i++) {
 			req.body[i].customerId = id;
@@ -21,7 +18,7 @@ exports.createEveluateAsync = async (req, res, next) => {
 					req.body[i].orderId,
 					req.body[i].productId
 				);
-			console.log(eveluateCurrent)
+
 			if (eveluateCurrent.data.length > 0) {
 				return controller.sendSuccess(
 					res,
@@ -41,13 +38,9 @@ exports.createEveluateAsync = async (req, res, next) => {
 				orderCurrent.success != true ||
 				orderCurrent.data.status != defaultStatusOrder.DaGiao
 			) {
-				return controller.sendSuccess(
-					res,
-					null,
-					300,
-					"Create Eveluate Fail"
-				);
+				return controller.sendSuccess(res, null, 300, 'Create Eveluate Fail');
 			}
+
 			const resServices = await eveluateServices.createEveluateAsync(
 				req.body[i]
 			);
@@ -55,33 +48,28 @@ exports.createEveluateAsync = async (req, res, next) => {
 				resultEveluate.push(resServices.data);
 			}
 		}
-		if(resultEveluate.length ==req.body.length)
-		{
+		if (resultEveluate.length == req.body.length) {
 			return controller.sendSuccess(
 				res,
 				resultEveluate,
 				200,
-				"Create Eveluate Success"
+				'Create Eveluate Success'
 			);
 		}
-		return controller.sendSuccess(
-			res,
-			null,
-			300,
-			"Create Eveluate Fail"
-		);
+
+		return controller.sendSuccess(res, null, 300, 'Create Eveluate Fail');
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
+
 exports.deleteEveluate = async (req, res, next) => {
 	try {
-		console.log(req.query.id);
 		const resServices = await eveluateServices.deleteEveluateAsync(
 			req.query.id
 		);
+
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -90,6 +78,7 @@ exports.deleteEveluate = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -97,23 +86,20 @@ exports.deleteEveluate = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
 exports.GetEveluateByProductAsync = async (req, res, next) => {
 	try {
-		console.log(req.query)
 		var query = {
 			productId: req.query.productId,
-			limit:req.query.limit||"15",
-      skip:req.query.skip||"1"
-		}
-		console.log(req.query.productId);
-		const resServices = await eveluateServices.getEveluateByProduct(
-			query
-		);
+			limit: req.query.limit || '15',
+			skip: req.query.skip || '1'
+		};
+
+		const resServices = await eveluateServices.getEveluateByProduct(query);
+
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -122,6 +108,7 @@ exports.GetEveluateByProductAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -129,7 +116,6 @@ exports.GetEveluateByProductAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}

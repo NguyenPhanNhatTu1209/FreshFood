@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { configEnv } = require("../config/index")
+
 const verify = (req, res, next) => {
 	const header = req.headers.authorization;
   
@@ -28,9 +29,8 @@ const verify = (req, res, next) => {
 			next();
 		}
 	});
-
-
 }
+
 const createToken = (data) => {
 	return jwt.sign(
 		{

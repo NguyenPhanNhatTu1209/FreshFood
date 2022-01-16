@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const configEnv = {
 	ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
 	JWT_KEY: process.env.JWT_KEY,
@@ -18,7 +19,9 @@ const configEnv = {
 	Phone: process.env.Phone,
 
 };
+
 const DFRoleValue = ["User", "Admin","Staff"]
+
 module.exports = {
 	configEnv,
 	DFRoleValue

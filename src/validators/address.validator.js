@@ -8,6 +8,7 @@ const schemas = {
     address: joi.string().required(),
     isMain: joi.bool().required()
 	}),
+  
 	updateAddress: joi.object().keys({
     id: joi.string().required(),
 		name: joi.string().required(),

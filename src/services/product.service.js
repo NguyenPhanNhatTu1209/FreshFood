@@ -6,19 +6,19 @@ const PRODUCT = require('../models/Product.model');
 exports.createProductAsync = async body => {
 	try {
 		var groupProduct = await GROUPPRODUCT.findOne({ key: body.groupProduct });
-		console.log(body)
 		if (groupProduct == null)
 			return {
 				message: 'GroupProduct not exit',
 				success: false
 			};
+
 		body.groupProduct = {
 			name: groupProduct.name,
 			key: groupProduct.key
 		};
-		console.log()
 		const product = new PRODUCT(body);
 		await product.save();
+
 		return {
 			message: 'Successfully create Product',
 			success: true,
@@ -32,15 +32,16 @@ exports.createProductAsync = async body => {
 		};
 	}
 };
+
 exports.updateProductAsync = async (id, body) => {
 	try {
-		console.log(id);
 		var groupProduct = await GROUPPRODUCT.findOne({ key: body.groupProduct });
 		if (groupProduct == null)
 			return {
 				message: 'GroupProduct not exit',
 				success: false
 			};
+
 		body.groupProduct = {
 			name: groupProduct.name,
 			key: groupProduct.key
@@ -48,7 +49,7 @@ exports.updateProductAsync = async (id, body) => {
 		const product = await PRODUCT.findOneAndUpdate({ _id: id }, body, {
 			new: true
 		});
-		console.log(product)
+
 		return {
 			message: 'Successfully update Product',
 			success: true,
@@ -69,6 +70,7 @@ exports.deleteProductAsync = async id => {
 			{ status: 'DELETED' },
 			{ new: true }
 		);
+
 		return {
 			message: 'Successfully delete Product',
 			success: true,
@@ -84,7 +86,6 @@ exports.deleteProductAsync = async id => {
 };
 exports.findProductByIdAsync = async id => {
 	try {
-		console.log(id);
 		const product = await PRODUCT.findById(id);
 		if(product == null)
 		{
@@ -93,6 +94,7 @@ exports.findProductByIdAsync = async id => {
 				success: false
 			};
 		}
+
 		return {
 			message: 'Successfully Get Product',
 			success: true,
@@ -106,6 +108,7 @@ exports.findProductByIdAsync = async id => {
 		};
 	}
 };
+
 exports.findAllProduct = async body => {
 	try {
 		const { groupProduct, search,skip,limit} = body;
@@ -126,6 +129,7 @@ exports.findAllProduct = async body => {
 			}).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
 			numberPage = Math.ceil(product.length/limit);
 		}
+
 		return {
 			message: 'Successfully Get Product',
 			success: true,
@@ -140,6 +144,7 @@ exports.findAllProduct = async body => {
 		};
 	}
 };
+
 exports.getProductRecommend = async (id) => {
 	try {
 		const products = await PRODUCT.find().sort({sold: -1});
@@ -148,6 +153,7 @@ exports.getProductRecommend = async (id) => {
 		{
 			arrResult.push(products[i]);
 		}
+		
 		return {
 			message: 'Successfully get product recommend',
 			success: true,

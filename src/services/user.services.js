@@ -2,14 +2,11 @@ const USER = require('../models/User.model');
 const bcrypt = require('bcryptjs');
 const jwtServices = require('./jwt.services');
 const jwt = require('jsonwebtoken');
-
 const { defaultRoles, defaultModel } = require('../config/defineModel');
 const otpGenerator = require('otp-generator');
 const { configEnv } = require('../config/index');
-const nodemailer = require('nodemailer');
 const { sendMail } = require('./sendMail.service');
 const { sendSmsTwilio } = require('./sms.service');
-
 const uploadServices = require('../services/uploadS3.service');
 exports.registerUserAsync = async body => {
 	try {
@@ -64,6 +61,7 @@ exports.loginAsync = async body => {
 		const user = await USER.findOne({
 			email: email
 		});
+
 		if (!user) {
 			return {
 				message: 'Invalid Email !!',
@@ -77,6 +75,7 @@ exports.loginAsync = async body => {
 				success: false
 			};
 		}
+
 		const generateToken = jwtServices.createToken({
 			id: user._id,
 			role: user.role
@@ -107,6 +106,7 @@ exports.findUserByIdAsync = async body => {
 				success: false
 			};
 		}
+
 		return {
 			message: 'Successfully Get User',
 			success: true,
@@ -132,6 +132,7 @@ exports.changePasswordAsync = async (id, body) => {
 				data: user
 			};
 		}
+
 		const newPassword = await bcrypt.hash(body.newPassword, 8);
 		user.password = newPassword;
 		await user.save();
@@ -151,6 +152,7 @@ exports.forgotPassword = async body => {
 	try {
 		const email = body.email;
 		const result = await USER.findOne({ email: email });
+
 		if (result != null) {
 			const mailOptions = {
 				to: result.email,
@@ -158,20 +160,20 @@ exports.forgotPassword = async body => {
 				subject: 'Quên mật khẩu Fresh Food',
 				text: 'Mã OTP của bạn là:' + result.otp
 			};
+
 			var bodySms = {
 				phoneSend: result.phone,
 				Otp: result.otp
 			};
+
 			const resultSendSms = await sendSmsTwilio(bodySms);
-			// const resultSendSms = true;
 			if (resultSendSms != true) {
 				return {
 					message: 'Send Phone Fail',
 					success: false
 				};
 			}
-			console.log('resultSendSms');
-			console.log(resultSendSms);
+
 			const resultSendMail = await sendMail(mailOptions);
 			if (resultSendMail != true) {
 				return {
@@ -179,8 +181,7 @@ exports.forgotPassword = async body => {
 					success: false
 				};
 			}
-			console.log('resultSendEmail');
-			console.log(resultSendMail);
+
 			if (!resultSendMail || resultSendSms != true) {
 				return {
 					message: 'Send Email Or Phone Fail',
@@ -207,10 +208,12 @@ exports.forgotPassword = async body => {
 		};
 	}
 };
+
 exports.resetPassword = async body => {
 	try {
 		const { otp, password, email } = body;
 		let user = await USER.findOne({ email: email });
+
 		if (user != null) {
 			if (otp == user.otp) {
 				const hashedPassword = await bcrypt.hash(password, 8);
@@ -245,6 +248,7 @@ exports.resetPassword = async body => {
 		};
 	}
 };
+
 exports.confirmOtp = async body => {
 	try {
 		const { otp, email } = body;
@@ -256,12 +260,14 @@ exports.confirmOtp = async body => {
 					specialChars: false,
 					alphabets: false
 				});
+
 				user.otp = otp;
 				user.save();
 				const generateToken = jwtServices.createToken({
 					id: user._id,
 					role: user.role
 				});
+
 				return {
 					message: 'Successfully confirm Otp',
 					success: true,
@@ -288,6 +294,7 @@ exports.confirmOtp = async body => {
 		};
 	}
 };
+
 exports.changePasswordWithOtp = async body => {
 	try {
 		const { password, token } = body;
@@ -301,7 +308,6 @@ exports.changePasswordWithOtp = async body => {
 						success: false
 					};
 				} else {
-					console.log(decodedFromToken);
 					var user = await USER.findById(decodedFromToken.data.id);
 					const hashedPassword = await bcrypt.hash(password, 8);
 					user.password = hashedPassword;
@@ -309,6 +315,7 @@ exports.changePasswordWithOtp = async body => {
 				}
 			}
 		);
+
 		return {
 			message: 'Successfully change password',
 			success: true
@@ -321,6 +328,7 @@ exports.changePasswordWithOtp = async body => {
 		};
 	}
 };
+
 exports.findInformation = async id => {
 	try {
 		const user = await USER.findById(id, {
@@ -331,24 +339,24 @@ exports.findInformation = async id => {
 			phone: 1,
 			avatar: 1
 		}).lean();
-		console.log(user);
+
 		return {
 			message: 'Successfully Get Information',
 			success: true,
 			data: user
 		};
 	} catch (err) {
-		console.log(e);
+		console.log(err);
 		return {
 			message: 'An error occurred',
 			success: false
 		};
 	}
 };
+
 exports.updateInformation = async (id, body) => {
 	try {
 		const user = await USER.findByIdAndUpdate(id, body, { new: true });
-		console.log(user);
 		return {
 			message: 'Successfully update Information',
 			success: true,
@@ -362,10 +370,10 @@ exports.updateInformation = async (id, body) => {
 		};
 	}
 };
+
 exports.getAllUser = async query => {
 	try {
-		const { role,skip, limit,search } = query;
-		console.log(search)
+		const { role, skip, limit, search } = query;
 		const user = await USER.find(
 			{
 				role: role,
@@ -395,6 +403,7 @@ exports.getAllUser = async query => {
 			.sort({ createdAt: -1 })
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
+
 		var result = [];
 		if (user.length > 0) {
 			for (let i = 0; i < user.length; i++) {
@@ -402,6 +411,7 @@ exports.getAllUser = async query => {
 					user[i].avatar,
 					60 * 60 * 24
 				);
+
 				var resultUser = {
 					_id: user[i]._id,
 					email: user[i].email,
@@ -426,6 +436,7 @@ exports.getAllUser = async query => {
 		};
 	}
 };
+
 exports.getInformationById = async id => {
 	try {
 		const user = await USER.findById(id, {
@@ -445,6 +456,7 @@ exports.getInformationById = async id => {
 			phone: user.phone,
 			avatar: image
 		};
+
 		return {
 			message: 'Successfully Get All User',
 			success: true,
@@ -458,6 +470,7 @@ exports.getInformationById = async id => {
 		};
 	}
 };
+
 exports.getAvatarAdmin = async id => {
 	try {
 		const user = await USER.findOne(
@@ -471,6 +484,7 @@ exports.getAvatarAdmin = async id => {
 				avatar: 1
 			}
 		).lean();
+
 		var image = await uploadServices.getImageS3(user.avatar, 60 * 60 * 24);
 		var resultUser = {
 			avatar: image
@@ -488,6 +502,7 @@ exports.getAvatarAdmin = async id => {
 		};
 	}
 };
+
 exports.registerStaffAsync = async body => {
 	try {
 		const { email, password, phone, name } = body;
@@ -500,11 +515,12 @@ exports.registerStaffAsync = async body => {
 				message: 'Email already exists',
 				success: false
 			};
+
 		var otp = otpGenerator.generate(6, {
 			upperCase: false,
 			specialChars: false
 		});
-		console.log(otp);
+
 		const hashedPassword = await bcrypt.hash(password, 8);
 		const newUser = new USER({
 			email: email,
@@ -515,6 +531,7 @@ exports.registerStaffAsync = async body => {
 			avatar: 'Avatar/1638807317930staff.jfif',
 			role: defaultRoles.Staff
 		});
+
 		await newUser.save();
 		const generateToken = jwtServices.createToken({
 			id: newUser._id,
@@ -524,6 +541,7 @@ exports.registerStaffAsync = async body => {
 			token: generateToken,
 			role: newUser.role
 		};
+
 		return {
 			message: 'Successfully Register',
 			success: true,

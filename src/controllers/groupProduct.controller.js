@@ -3,8 +3,9 @@ const groupProductServices = require('../services/groupProduct.service');
 const { defaultRoles } = require('../config/defineModel');
 exports.createGroupProductAsync = async (req, res, next) => {
 	try {
-		
-		const resServices = await groupProductServices.createGroupProductAsync(req.value.body);
+		const resServices = await groupProductServices.createGroupProductAsync(
+			req.value.body
+		);
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -13,6 +14,7 @@ exports.createGroupProductAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -20,14 +22,16 @@ exports.createGroupProductAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
 exports.updateGroupProductAsync = async (req, res, next) => {
 	try {
-		const resServices = await groupProductServices.updateGroupProductAsync(req.value.body.id,req.value.body);
+		const resServices = await groupProductServices.updateGroupProductAsync(
+			req.value.body.id,
+			req.value.body
+		);
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -36,6 +40,7 @@ exports.updateGroupProductAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -43,14 +48,15 @@ exports.updateGroupProductAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
 exports.deleteGroupProductAsync = async (req, res, next) => {
 	try {
-		const resServices = await groupProductServices.deleteGroupProductAsync(req.query.id);
+		const resServices = await groupProductServices.deleteGroupProductAsync(
+			req.query.id
+		);
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -59,6 +65,7 @@ exports.deleteGroupProductAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -66,7 +73,6 @@ exports.deleteGroupProductAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
@@ -82,6 +88,7 @@ exports.GetAllGroupProductAsync = async (req, res, next) => {
 				resServices.message
 			);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -89,7 +96,6 @@ exports.GetAllGroupProductAsync = async (req, res, next) => {
 			resServices.message
 		);
 	} catch (error) {
-		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}

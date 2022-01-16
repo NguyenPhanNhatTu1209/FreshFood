@@ -6,14 +6,17 @@ const schemas = {
 		area: joi.object().required(),
 		typePaymentOrder: joi.number().required()
 	}),
+
 	updateOrder: joi.object().keys({
 		id: joi.string().required(),
     area: joi.object().required(),
 	}),
+
 	updateStatus: joi.object().keys({
 		id: joi.string().required(),
     status: joi.number().required(),
 	}),
+	
 	creatOrderByWithNow: joi.object().keys({
 		quantity: joi.number().required(),
 		productId: joi.string().required(),

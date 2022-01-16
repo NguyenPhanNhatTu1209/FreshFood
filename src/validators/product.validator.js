@@ -8,6 +8,7 @@ const schemas = {
     weight: joi.number().required(),
     quantity: joi.number().required(),
 	}),
+    
 	updateShipFee: joi.object().keys({
     id: joi.string().required(),
     address: joi.string().required(),
