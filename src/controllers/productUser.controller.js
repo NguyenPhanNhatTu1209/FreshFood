@@ -87,29 +87,8 @@ exports.GetAllProductUserByUserAsync = async (req, res, next) => {
 						productCurrent.message
 					);
 				}
-
-				var images = [];
-				for (let j = 0; j < productCurrent.data.image.length; j++) {
-					var image = await uploadServices.getImageS3(
-						productCurrent.data.image[j]
-					);
-					images.push(image);
-				}
-
-				var result = {
-					price: productCurrent.data.price,
-					image: images,
-					status: productCurrent.data.status,
-					weight: productCurrent.data.weight,
-					quantity: productCurrent.data.quantity,
-					_id: productCurrent.data._id,
-					name: productCurrent.data.name,
-					detail: productCurrent.data.detail,
-					groupProduct: productCurrent.data.groupProduct,
-					createdAt: productCurrent.data.createdAt,
-					updatedAt: productCurrent.data.updatedAt
-				};
-				arrResult.push(result);
+				
+				arrResult.push(productCurrent.data);
 			}
 
 			return controller.sendSuccess(

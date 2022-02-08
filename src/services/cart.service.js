@@ -103,11 +103,6 @@ exports.getAllCartByIdUser = async body => {
 		for (let i = 0; i < cartsCurrent.length; i++) {
 			var productCurrent = await PRODUCT.findById(cartsCurrent[i].productId);
 			var costCart = 0;
-			var images = [];
-			for (let j = 0; j < productCurrent.image.length; j++) {
-				var image = await uploadServices.getImageS3(productCurrent.image[j]);
-				images.push(image);
-			}
 			costCart = productCurrent.price * cartsCurrent[i].quantity;
 			var newCart = {
 				status: cartsCurrent[i].status,
@@ -117,7 +112,7 @@ exports.getAllCartByIdUser = async body => {
 				_id: cartsCurrent[i].id,
 				productId: cartsCurrent[i].productId,
 				customerId: cartsCurrent[i].customerId,
-				image: images,
+				image: cartsCurrent[i].image,
 				cost: productCurrent.price,
 				totalCost: costCart,
 				createdAt: cartsCurrent[i].createdAt,

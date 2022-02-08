@@ -212,10 +212,7 @@ exports.GetOrderByUser = async body => {
 			for (let j = 0; j < ordersSearch[i].product.length; j++) {
 				var resultImage = [];
 				console.log(ordersSearch[i].product[j].image[0]);
-				var image = await uploadServices.getImageS3(
-					ordersSearch[i].product[j].image[0]
-				);
-				resultImage.push(image);
+				resultImage.push(ordersSearch[i].product[j].image[0]);
 				ordersSearch[i].product[j].image = resultImage;
 			}
 
@@ -297,10 +294,7 @@ exports.GetOrderByAdmin = async body => {
 		for (let i = 0; i < ordersCurrent.length; i++) {
 			for (let j = 0; j < ordersCurrent[i].product.length; j++) {
 				var resultImage = [];
-				var image = await uploadServices.getImageS3(
-					ordersCurrent[i].product[j].image[0]
-				);
-				resultImage.push(image);
+				resultImage.push(ordersCurrent[i].product[j].image[0]);
 				ordersCurrent[i].product[j].image = resultImage;
 			}
 			ordersSearch.push(ordersCurrent[i]);

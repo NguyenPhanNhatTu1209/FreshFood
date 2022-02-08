@@ -60,8 +60,8 @@ router.put(
 
 router.post(
 	'/updateImage',
-	singleUpload,
 	jwtServices.verify,
+	Validate.body(SchemaValidateUser.updateAvatar),
 	Controller.uploadImage
 );
 

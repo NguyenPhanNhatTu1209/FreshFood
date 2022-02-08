@@ -51,8 +51,7 @@ exports.staticByProduct = async body => {
 			for(let i = 0; i < listProduct.length;i++)
 			{
 				var arrayImage = [];
-				image = await uploadServices.getImageS3(listProduct[i].image[0]);
-				arrayImage.push(image);
+				arrayImage.push(listProduct[i].image[0]);
 				listProduct[i].image = arrayImage;
 				arrayListProduct.push(listProduct[i]);
 			}
@@ -62,8 +61,7 @@ exports.staticByProduct = async body => {
 			for(let i = 0; i < 5;i++)
 			{
 				var arrayImage = [];
-				image = await uploadServices.getImageS3(listProduct[i].image[0]);
-				arrayImage.push(image);
+				arrayImage.push(listProduct[i].image[0]);
 				listProduct[i].image = arrayImage;
 				arrayListProduct.push(listProduct[i]);
 			}

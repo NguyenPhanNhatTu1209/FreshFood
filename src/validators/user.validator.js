@@ -25,7 +25,12 @@ const schemas = {
 
 	updateInformation: joi.object().keys({
 		phone: joi.string().required(),
-		name:joi.string().required()
+		name:joi.string().required(),
+		avatar: joi.string()
+	}),
+
+	updateAvatar: joi.object().keys({
+		avatar: joi.string().required()
 	}),
 	
 	confirmOtp: joi.object().keys({

@@ -100,7 +100,6 @@ exports.getEveluateByProduct = async body => {
 		if (eveluates.length > 0) {
 			for (let i = 0; i < eveluates.length; i++) {
 				var userCurrent = await USER.findById(eveluates[i].customerId);
-				var avatar = await uploadServices.getImageS3(userCurrent.avatar);
 				var result = {
 					productId: eveluates[i].productId,
 					customerId: eveluates[i].customerId,
@@ -111,7 +110,7 @@ exports.getEveluateByProduct = async body => {
 					_id: eveluates[i]._id,
 					createdAt: eveluates[i].createdAt,
 					updatedAt: eveluates[i].updatedAt,
-					avatar: avatar,
+					avatar: userCurrent.avatar,
 					name: userCurrent.name
 				};
 				resultEveluate.push(result);
@@ -140,7 +139,6 @@ exports.getAllEveluateByProduct = async productId => {
 		if (eveluates.length > 0) {
 			for (let i = 0; i < eveluates.length; i++) {
 				var userCurrent = await USER.findById(eveluates[i].customerId);
-				var avatar = await uploadServices.getImageS3(userCurrent.avatar);
 				var result = {
 					productId: eveluates[i].productId,
 					customerId: eveluates[i].customerId,
@@ -151,7 +149,7 @@ exports.getAllEveluateByProduct = async productId => {
 					_id: eveluates[i]._id,
 					createdAt: eveluates[i].createdAt,
 					updatedAt: eveluates[i].updatedAt,
-					avatar: avatar,
+					avatar: userCurrent.avatar,
 					name: userCurrent.name
 				};
 				resultEveluate.push(result);

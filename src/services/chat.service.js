@@ -109,14 +109,13 @@ exports.getRoomAdmin = async body => {
 		for (let i = 0; i < getRoomByAdmin.length; i++) {
 			let chat = await CHAT.findById(getRoomByAdmin[i].idLastMessage);
 			var userChat = await USER.findById(getRoomByAdmin[i].idRoom);
-			var avatarUser = await uploadServices.getImageS3(userChat.avatar);
 			var roomNew = {
 				idRoom: getRoomByAdmin[i].idRoom,
 				idLastMessage: getRoomByAdmin[i].idLastMessage,
 				name: getRoomByAdmin[i].name,
 				seenByUser: chat.seenByUser,
 				message: chat.message,
-				avatar: avatarUser,
+				avatar: userChat.avatar,
 				updatedAt: getRoomByAdmin[i].updatedAt
 			};
 			arrResult.push(roomNew);

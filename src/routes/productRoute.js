@@ -7,17 +7,8 @@ const jwtServices = require('../services/jwt.services');
 const Validate = require('../validators');
 const SchemaValidateProduct = require('../validators/product.validator');
 
-var multer = require('multer');
-var storage = multer.memoryStorage({
-	destination: function (req, file, callback) {
-		callback(null, '');
-	}
-});
-var multipleUpload = multer({ storage: storage }).array('image');
-
 router.post(
 	'/createProduct',
-	multipleUpload,
 	jwtServices.verify,
 	checkRole([defaultRoles.Admin]),
 	Validate.body(SchemaValidateProduct.createProduct),
@@ -26,8 +17,8 @@ router.post(
 
 router.put(
 	'/updateProduct',
-	multipleUpload,
 	jwtServices.verify,
+	Validate.body(SchemaValidateProduct.updateProduct),
 	checkRole([defaultRoles.Admin]),
 	Controller.updateProductAsync
 );

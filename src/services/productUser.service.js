@@ -18,6 +18,7 @@ exports.createProductUserAsync = async body => {
 		};
 	}
 };
+
 exports.updateProductUserAsync = async ( body) => {
 	try {
 		const productUser = await PRODUCTUSER.findOneAndUpdate({ customerId: body.customerId, productId: body.productId }, body, {
@@ -35,6 +36,7 @@ exports.updateProductUserAsync = async ( body) => {
 		};
 	}
 };
+
 exports.deleteProductUserAsync = async id => {
 	try {
     const productUser = await PRODUCTUSER.deleteOne({_id: id});
@@ -49,6 +51,7 @@ exports.deleteProductUserAsync = async id => {
 		};
 	}
 };
+
 exports.findProductByIdUserAsync = async body => {
 	try {
 		const { customerId,skip,limit} = body;
@@ -66,6 +69,7 @@ exports.findProductByIdUserAsync = async body => {
 		};
 	}
 };
+
 exports.findProductByIdUserAndProductAsync = async (body) => {
 	try {
 		const productUser = await PRODUCTUSER.find({customerId: body.customerId, productId: body.productId});

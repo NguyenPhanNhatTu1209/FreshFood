@@ -316,10 +316,7 @@ exports.getInformation = async (req, res, next) => {
 			return controller.sendSuccess(res, {}, 300, resServices.message);
 		}
 
-		var result = resServices.data;
-		var image = await uploadServices.getImageS3(result.avatar);
-		result.avatar = image;
-		return controller.sendSuccess(res, result, 200, resServices.message);
+		return controller.sendSuccess(res, resServices.data, 200, resServices.message);
 	} catch (err) {
 		console.log(err);
 		return controller.sendError(res);
@@ -354,51 +351,20 @@ exports.uploadImage = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
 		const id = decodeToken.data.id;
-		const file = req.file;
-		let s3bucket = new AWS.S3({
-			accessKeyId: configEnv.AWS_ACCESS_KEY,
-			secretAccessKey: configEnv.AWS_SECRET_KEY
-		});
+		const resServices = await userServices.updateInformation(
+			id,
+			req.value.body
+		);
 
-		var timeCurrent = Date.now();
-		var params = {
-			Bucket: 'freshfoodbe',
-			Key: `Avatar/${timeCurrent}${file.originalname}`,
-			Body: file.buffer,
-			ContentType: file.mimetype
-		};
-
-		s3bucket.upload(params, async function (err, data) {
-			if (err) {
-				return controller.sendSuccess(res, err, 300, 'Upload Image Fail');
-			} else {
-				var name = `Avatar/${timeCurrent}${file.originalname}`;
-				var bodyNew = {
-					avatar: name
-				};
-
-				const resServices = await userServices.updateInformation(id, bodyNew);
-				var image = await uploadServices.getImageS3(name);
-				if (resServices.success) {
-					var result = {
-						fcm: resServices.data.fcm,
-						image: image,
-						email: resServices.data.email,
-						phone: resServices.data.phone,
-						name: resServices.data.name,
-						_id: resServices.data._id
-					};
-					return controller.sendSuccess(res, result, 200, resServices.message);
-				}
-
-				return controller.sendSuccess(
-					res,
-					resServices.data,
-					300,
-					resServices.message
-				);
-			}
-		});
+		if (!resServices.success) {
+			return controller.sendSuccess(res, {}, 300, resServices.message);
+		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			200,
+			resServices.message
+		);
 	} catch (error) {
 		console.log(error);
 		return controller.sendError(res);

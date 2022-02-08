@@ -8,190 +8,52 @@ const { configEnv } = require('../config');
 var AWS = require('aws-sdk');
 exports.createProductAsync = async (req, res, next) => {
 	try {
-		const file = req.files;
-		let s3bucket = new AWS.S3({
-			accessKeyId: configEnv.AWS_ACCESS_KEY,
-			secretAccessKey: configEnv.AWS_SECRET_KEY
-		});
+		const resServices = await productServices.createProductAsync(
+			req.value.body
+		);
 
-		var ResponseData = [];
-		file.forEach(item => {
-			var timeCurrent = Date.now();
-			var params = {
-				Bucket: 'freshfoodbe',
-				Key: `FreshFood/${timeCurrent}${item.originalname}`,
-				Body: item.buffer,
-				ContentType: item.mimetype
-			};
+		if (resServices.success)
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
+			);
 
-			s3bucket.upload(params, async function (err, data) {
-				if (err) {
-					return controller.sendSuccess(res, err, 300, 'Upload Image Fail');
-				} else {
-					var name = `FreshFood/${timeCurrent}${item.originalname}`;
-					ResponseData.push(name);
-					if (ResponseData.length == file.length) {
-						req.value.body.image = ResponseData;
-						const resServices = await productServices.createProductAsync(
-							req.value.body
-						);
-
-						var images = [];
-						for (let i = 0; i < ResponseData.length; i++) {
-							var image = await uploadServices.getImageS3(ResponseData[i]);
-							images.push(image);
-						}
-
-						if (resServices.success) {
-							var result = {
-								price: resServices.data.price,
-								image: images,
-								status: resServices.data.status,
-								weight: resServices.data.weight,
-								quantity: resServices.data.quantity,
-								_id: resServices.data._id,
-								name: resServices.data.name,
-								detail: resServices.data.detail,
-								groupProduct: resServices.data.groupProduct,
-								createdAt: resServices.data.createdAt,
-								updatedAt: resServices.data.updatedAt
-							};
-
-							return controller.sendSuccess(
-								res,
-								result,
-								200,
-								resServices.message
-							);
-						}
-						return controller.sendSuccess(
-							res,
-							resServices.data,
-							300,
-							resServices.message
-						);
-					}
-				}
-			});
-		});
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
 	} catch (error) {
 		// bug
 		console.log(error);
 		return controller.sendError(res);
 	}
 };
+
 exports.updateProductAsync = async (req, res, next) => {
 	try {
-		const file = req.files;
-		if (file.length != 0) {
-			let s3bucket = new AWS.S3({
-				accessKeyId: configEnv.AWS_ACCESS_KEY,
-				secretAccessKey: configEnv.AWS_SECRET_KEY
-			});
+		const resServices = await productServices.updateProductAsync(
+			req.value.body.id,
+			req.value.body
+		);
 
-			var ResponseData = [];
-			file.forEach(item => {
-				var timeCurrent = Date.now();
-				var params = {
-					Bucket: 'freshfoodbe',
-					Key: `FreshFood/${timeCurrent}${item.originalname}`,
-					Body: item.buffer,
-					ContentType: item.mimetype
-				};
-				s3bucket.upload(params, async function (err, data) {
-					if (err) {
-						return controller.sendSuccess(res, err, 300, 'Upload Image Fail');
-					} else {
-						var name = `FreshFood/${timeCurrent}${item.originalname}`;
-						ResponseData.push(name);
-
-						if (ResponseData.length == file.length) {
-							req.body.image = ResponseData;
-							const resServices = await productServices.updateProductAsync(
-								req.body.id,
-								req.body
-							);
-
-							var images = [];
-							for (let i = 0; i < ResponseData.length; i++) {
-								var image = await uploadServices.getImageS3(ResponseData[i]);
-								images.push(image);
-							}
-
-							if (resServices.success) {
-								var result = {
-									price: resServices.data.price,
-									image: images,
-									status: resServices.data.status,
-									weight: resServices.data.weight,
-									quantity: resServices.data.quantity,
-									_id: resServices.data._id,
-									name: resServices.data.name,
-									detail: resServices.data.detail,
-									groupProduct: resServices.data.groupProduct,
-									createdAt: resServices.data.createdAt,
-									updatedAt: resServices.data.updatedAt
-								};
-
-								return controller.sendSuccess(
-									res,
-									result,
-									200,
-									resServices.message
-								);
-							}
-							return controller.sendSuccess(
-								res,
-								resServices.data,
-								300,
-								resServices.message
-							);
-						}
-					}
-				});
-			});
-		} else {
-			var currentProduct = await productServices.findProductByIdAsync(
-				req.body.id
-			);
-			if (currentProduct.success != true) {
-				return controller.sendSuccess(
-					res,
-					currentProduct.data,
-					300,
-					currentProduct.message
-				);
-			}
-			var images = [];
-			for (let i = 0; i < currentProduct.data.image.length; i++) {
-				var image = await uploadServices.getImageS3(
-					currentProduct.data.image[i]
-				);
-				images.push(image);
-			}
-
-			const resServices = await productServices.updateProductAsync(
-				req.body.id,
-				req.body
+		if (resServices.success)
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
 			);
 
-			if (resServices.success) {
-				var result = {
-					price: resServices.data.price,
-					image: images,
-					status: resServices.data.status,
-					weight: resServices.data.weight,
-					quantity: resServices.data.quantity,
-					_id: resServices.data._id,
-					name: resServices.data.name,
-					detail: resServices.data.detail,
-					groupProduct: resServices.data.groupProduct,
-					createdAt: resServices.data.createdAt,
-					updatedAt: resServices.data.updatedAt
-				};
-				return controller.sendSuccess(res, result, 200, resServices.message);
-			}
-		}
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
 	} catch (error) {
 		console.log(error);
 		return controller.sendError(res);
@@ -232,35 +94,9 @@ exports.findAllProductAsync = async (req, res, next) => {
 
 		const resServices = await productServices.findAllProduct(query);
 		if (resServices.success) {
-			var resultArr = [];
-			for (let i = 0; i < resServices.data.length; i++) {
-				var responseData = resServices.data[i].image;
-				var images = [];
-				for (let i = 0; i < responseData.length; i++) {
-					var image = await uploadServices.getImageS3(responseData[i]);
-					images.push(image);
-				}
-
-				var result = {
-					price: resServices.data[i].price,
-					image: images,
-					status: resServices.data[i].status,
-					weight: resServices.data[i].weight,
-					quantity: resServices.data[i].quantity,
-					_id: resServices.data[i]._id,
-					name: resServices.data[i].name,
-					detail: resServices.data[i].detail,
-					sold: resServices.data[i].sold,
-					groupProduct: resServices.data[i].groupProduct,
-					createdAt: resServices.data[i].createdAt,
-					updatedAt: resServices.data[i].updatedAt
-				};
-				resultArr.push(result);
-			}
-
 			return controller.sendSuccessPaging(
 				res,
-				resultArr,
+				resServices.data,
 				resServices.numberPage,
 				200,
 				resServices.message
@@ -282,33 +118,9 @@ exports.GetProductRecommend = async (req, res, next) => {
 	try {
 		const resServices = await productServices.getProductRecommend();
 		if (resServices.success) {
-			var resultArr = [];
-			for (let i = 0; i < resServices.data.length; i++) {
-				var responseData = resServices.data[i].image;
-				var images = [];
-				for (let i = 0; i < responseData.length; i++) {
-					var image = await uploadServices.getImageS3(responseData[i]);
-					images.push(image);
-				}
-
-				var result = {
-					price: resServices.data[i].price,
-					image: images,
-					status: resServices.data[i].status,
-					weight: resServices.data[i].weight,
-					quantity: resServices.data[i].quantity,
-					_id: resServices.data[i]._id,
-					name: resServices.data[i].name,
-					sold: resServices.data[i].sold,
-					detail: resServices.data[i].detail,
-					groupProduct: resServices.data[i].groupProduct,
-					createdAt: resServices.data[i].createdAt,
-					updatedAt: resServices.data[i].updatedAt
-				};
-				resultArr.push(result);
-			}
-			return controller.sendSuccess(res, resultArr, 200, resServices.message);
+			return controller.sendSuccess(res, resServices.data, 200, resServices.message);
 		}
+
 		return controller.sendSuccess(
 			res,
 			resServices.data,
@@ -326,12 +138,6 @@ exports.findDetailProduct = async (req, res, next) => {
 			req.query.id
 		);
 		if (resServices.success) {
-			var linkImage = [];
-			for (let i = 0; i < resServices.data.image.length; i++) {
-				var image = await uploadServices.getImageS3(resServices.data.image[i]);
-				linkImage.push(image);
-			}
-
 			var eveluates = await eveluateServices.getAllEveluateByProduct(
 				resServices.data.id
 			);
@@ -355,7 +161,7 @@ exports.findDetailProduct = async (req, res, next) => {
 
 			var result = {
 				price: resServices.data.price,
-				image: linkImage,
+				image: resServices.data.image,
 				status: resServices.data.status,
 				weight: resServices.data.weight,
 				sold: resServices.data.sold,

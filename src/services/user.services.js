@@ -404,29 +404,10 @@ exports.getAllUser = async query => {
 			.skip(Number(limit) * Number(skip) - Number(limit))
 			.limit(Number(limit));
 
-		var result = [];
-		if (user.length > 0) {
-			for (let i = 0; i < user.length; i++) {
-				var image = await uploadServices.getImageS3(
-					user[i].avatar,
-					60 * 60 * 24
-				);
-
-				var resultUser = {
-					_id: user[i]._id,
-					email: user[i].email,
-					role: user[i].role,
-					name: user[i].name,
-					phone: user[i].phone,
-					avatar: image
-				};
-				result.push(resultUser);
-			}
-		}
 		return {
 			message: 'Successfully Get All User',
 			success: true,
-			data: result
+			data: user
 		};
 	} catch (err) {
 		console.log(err);
@@ -447,20 +428,11 @@ exports.getInformationById = async id => {
 			phone: 1,
 			avatar: 1
 		}).lean();
-		var image = await uploadServices.getImageS3(user.avatar, 60 * 60 * 24);
-		var resultUser = {
-			_id: user._id,
-			email: user.email,
-			role: user.role,
-			name: user.name,
-			phone: user.phone,
-			avatar: image
-		};
 
 		return {
 			message: 'Successfully Get All User',
 			success: true,
-			data: resultUser
+			data: user
 		};
 	} catch (err) {
 		console.log(err);
@@ -484,15 +456,10 @@ exports.getAvatarAdmin = async id => {
 				avatar: 1
 			}
 		).lean();
-
-		var image = await uploadServices.getImageS3(user.avatar, 60 * 60 * 24);
-		var resultUser = {
-			avatar: image
-		};
 		return {
 			message: 'Successfully Get Image Admin',
 			success: true,
-			data: resultUser
+			data: user
 		};
 	} catch (err) {
 		console.log(err);
