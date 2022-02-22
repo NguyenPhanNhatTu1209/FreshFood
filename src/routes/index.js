@@ -9,6 +9,7 @@ const eveluateRoute = require('./eveluateRoute');
 const addressRoute = require('./addressRoute');
 const productUserRoute = require('./productUserRoute');
 const statisticRoute = require('./statisticRoute');
+const discountRoute = require('./discountRoute');
 
 const router = express.Router();
 router.use('/user', useRoute);
@@ -21,6 +22,7 @@ router.use('/eveluate', eveluateRoute);
 router.use('/address', addressRoute);
 router.use('/productUser', productUserRoute);
 router.use('/statistic', statisticRoute);
+router.use('/discount', discountRoute);
 
 router.get('/healCheck', (req, res) =>
 	res.status(200).send('Welcome to FreshFood')
