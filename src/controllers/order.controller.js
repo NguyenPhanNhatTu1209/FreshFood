@@ -2,9 +2,12 @@ const controller = require('./controller');
 const cartServices = require('../services/cart.service');
 const orderServices = require('../services/order.service');
 const productServices = require('../services/product.service');
+const discountService = require('../services/discount.service');
+
 const ORDER = require('../models/Order.model');
 const USER = require('../models/User.model');
 const DEVICE = require('../models/Device.model');
+
 const {
 	pushNotification,
 	pushMultipleNotification
@@ -22,6 +25,7 @@ const {
 	RefundPayment
 } = require('../helper');
 const { configEnv } = require('../config');
+const { string } = require('@hapi/joi');
 exports.createOrderAsync = async (req, res, next) => {
 	try {
 		const { decodeToken } = req.value.body;
@@ -107,14 +111,32 @@ exports.createOrderAsync = async (req, res, next) => {
 			.then(function () {
 				// always executed
 			});
+		var discountOrder = 0;
+		if(req.value.body.idDiscount != '')
+		{
+			var discount = await discountService.CheckDiscountActive(req.value.body.idDiscount)
+			if(discount.data == null)
+			{
+				return controller.sendSuccess(
+					res,
+					null,
+					300,
+					"discount has expired"
+				);
+			}
+			discountOrder = totalMoneyProduct * discount.data.percentDiscount;
+			if(discountOrder > discount.data.maxDiscount)
+				discountOrder = discount.data.maxDiscount
+		}
 
-		totalMoney = totalMoneyProduct + totalShip;
+		totalMoney = totalMoneyProduct + totalShip - discountOrder;
 		req.value.body.area = req.value.body.area;
 		req.value.body.product = arrCart;
 		req.value.body.shipFee = totalShip;
 		req.value.body.totalMoney = totalMoney;
 		req.value.body.totalMoneyProduct = totalMoneyProduct;
 		req.value.body.history = history;
+		req.value.body.discountMoney = discountOrder;
 		const resServices = await orderServices.createOrderAsync(req.value.body);
 		var changePriceOrder = FormatDollar(totalMoney / 24000);
 		var resultPayment;
@@ -754,7 +776,26 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 				// always executed
 			});
 
-		totalMoney = totalMoneyProduct + totalShip;
+			var discountOrder = 0;
+			if(req.value.body.idDiscount != '')
+			{
+				var discount = await discountService.CheckDiscountActive(req.value.body.idDiscount)
+				if(discount.data == null)
+				{
+					return controller.sendSuccess(
+						res,
+						null,
+						300,
+						"discount has expired"
+					);
+				}
+				discountOrder = totalMoneyProduct * discount.data.percentDiscount;
+				if(discountOrder > discount.data.maxDiscount)
+					discountOrder = discount.data.maxDiscount
+			}
+
+		totalMoney = totalMoneyProduct + totalShip - discountOrder;
+		req.value.body.discountMoney = discountOrder;
 		req.value.body.area = req.value.body.area;
 		req.value.body.product = arrProduct;
 		req.value.body.shipFee = totalShip;

@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const Discount = new Schema(
 	{
 		idProduct: defaultModel.string,
-    idGroupProduct: defaultModel.string,
+    	idGroupProduct: defaultModel.string,
 		totalProduct: defaultModel.boolean,
 		percentDiscount: defaultModel.number,
 		duration: defaultModel.date,

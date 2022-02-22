@@ -11,6 +11,8 @@ async function connect() {
 		});
 		console.log('connect successfully!');
 	} catch (error) {
+		console.log(configEnv.MONGO_URI)
+		console.log(error);
 		console.log('connect fail!!');
 	}
 }
