@@ -34,10 +34,9 @@ router.get(
 );
 
 router.get(
-	'/getAllDiscountActiveProduct/:id',
+	'/getAllDiscountActive',
 	jwtServices.verify,
-	Controller.GetAllDiscountActiveAsync
-);
+	Controller.GetAllDiscountActiveAsync);
 
 module.exports = router;
 

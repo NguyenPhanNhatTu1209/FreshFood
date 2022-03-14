@@ -5,12 +5,11 @@ const Schema = mongoose.Schema;
 
 const Discount = new Schema(
 	{
-		idProduct: defaultModel.string,
-    	idGroupProduct: defaultModel.string,
-		totalProduct: defaultModel.boolean,
 		percentDiscount: defaultModel.number,
 		duration: defaultModel.date,
-		maxDiscount: defaultModel.number
+		maxDiscount: defaultModel.number,
+		minimumDiscount: defaultModel.number,
+		quantity: defaultModel.number
 	},
 	{ timestamps: true }
 );

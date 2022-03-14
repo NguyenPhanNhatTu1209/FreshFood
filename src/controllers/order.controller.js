@@ -115,18 +115,38 @@ exports.createOrderAsync = async (req, res, next) => {
 		if(req.value.body.idDiscount != '')
 		{
 			var discount = await discountService.CheckDiscountActive(req.value.body.idDiscount)
-			if(discount.data == null)
+			if(discount.data == null || discount.data.quantity < 1)
 			{
 				return controller.sendSuccess(
 					res,
 					null,
 					300,
-					"discount has expired"
+					"Discount has expired"
 				);
 			}
+
+			if(discount.data.minimumOrder > totalMoneyProduct)
+			{
+				return controller.sendSuccess(
+					res,
+					null,
+					300,
+					"Not eligible to apply discount"
+				);
+			}
+
 			discountOrder = totalMoneyProduct * discount.data.percentDiscount;
 			if(discountOrder > discount.data.maxDiscount)
 				discountOrder = discount.data.maxDiscount
+				
+			var updateDiscount=  await discountService.updateDiscountAsync(req.value.body.idDiscount, {quantity: discount.data.quantity -1});
+			if(updateDiscount.success == false)
+				return controller.sendSuccess(
+					res,
+					null,
+					300,
+					"Update discount fail"
+				);
 		}
 
 		totalMoney = totalMoneyProduct + totalShip - discountOrder;

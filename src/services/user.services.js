@@ -337,7 +337,8 @@ exports.findInformation = async id => {
 			role: 1,
 			name: 1,
 			phone: 1,
-			avatar: 1
+			avatar: 1,
+			point: 1
 		}).lean();
 
 		return {

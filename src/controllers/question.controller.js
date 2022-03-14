@@ -1,12 +1,9 @@
 const controller = require('./controller');
-const discountService = require('../services/discount.service');
+const questionService = require('../services/question.service');
 const { defaultRoles } = require('../config/defineModel');
-
-exports.createDiscountAsync = async (req, res, next) => {
+exports.createQuestionAsync = async (req, res, next) => {
 	try {
-		const { decodeToken } = req.value.body;
-		const id = decodeToken.data.id;
-		const resServices = await discountService.createDiscountAsync(
+		const resServices = await questionService.createQuestionAsync(
 			req.value.body
 		);
 		if (resServices.success) {
@@ -29,12 +26,9 @@ exports.createDiscountAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
-
-exports.updateDiscountAsync = async (req, res, next) => {
+exports.updateQuestionAsync = async (req, res, next) => {
 	try {
-		const { decodeToken } = req.value.body;
-		const id = decodeToken.data.id;
-		const resServices = await discountService.updateDiscountAsync(
+		const resServices = await questionService.updateQuestionAsync(
 			req.value.body.id,
 			req.value.body
 		);
@@ -58,9 +52,11 @@ exports.updateDiscountAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
-exports.deleteDiscountAsync = async (req, res, next) => {
+exports.deleteQuestionAsync = async (req, res, next) => {
 	try {
-		const resServices = await discountService.deleteDiscontAsync(req.query.id);
+		const resServices = await questionService.deleteQuestionAsync(
+			req.query.id
+		);
 		if (resServices.success) {
 			return controller.sendSuccess(
 				res,
@@ -81,38 +77,13 @@ exports.deleteDiscountAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
-exports.GetAllDiscountUserAsync = async (req, res, next) => {
+exports.GetAllQuestionByGroupAsync = async (req, res, next) => {
 	try {
-		const { decodeToken } = req.value.body;
-		const resServices = await discountService.getAllDiscount();
+    const { id } = req.params;
+		var resServices = await questionService.getAllQuestionByGroupAsync(id);
+
 		if (resServices.success) {
-			return controller.sendSuccess(
-				res,
-				resServices.data,
-				200,
-				resServices.message
-			);
-		}
-
-		return controller.sendSuccess(
-			res,
-			resServices.data,
-			300,
-			resServices.message
-		);
-	} catch (error) {
-		console.log(error);
-		return controller.sendError(res);
-	}
-};
-
-
-exports.GetAllDiscountActiveAsync = async (req, res, next) => {
-	try {
-		const { decodeToken } = req.value.body;
-		const { id } = req.params;
-		const resServices = await discountService.getAllDiscountActive();
-		if (resServices.success) {
+      resServices.data = resServices.data.sort(() => Math.random() - 0.5)
 			return controller.sendSuccess(
 				res,
 				resServices.data,

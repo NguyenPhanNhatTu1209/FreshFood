@@ -93,7 +93,7 @@ exports.getAllDiscount = async () => {
     };
   }
 };
-exports.getAllDiscountActiveProduct = async (id) => {
+exports.getAllDiscountActive = async () => {
   try {
     var now = new Date();
     var timeCurrent = Date.UTC(
@@ -109,34 +109,16 @@ exports.getAllDiscountActiveProduct = async (id) => {
     const arrDiscount = await DISCOUNT.find().sort({
       createdAt: -1,
     });
-    var productCurrent = await PRODUCT.findById(id);
-    if (productCurrent == null)
-      return {
-        message: "Product not exit",
-        success: false,
-      };
-    var groupProductCurrent = await GROUPPRODUCT.find({
-      key: productCurrent.groupProduct.key,
-    });
+
     arrDiscount.forEach((discount) => {
       var durationTime = new Date(discount.duration).getTime();
       console.log(timeCurrent);
       console.log(durationTime);
       if (timeCurrent <= durationTime) {
-        if (discount.totalProduct != false) arrResult.push(discount);
-        else if (
-          discount.idGroupProduct != null &&
-          discount.idGroupProduct == groupProductCurrent.id
-        )
           arrResult.push(discount);
-        else if (
-          discount.idProduct != null &&
-          discount.idProduct == productCurrent.id
-        ) {
-          arrResult.push(discount);
-        }
       }
     });
+
     return {
       message: "Successfully Get discount",
       success: true,
