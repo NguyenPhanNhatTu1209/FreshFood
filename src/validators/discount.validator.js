@@ -6,6 +6,7 @@ const schemas = {
 		maxDiscount: joi.number().required(),
 		minimumDiscount: joi.number().required(),
 		quantity: joi.number().required(),
+		startTime: joi.date().required(),
 	}),
   
 	updateDiscount: joi.object().keys({
@@ -15,6 +16,7 @@ const schemas = {
 		maxDiscount: joi.number(),
 		minimumDiscount: joi.number(),
 		quantity: joi.number(),
+		startTime: joi.date(),
 	}),
 };
 module.exports = schemas;

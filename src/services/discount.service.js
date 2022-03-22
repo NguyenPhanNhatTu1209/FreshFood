@@ -111,10 +111,9 @@ exports.getAllDiscountActive = async () => {
     });
 
     arrDiscount.forEach((discount) => {
-      var durationTime = new Date(discount.duration).getTime();
-      console.log(timeCurrent);
-      console.log(durationTime);
-      if (timeCurrent <= durationTime) {
+      var finishedTime = new Date(discount.duration).getTime();
+      var startTime = new Date(discount.startTime).getTime();
+      if (timeCurrent <= finishedTime && timeCurrent >= startTime) {
           arrResult.push(discount);
       }
     });
@@ -150,7 +149,10 @@ exports.CheckDiscountActive = async (idDiscount) => {
 		  message: "Discount not exit",
 		  success: false,
 		};
-		if (timeCurrent <= durationTime) {
+
+    var finishedTime = new Date(discount.duration).getTime();
+    var startTime = new Date(discount.startTime).getTime();
+		if (timeCurrent <= finishedTime && timeCurrent >= startTime) {
 			return {
 				message: "Successfully Get discount",
 				success: true,
@@ -158,7 +160,7 @@ exports.CheckDiscountActive = async (idDiscount) => {
 			  };
 		}
 		return {
-			message: "Successfully Get discount",
+			message: "Get discount fail",
 			success: false,
 			data: null,
 		};

@@ -10,6 +10,7 @@ const jwtServices = require('../services/jwt.services');
 router.post(
 	'/createDiscount',
 	jwtServices.verify,
+	checkRole([defaultRoles.Admin]),
 	Validate.body(SchemaValidatediscount.createDiscount),
 	Controller.createDiscountAsync
 );
@@ -17,6 +18,7 @@ router.post(
 router.put(
 	'/updateDiscount',
 	jwtServices.verify,
+	checkRole([defaultRoles.Admin]),
 	Validate.body(SchemaValidatediscount.updateDiscount),
 	Controller.updateDiscountAsync
 );
@@ -24,12 +26,14 @@ router.put(
 router.delete(
 	'/deleteDiscount',
 	jwtServices.verify,
+	checkRole([defaultRoles.Admin]),
 	Controller.deleteDiscountAsync
 );
 
 router.get(
 	'/getAllDiscount',
 	jwtServices.verify,
+	checkRole([defaultRoles.Admin]),
 	Controller.GetAllDiscountUserAsync
 );
 

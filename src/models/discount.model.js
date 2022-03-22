@@ -7,6 +7,7 @@ const Discount = new Schema(
 	{
 		percentDiscount: defaultModel.number,
 		duration: defaultModel.date,
+		startTime: defaultModel.date,
 		maxDiscount: defaultModel.number,
 		minimumDiscount: defaultModel.number,
 		quantity: defaultModel.number
