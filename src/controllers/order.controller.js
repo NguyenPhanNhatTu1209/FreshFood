@@ -115,7 +115,7 @@ exports.createOrderAsync = async (req, res, next) => {
 		if(req.value.body.idDiscount != '')
 		{
 			var discount = await discountService.CheckDiscountActive(req.value.body.idDiscount)
-			if(discount.data == null || discount.data.quantity < 1)
+			if(discount.data == null)
 			{
 				return controller.sendSuccess(
 					res,
@@ -125,7 +125,7 @@ exports.createOrderAsync = async (req, res, next) => {
 				);
 			}
 
-			if(discount.data.minimumOrder > totalMoneyProduct)
+			if(discount.data.minimumDiscount > totalMoneyProduct)
 			{
 				return controller.sendSuccess(
 					res,
@@ -138,8 +138,9 @@ exports.createOrderAsync = async (req, res, next) => {
 			discountOrder = totalMoneyProduct * discount.data.percentDiscount;
 			if(discountOrder > discount.data.maxDiscount)
 				discountOrder = discount.data.maxDiscount
-				
-			var updateDiscount=  await discountService.updateDiscountAsync(req.value.body.idDiscount, {quantity: discount.data.quantity -1});
+			
+			var numberUsedDiscont = discount.data.used + 1;
+			var updateDiscount=  await discountService.updateDiscountAsync(req.value.body.idDiscount, {quantity: numberUsedDiscont});
 			if(updateDiscount.success == false)
 				return controller.sendSuccess(
 					res,
@@ -800,15 +801,26 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 			if(req.value.body.idDiscount != '')
 			{
 				var discount = await discountService.CheckDiscountActive(req.value.body.idDiscount)
-				if(discount.data == null)
+				if(discount.data == null )
 				{
 					return controller.sendSuccess(
 						res,
 						null,
 						300,
-						"discount has expired"
+						"Discount has expired"
 					);
 				}
+	
+				if(discount.data.minimumDiscount > totalMoneyProduct)
+				{
+					return controller.sendSuccess(
+						res,
+						null,
+						300,
+						"Not eligible to apply discount"
+					);
+				}
+	
 				discountOrder = totalMoneyProduct * discount.data.percentDiscount;
 				if(discountOrder > discount.data.maxDiscount)
 					discountOrder = discount.data.maxDiscount

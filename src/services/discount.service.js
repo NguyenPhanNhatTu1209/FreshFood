@@ -152,7 +152,7 @@ exports.CheckDiscountActive = async (idDiscount) => {
 
     var finishedTime = new Date(discount.duration).getTime();
     var startTime = new Date(discount.startTime).getTime();
-		if (timeCurrent <= finishedTime && timeCurrent >= startTime) {
+		if (timeCurrent <= finishedTime && timeCurrent >= startTime && discount.used < discount.quantity ) {
 			return {
 				message: "Successfully Get discount",
 				success: true,

@@ -10,7 +10,8 @@ const Discount = new Schema(
 		startTime: defaultModel.date,
 		maxDiscount: defaultModel.number,
 		minimumDiscount: defaultModel.number,
-		quantity: defaultModel.number
+		quantity: defaultModel.number,
+		used: defaultModel.number
 	},
 	{ timestamps: true }
 );
