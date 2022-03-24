@@ -24,7 +24,7 @@ exports.createAnswerAsync = async body => {
 
 		if (resultQuestion.includes(body.result)) {
 			var userCurrent = await USER.findById(body.userId);
-			var pointAdd = questionCurrent.point + body.time ;
+			var pointAdd = 100 ;
 			var point = pointAdd + userCurrent.point;
 			var userUpdate = await USER.findOneAndUpdate(
 				{ _id: body.userId },
@@ -36,8 +36,15 @@ exports.createAnswerAsync = async body => {
 			body.point = pointAdd;
 		} else {
 			body.isTrue = false;
+			var pointAdd = 50 ;
+			var point = pointAdd + userCurrent.point;
+			var userUpdate = await USER.findOneAndUpdate(
+				{ _id: body.userId },
+				{ point: point },
+				{ new: true }
+			);
+			body.point = pointAdd;
 		}
-		console.log(body);
 		
 		const answer = new ANSWER(body);
 		await answer.save();
