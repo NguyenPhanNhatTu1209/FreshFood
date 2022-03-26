@@ -32,4 +32,6 @@ router.delete(
 
 router.get('/getAllQuestionByGroup/:id', Controller.GetAllQuestionByGroupAsync);
 
+router.get('/checkUserAnswerQuestion/:id',	jwtServices.verify, Controller.CheckUserAnswerQuestion);
+
 module.exports = router;
