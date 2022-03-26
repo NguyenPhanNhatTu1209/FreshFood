@@ -7,7 +7,6 @@ const Answer = new Schema(
 		questionId: defaultModel.stringRef,
 	  userId: defaultModel.stringRef,
 		isTrue: defaultModel.booleanFalse,
-		time: defaultModel.number,
 		result: defaultModel.string,
 		point: defaultModel.number,
 	},

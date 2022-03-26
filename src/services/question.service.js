@@ -4,6 +4,7 @@ const otpGenerator = require('otp-generator');
 const { configEnv } = require('../config/index');
 const nodemailer = require('nodemailer');
 const QUESTION = require('../models/Question.model');
+const ANSWER = require('../models/Answer.model')
 
 exports.createQuestionAsync = async body => {
 	try {
@@ -68,6 +69,34 @@ exports.getAllQuestionByGroupAsync = async groupQuestionId => {
 			message: 'Successfully get all Question by group question',
 			success: true,
 			data: listQuestion
+		};
+	} catch (e) {
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+
+exports.checkUserAnswerQuestion = async body => {
+	try {
+		const { customerId,groupQuestionId } = body;
+		const listQuestion = await QUESTION.find({groupQuestion: groupQuestionId}).sort({ createdAt: -1 });
+		if(listQuestion[0] == null || listQuestion[0] == undefined)
+			return {
+				message: 'Group Question does not question',
+				success: false
+			};
+
+		var answer = await ANSWER.find({customerId: customerId,questionId: listQuestion[0].questionId});
+		var checkAnswer = false;
+		if(answer != null )
+			checkAnswer = true;
+
+		return {
+			message: 'Successfully check user answer question',
+			success: true,
+			data: checkAnswer
 		};
 	} catch (e) {
 		return {

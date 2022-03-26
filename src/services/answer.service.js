@@ -97,7 +97,7 @@ exports.deleteAnswerAsync = async id => {
 	}
 };
 
-exports.getAnswerByIdQuestion = async (quesionId, userId) => {
+exports.getAnswerByIdQuestion = async (questionId, userId) => {
 	try {
 		const answer = await ANSWER.findOne({
 			questionId: questionId,
@@ -105,7 +105,7 @@ exports.getAnswerByIdQuestion = async (quesionId, userId) => {
 		});
 
 		return {
-			message: 'Successfully delete ANSWER',
+			message: 'Successfully get answer',
 			success: true,
 			data: answer
 		};

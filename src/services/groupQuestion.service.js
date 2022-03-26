@@ -7,6 +7,15 @@ const GROUPQUESTION = require('../models/GroupQuestion.model');
 
 exports.createGroupQuestionAsync = async body => {
 	try {
+		if (body.isActive == true) {
+			listGroupQuestion = await GROUPQUESTION.find();
+			if (listGroupQuestion.length > 0) {
+				for (let i = 0; i < listGroupQuestion.length; i++) {
+					listGroupQuestion[i].isMain = false;
+					listGroupQuestion[i].save();
+				}
+			}
+		}
 		const groupQuestion = new GROUPQUESTION(body);
 		await groupQuestion.save();
 		
