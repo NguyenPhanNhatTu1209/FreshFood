@@ -112,7 +112,7 @@ exports.createOrderAsync = async (req, res, next) => {
 				// always executed
 			});
 		var discountOrder = 0;
-		if(req.value.body.idDiscount != '')
+		if(req.value.body.idDiscount != '' && req.value.body.idDiscount != undefined )
 		{
 			var discount = await discountService.CheckDiscountActive(req.value.body.idDiscount)
 			if(discount.data == null)
@@ -798,7 +798,7 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 			});
 
 			var discountOrder = 0;
-			if(req.value.body.idDiscount != '')
+			if(req.value.body.idDiscount != '' && req.value.body.idDiscount != undefined)
 			{
 				var discount = await discountService.CheckDiscountActive(req.value.body.idDiscount)
 				if(discount.data == null )

@@ -12,7 +12,6 @@ const schemas = {
 		isTrueD: joi.bool(),
 		groupQuestion: joi.string().required(),
 		image: joi.string().required(),
-		point: joi.number().required(),
 		time: joi.number().required()
 	}),
 
@@ -25,7 +24,6 @@ const schemas = {
 		answerD: joi.string(),
 		groupQuestion: joi.string(),
 		image: joi.string(),
-		point: joi.number(),
 		time: joi.number()
 	})
 };
