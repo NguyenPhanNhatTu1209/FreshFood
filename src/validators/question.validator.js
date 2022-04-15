@@ -11,7 +11,6 @@ const schemas = {
 		isTrueC: joi.bool(),
 		isTrueD: joi.bool(),
 		groupQuestion: joi.string().required(),
-		image: joi.string().required(),
 		time: joi.number().required()
 	}),
 
