@@ -4,6 +4,7 @@ const otpGenerator = require('otp-generator');
 const { configEnv } = require('../config/index');
 const nodemailer = require('nodemailer');
 const QUESTION = require('../models/Question.model');
+const GROUPQUESTION = require('../models/GroupQuestion.model');
 const ANSWER = require('../models/Answer.model')
 
 exports.createQuestionAsync = async body => {
@@ -63,9 +64,31 @@ exports.deleteQuestionAsync = async id => {
 	}
 };
 
-exports.getAllQuestionByGroupAsync = async groupQuestionId => {
+exports.getAllQuestionByGroupAsync = async () => {
 	try {
-		const listQuestion = await QUESTION.find({groupQuestion: groupQuestionId}).sort({ createdAt: -1 });
+		const groupQuestionActive = await GROUPQUESTION.findOne({isActive: true});
+		if(groupQuestionActive === null)
+		{
+			return {
+				message: 'Game is inactive',
+				success: false,
+				data: null
+			};
+		}
+
+		const listQuestion = await QUESTION.find({groupQuestion: groupQuestionActive.id}).sort({ createdAt: -1 });
+		console.log("tuine",listQuestion.length)
+		console.log("11",groupQuestionActive.id)
+
+		if(listQuestion.length === 0)
+		{
+			return {
+				message: 'There are currently no questions',
+				success: false,
+				data: null
+			};
+		}
+
 		return {
 			message: 'Successfully get all Question by group question',
 			success: true,

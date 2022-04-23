@@ -30,7 +30,7 @@ router.delete(
 	Controller.deleteQuestionAsync
 );
 
-router.get('/getAllQuestionByGroup/:id', Controller.GetAllQuestionByGroupAsync);
+router.get('/getAllQuestionByGroup', Controller.GetAllQuestionByGroupAsync);
 
 router.get('/checkUserAnswerQuestion/:id',	jwtServices.verify, Controller.CheckUserAnswerQuestion);
 
