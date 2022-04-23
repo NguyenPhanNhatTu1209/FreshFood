@@ -191,3 +191,29 @@ exports.findDetailProduct = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+
+exports.updateAllImageAsync = async (req, res, next) => {
+	try {
+		const resServices = await productServices.updateImageAllProductAsync(
+			req.value.body
+		);
+
+		if (resServices.success)
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
+			);
+
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
+	} catch (error) {
+		console.log(error);
+		return controller.sendError(res);
+	}
+};

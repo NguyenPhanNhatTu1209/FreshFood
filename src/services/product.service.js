@@ -167,3 +167,24 @@ exports.getProductRecommend = async (id) => {
 		};
 	}
 };
+
+exports.updateImageAllProductAsync = async ( body) => {
+	try {
+
+		const products = await PRODUCT.updateMany({}, body, {
+			new: true
+		});
+
+		return {
+			message: 'Successfully update image all product',
+			success: true,
+			data: products
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};

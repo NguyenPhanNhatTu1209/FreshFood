@@ -36,6 +36,11 @@ exports.createGroupQuestionAsync = async body => {
 
 exports.updateGroupQuestionAsync = async (id, body) => {
 	try {
+		if(body.isActive === true)
+		{
+			await GROUPQUESTION.updateMany({_id: {$ne: id}},{isActive: false}, {new: true});
+		}
+
 		const groupQuestion = await GROUPQUESTION.findOneAndUpdate(
 			{ _id: id },
 			body,

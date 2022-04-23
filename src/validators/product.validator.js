@@ -26,5 +26,10 @@ const schemas = {
     address: joi.string().required(),
     fee: joi.number().required(),
 	}),
+
+    updateAllImageProduct: joi.object().keys({
+        image: joi.array().required()
+        }),
+    
 };
 module.exports = schemas;

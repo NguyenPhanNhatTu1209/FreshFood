@@ -112,7 +112,7 @@ exports.getAllCartByIdUser = async body => {
 				_id: cartsCurrent[i].id,
 				productId: cartsCurrent[i].productId,
 				customerId: cartsCurrent[i].customerId,
-				image: cartsCurrent[i].image,
+				image: productCurrent.image,
 				cost: productCurrent.price,
 				totalCost: costCart,
 				createdAt: cartsCurrent[i].createdAt,

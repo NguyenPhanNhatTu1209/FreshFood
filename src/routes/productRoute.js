@@ -36,4 +36,5 @@ router.get('/getProductRecommend', Controller.GetProductRecommend);
 
 router.get('/getDetailProduct', Controller.findDetailProduct);
 
+router.put('/updateAllImageProduct',	Validate.body(SchemaValidateProduct.updateAllImageProduct),Controller.updateAllImageAsync);
 module.exports = router;
