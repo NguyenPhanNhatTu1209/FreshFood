@@ -14,7 +14,6 @@ const Question = new Schema(
 		isTrueC: defaultModel.booleanFalse,
 		isTrueD: defaultModel.booleanFalse,
 		groupQuestion: defaultModel.stringRef,
-    image: defaultModel.stringR,
 		time: defaultModel.number,
 	},
 	{ timestamps: true }

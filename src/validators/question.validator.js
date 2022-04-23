@@ -22,7 +22,6 @@ const schemas = {
 		answerC: joi.string(),
 		answerD: joi.string(),
 		groupQuestion: joi.string(),
-		image: joi.string(),
 		time: joi.number()
 	})
 };

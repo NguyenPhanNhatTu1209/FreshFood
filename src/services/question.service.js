@@ -17,6 +17,7 @@ exports.createQuestionAsync = async body => {
 			data: question
 		};
 	} catch (e) {
+		console.log(e)
 		return {
 			message: 'An error occurred',
 			success: false

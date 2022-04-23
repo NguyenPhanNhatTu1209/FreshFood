@@ -46,7 +46,7 @@ exports.createOrderAsync = async body => {
 						currentProduct.status = defaultStatusProduct.InActive;
 					}
 					console.log(currentProduct.quantity);
-					currentProduct.save();
+					await currentProduct.save();
 					check = check + 1;
 				}
 				session1.commitTransaction();
