@@ -80,8 +80,10 @@ exports.deleteQuestionAsync = async (req, res, next) => {
 
 exports.GetAllQuestionByGroupAsync = async (req, res, next) => {
 	try {
-    const { id } = req.params;
-		var resServices = await questionService.getAllQuestionByGroupAsync();
+		const { decodeToken } = req.value.body;
+		console.log(req.value)
+		const idCustomer = decodeToken.data.id;
+		var resServices = await questionService.getAllQuestionByGroupAsync(idCustomer);
 
 		if (resServices.success) {
       resServices.data = resServices.data.sort(() => Math.random() - 0.5)
@@ -111,7 +113,6 @@ exports.GetAllQuestionByIdGroupAsync = async (req, res, next) => {
 		var resServices = await questionService.getAllQuestionByIdGroupAsync(id);
 
 		if (resServices.success) {
-      resServices.data = resServices.data.sort(() => Math.random() - 0.5)
 			return controller.sendSuccess(
 				res,
 				resServices.data,

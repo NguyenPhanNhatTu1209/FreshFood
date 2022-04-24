@@ -64,7 +64,7 @@ exports.deleteQuestionAsync = async id => {
 	}
 };
 
-exports.getAllQuestionByGroupAsync = async () => {
+exports.getAllQuestionByGroupAsync = async (idCustomer) => {
 	try {
 		const groupQuestionActive = await GROUPQUESTION.findOne({isActive: true});
 		if(groupQuestionActive === null)
@@ -85,11 +85,25 @@ exports.getAllQuestionByGroupAsync = async () => {
 				data: null
 			};
 		}
+		const newListQuestion = await Promise.all(listQuestion.map(async (question) =>  {
+			const checkAnswer = await ANSWER.findOne({customerId: idCustomer,questionId: question.id});
+			if(checkAnswer !==  null)
+			{
+				return {
+					...question._doc,
+					isAnswer: true
+				}
+			}
+			return  {
+				...question._doc,
+				isAnswer: false
+			}
+		}))
 
 		return {
 			message: 'Successfully get all Question by group question',
 			success: true,
-			data: listQuestion
+			data: newListQuestion
 		};
 	} catch (e) {
 		return {
@@ -99,9 +113,8 @@ exports.getAllQuestionByGroupAsync = async () => {
 	}
 };
 
-exports.getAllQuestionByIdGroupAsync = async (groupQuestionId) => {
+exports.getAllQuestionByIdGroupAsync = async (groupQuestionId,customerId) => {
 	try {
-
 		const listQuestion = await QUESTION.find({groupQuestion: groupQuestionId}).sort({ createdAt: -1 });
 		if(listQuestion.length === 0)
 		{
@@ -118,6 +131,7 @@ exports.getAllQuestionByIdGroupAsync = async (groupQuestionId) => {
 			data: listQuestion
 		};
 	} catch (e) {
+		console.log(e)
 		return {
 			message: 'An error occurred',
 			success: false
@@ -135,7 +149,7 @@ exports.checkUserAnswerQuestion = async body => {
 				success: false
 			};
 
-		var answer = await ANSWER.find({customerId: customerId,questionId: listQuestion[0].questionId});
+		var answer = await ANSWER.find({customerId: customerId,questionId: listQuestion[0].id});
 		var checkAnswer = false;
 		if(answer != null )
 			checkAnswer = true;
