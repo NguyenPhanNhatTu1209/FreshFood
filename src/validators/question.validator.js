@@ -21,6 +21,10 @@ const schemas = {
 		answerB: joi.string(),
 		answerC: joi.string(),
 		answerD: joi.string(),
+		isTrueA: joi.bool(),
+		isTrueB: joi.bool(),
+		isTrueC: joi.bool(),
+		isTrueD: joi.bool(),
 		groupQuestion: joi.string(),
 		time: joi.number()
 	})
