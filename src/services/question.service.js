@@ -77,9 +77,6 @@ exports.getAllQuestionByGroupAsync = async () => {
 		}
 
 		const listQuestion = await QUESTION.find({groupQuestion: groupQuestionActive.id}).sort({ createdAt: -1 });
-		console.log("tuine",listQuestion.length)
-		console.log("11",groupQuestionActive.id)
-
 		if(listQuestion.length === 0)
 		{
 			return {
@@ -91,6 +88,32 @@ exports.getAllQuestionByGroupAsync = async () => {
 
 		return {
 			message: 'Successfully get all Question by group question',
+			success: true,
+			data: listQuestion
+		};
+	} catch (e) {
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+
+exports.getAllQuestionByIdGroupAsync = async (groupQuestionId) => {
+	try {
+
+		const listQuestion = await QUESTION.find({groupQuestion: groupQuestionId}).sort({ createdAt: -1 });
+		if(listQuestion.length === 0)
+		{
+			return {
+				message: 'There are currently no questions',
+				success: false,
+				data: null
+			};
+		}
+
+		return {
+			message: 'Successfully get all Question by id group question',
 			success: true,
 			data: listQuestion
 		};

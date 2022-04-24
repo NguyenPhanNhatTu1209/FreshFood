@@ -81,7 +81,7 @@ exports.deleteQuestionAsync = async (req, res, next) => {
 exports.GetAllQuestionByGroupAsync = async (req, res, next) => {
 	try {
     const { id } = req.params;
-		var resServices = await questionService.getAllQuestionByGroupAsync(id);
+		var resServices = await questionService.getAllQuestionByGroupAsync();
 
 		if (resServices.success) {
       resServices.data = resServices.data.sort(() => Math.random() - 0.5)
@@ -104,6 +104,34 @@ exports.GetAllQuestionByGroupAsync = async (req, res, next) => {
 		return controller.sendError(res);
 	}
 };
+
+exports.GetAllQuestionByIdGroupAsync = async (req, res, next) => {
+	try {
+    const { id } = req.params;
+		var resServices = await questionService.getAllQuestionByIdGroupAsync(id);
+
+		if (resServices.success) {
+      resServices.data = resServices.data.sort(() => Math.random() - 0.5)
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
+			);
+		}
+
+		return controller.sendSuccess(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
+	} catch (error) {
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
+
 
 exports.CheckUserAnswerQuestion = async (req, res, next) => {
 	try {
