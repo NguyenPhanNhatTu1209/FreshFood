@@ -90,12 +90,38 @@ exports.getAllQuestionByGroupAsync = async (idCustomer) => {
 			if(checkAnswer !==  null)
 			{
 				return {
-					...question._doc,
+					isTrueA: question.isTrueA,
+					isTrueB: question.isTrueB,
+					isTrueC: question.isTrueC,
+					isTrueD: question.isTrued,
+					time: question.time,
+					_id: question.id,
+					title: question.title,
+					answerA: question.answerA,
+					answerB: question.answerB,
+					answerC: question.answerC,
+					answerD: question.answerD,
+					groupQuestion: question.groupQuestion,
+					createdAt: question.createdAt,
+					updatedAt: question.updatedAt,
 					isAnswer: true
 				}
 			}
 			return  {
-				...question._doc,
+				isTrueA: question.isTrueA,
+				isTrueB: question.isTrueB,
+				isTrueC: question.isTrueC,
+				isTrueD: question.isTrued,
+				time: question.time,
+				_id: question.id,
+				title: question.title,
+				answerA: question.answerA,
+				answerB: question.answerB,
+				answerC: question.answerC,
+				answerD: question.answerD,
+				groupQuestion: question.groupQuestion,
+				createdAt: question.createdAt,
+				updatedAt: question.updatedAt,
 				isAnswer: false
 			}
 		}))
