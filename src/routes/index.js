@@ -13,6 +13,7 @@ const discountRoute = require('./discountRoute');
 const groupQuestionRoute = require('./groupQuestionRoute');
 const quesitionRoute = require('./questionRoute');
 const answerRoute = require('./answerRoute');
+const iventoryRoute = require('./iventoryHistoryRoute');
 
 const router = express.Router();
 router.use('/user', useRoute);
@@ -29,6 +30,7 @@ router.use('/discount', discountRoute);
 router.use('/groupQuestion',groupQuestionRoute );
 router.use('/question', quesitionRoute);
 router.use('/answer', answerRoute);
+router.use('/iventoryHistory', iventoryRoute);
 
 router.get('/healCheck', (req, res) =>
 	res.status(200).send('Welcome to FreshFood')

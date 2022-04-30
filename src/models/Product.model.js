@@ -12,7 +12,8 @@ const Product = new Schema(
 		groupProduct: { name: String, key: String },
 		weight: defaultModel.number,
 		quantity: defaultModel.number,
-		sold: defaultModel.number
+		sold: defaultModel.number,
+		priceDiscount: defaultModel.number,
 	},
 	{ timestamps: true }
 );
