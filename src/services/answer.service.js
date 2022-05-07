@@ -8,7 +8,6 @@ const QUESTION = require('../models/Question.model');
 
 exports.createAnswerAsync = async body => {
 	try {
-		console.log(body);
 		questionCurrent = await QUESTION.findById(body.questionId);
 		if (questionCurrent == null)
 			return {
@@ -21,9 +20,10 @@ exports.createAnswerAsync = async body => {
 		if (questionCurrent.isTrueB == true) resultQuestion = resultQuestion + 'B';
 		if (questionCurrent.isTrueC == true) resultQuestion = resultQuestion + 'C';
 		if (questionCurrent.isTrueD == true) resultQuestion = resultQuestion + 'D';
+		var userCurrent = await USER.findById(body.userId);
 
 		if (resultQuestion.includes(body.result)) {
-			var userCurrent = await USER.findById(body.userId);
+			console.log(userCurrent)
 			var pointAdd = 100 ;
 			var point = pointAdd + userCurrent.point;
 			var userUpdate = await USER.findOneAndUpdate(
@@ -37,6 +37,8 @@ exports.createAnswerAsync = async body => {
 		} else {
 			body.isTrue = false;
 			var pointAdd = 50 ;
+			console.log(userCurrent)
+
 			var point = pointAdd + userCurrent.point;
 			var userUpdate = await USER.findOneAndUpdate(
 				{ _id: body.userId },

@@ -86,7 +86,7 @@ exports.getAllQuestionByGroupAsync = async (idCustomer) => {
 			};
 		}
 		const newListQuestion = await Promise.all(listQuestion.map(async (question) =>  {
-			const checkAnswer = await ANSWER.findOne({customerId: idCustomer,questionId: question.id});
+			const checkAnswer = await ANSWER.findOne({userId: idCustomer,questionId: question.id});
 			if(checkAnswer !==  null)
 			{
 				return {
