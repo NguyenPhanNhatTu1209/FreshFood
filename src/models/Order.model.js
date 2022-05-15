@@ -32,7 +32,8 @@ const Order = new Schema(
 		shipFee: defaultModel.number,
 		history: [{ title: String, createdAt: Date }],
 		typePayment: { type: String, default: 'Chưa thanh toán' },
-		discountMoney: defaultModel.number
+		discountMoney: defaultModel.number,
+		bonusMoney: defaultModel.number
 	},
 	{ timestamps: true }
 );

@@ -11,6 +11,23 @@ exports.createEveluateAsync = async body => {
 		console.log(body);
 		const eveluate = new EVELUATE(body);
 		await eveluate.save();
+
+		var eveluates = await EVELUATE.find({ productId: body.productId });
+		var totalStar = 0;
+		var starAVG = 0;
+		if (eveluates.length > 0) {
+			eveluates.forEach(element => {
+				totalStar = element.star + totalStar;
+			});
+			starAVG = totalStar / eveluates.length;
+			starAVG = starAVG.toFixed(1);
+		}
+		await PRODUCT.findOneAndUpdate(
+			{ _id: body.productId },
+			{ starAVG: starAVG },
+			{ new: true }
+		);
+
 		return {
 			message: 'Successfully create eveluate',
 			success: true,
@@ -155,7 +172,7 @@ exports.getAllEveluateByProduct = async productId => {
 				resultEveluate.push(result);
 			}
 		}
-		
+
 		return {
 			message: 'Successfully Get eveluates',
 			success: true,

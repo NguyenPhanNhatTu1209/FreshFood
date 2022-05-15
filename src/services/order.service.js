@@ -24,7 +24,6 @@ exports.createOrderAsync = async body => {
 			while (check < body.product.length) {
 				const session1 = await PRODUCT.startSession();
 				session1.startTransaction();
-				console.log(body.product.length);
 
 				for (let i = 0; i < body.product.length; i++) {
 					var currentProduct = await PRODUCT.findById(

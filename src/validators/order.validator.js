@@ -5,7 +5,8 @@ const schemas = {
 		note: joi.string().allow(''),
 		area: joi.object().required(),
 		typePaymentOrder: joi.number().required(),
-		idDiscount: joi.string().allow('')
+		idDiscount: joi.string().allow(''),
+		bonusMoney: joi.number()
 	}),
 
 	updateOrder: joi.object().keys({
@@ -23,7 +24,9 @@ const schemas = {
 		productId: joi.string().required(),
 		note: joi.string().allow(''),
 		area: joi.object().required(),
-		typePaymentOrder: joi.number().required()
+		typePaymentOrder: joi.number().required(),
+		idDiscount: joi.string().allow(''),
+		bonusMoney: joi.number()
 	}),
 };
 module.exports = schemas;

@@ -249,9 +249,13 @@ exports.paymentSuccess = (req, res, next) => {
 			if (error) {
 				res.send('Payment Fail');
 			} else {
-				await ORDER.findOneAndUpdate({ _id: idDonHang }, update, {
+				var orderCurrent = await ORDER.findOneAndUpdate({ _id: idDonHang }, update, {
 					new: true
 				});
+				var userCurrent = await USER.findById(orderCurrent.customerId);
+				userCurrent.point = userCurrent.point -  orderCurrent.bonusMoney;
+				await userCurrent.save();
+				
 
 				await PaypalModel.create({
 					idOrder: idDonHang,
@@ -297,6 +301,10 @@ exports.successVnPayOrder = async (req, res, next) => {
 				new: true
 			}
 		);
+		
+		var userCurrent = await USER.findById(orderCurrent.customerId);
+		userCurrent.point = userCurrent.point -  orderCurrent.bonusMoney;
+		await userCurrent.save();
 		res.send({
 			message: 'Success',
 			paymentId: id,

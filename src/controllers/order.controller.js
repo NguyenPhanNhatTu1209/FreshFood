@@ -36,6 +36,7 @@ exports.createOrderAsync = async (req, res, next) => {
 		var totalShip = 0;
 		var totalMoney = 0;
 		var totalMoneyProduct = 0;
+		
 		const staff = await USER.find({ role: 2 });
 
 		for (let i = 0; i < req.value.body.cartId.length; i++) {
@@ -70,6 +71,20 @@ exports.createOrderAsync = async (req, res, next) => {
 			totalMoneyProduct =
 				totalMoneyProduct +
 				productCurrent.data.price * cartCurrent.data.quantity;
+			
+			if(productCurrent.data.priceDiscount != 0)
+			{
+				totalMoneyProduct =
+				totalMoneyProduct +
+				productCurrent.data.priceDiscount * cartCurrent.data.quantity;
+			}
+			else
+			{
+				totalMoneyProduct =
+				totalMoneyProduct +
+				productCurrent.data.price * cartCurrent.data.quantity;
+			}
+
 			cartCurrent.data.status = defaultStatusCart.InActive;
 			cartCurrent.data.save();
 			var cartPush = {
@@ -138,7 +153,7 @@ exports.createOrderAsync = async (req, res, next) => {
 			discountOrder = totalMoneyProduct * discount.data.percentDiscount;
 			if(discountOrder > discount.data.maxDiscount)
 				discountOrder = discount.data.maxDiscount
-			
+
 			var numberUsedDiscont = discount.data.used + 1;
 			var updateDiscount=  await discountService.updateDiscountAsync(req.value.body.idDiscount, {quantity: numberUsedDiscont});
 			if(updateDiscount.success == false)
@@ -150,7 +165,16 @@ exports.createOrderAsync = async (req, res, next) => {
 				);
 		}
 
-		totalMoney = totalMoneyProduct + totalShip - discountOrder;
+		if(req.value.body.bonusMoney == null || req.value.body.bonusMoney == undefined)
+			req.value.body.bonusMoney = 0;
+
+		var userCurrent = await USER.findById(id);
+		if(userCurrent.point < req.value.body.bonusMoney)
+		{
+			req.value.body.bonusMoney = userCurrent.point;
+		}
+
+		totalMoney = totalMoneyProduct + totalShip - discountOrder - req.value.body.bonusMoney;
 		req.value.body.area = req.value.body.area;
 		req.value.body.product = arrCart;
 		req.value.body.shipFee = totalShip;
@@ -158,6 +182,7 @@ exports.createOrderAsync = async (req, res, next) => {
 		req.value.body.totalMoneyProduct = totalMoneyProduct;
 		req.value.body.history = history;
 		req.value.body.discountMoney = discountOrder;
+
 		const resServices = await orderServices.createOrderAsync(req.value.body);
 		var changePriceOrder = FormatDollar(totalMoney / 24000);
 		var resultPayment;
@@ -758,7 +783,15 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 		);
 
 		totalWeight = req.value.body.quantity * productCurrent.data.weight;
-		totalMoneyProduct = productCurrent.data.price * req.value.body.quantity;
+		if(productCurrent.data.priceDiscount != 0)
+		{
+			totalMoneyProduct = productCurrent.data.priceDiscount * req.value.body.quantity;
+		}
+		else
+		{
+			totalMoneyProduct = productCurrent.data.price * req.value.body.quantity;
+		}
+
 		var productPush = {
 			productId: productCurrent.data.id,
 			price: productCurrent.data.price,
@@ -826,7 +859,15 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 					discountOrder = discount.data.maxDiscount
 			}
 
-		totalMoney = totalMoneyProduct + totalShip - discountOrder;
+		if(req.value.body.bonusMoney == null || req.value.body.bonusMoney == undefined)
+		req.value.body.bonusMoney = 0;
+			
+		var userCurrent = await USER.findById(id);
+		if(userCurrent.point < req.value.body.bonusMoney)
+		{
+			req.value.body.bonusMoney = userCurrent.point;
+		}
+		totalMoney = totalMoneyProduct + totalShip - discountOrder - req.value.body.bonusMoney;
 		req.value.body.discountMoney = discountOrder;
 		req.value.body.area = req.value.body.area;
 		req.value.body.product = arrProduct;
@@ -834,6 +875,8 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 		req.value.body.totalMoney = totalMoney;
 		req.value.body.totalMoneyProduct = totalMoneyProduct;
 		req.value.body.history = history;
+		req.value.body.discountMoney = discountOrder;
+
 		const resServices = await orderServices.createOrderAsync(req.value.body);
 		var changePriceOrder = FormatDollar(totalMoney / 24000);
 		var resultPayment;
