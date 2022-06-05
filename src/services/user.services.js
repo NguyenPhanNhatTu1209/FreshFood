@@ -31,7 +31,7 @@ exports.registerUserAsync = async body => {
 			phone: phone,
 			name: name,
 			otp: otp,
-			avatar: 'Avatar/1638466795493avatar.png'
+			avatar: 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png'
 		});
 		await newUser.save();
 		const generateToken = jwtServices.createToken({
@@ -88,6 +88,58 @@ exports.loginAsync = async body => {
 				role: user.role
 			}
 		};
+	} catch (err) {
+		console.log(err);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};
+
+exports.loginGoogleAsync = async body => {
+	try {
+		const { email, name, avatar } = body;
+		const user = await USER.findOne({
+			email: email
+		});
+		var defaultPassword = await bcrypt.hash("FRESHFOOD@a", 8);
+		if (!user) {
+			const newUser = new USER({
+				email: email,
+				password: defaultPassword,
+				name: name,
+				avatar: avatar.length > 0 ? avatar : 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png'
+			});
+			await newUser.save();
+			const generateToken = jwtServices.createToken({
+				id: newUser._id,
+				role: newUser.role
+			});
+			return {
+				message: 'Successfully login',
+				success: true,
+				data: {
+					token: generateToken,
+					role: newUser.role
+				}
+			};
+		}
+		else
+		{
+			const generateToken = jwtServices.createToken({
+				id: user._id,
+				role: user.role
+			});
+			return {
+				message: 'Successfully login',
+				success: true,
+				data: {
+					token: generateToken,
+					role: user.role
+				}
+			};
+		}
 	} catch (err) {
 		console.log(err);
 		return {

@@ -30,6 +30,12 @@ router.post(
 );
 
 router.post(
+	'/loginGoogle',
+	Validate.body(SchemaValidateUser.loginGoogle),
+	Controller.loginGoogleAsync
+);
+
+router.post(
 	'/register',
 	Validate.body(SchemaValidateUser.register),
 	Controller.registerAsync
