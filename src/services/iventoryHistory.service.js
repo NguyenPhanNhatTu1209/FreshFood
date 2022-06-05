@@ -15,19 +15,29 @@ exports.createIventoryHistoryAsync = async body => {
 		}
 
 		body.nameUser = userUpdate.name;
-		const iventoryHistory = new IVENTORYHISTORY(body);
-		await iventoryHistory.save();
 		for (let i = 0; i < body.history.length; i++) {
-			console.log(body.history[i].id);
-			console.log(body.history[i]);
-			var abc = await PRODUCT.findOneAndUpdate(
+			var productCurrent = await PRODUCT.findById(body.history[i].id);
+			if(body.history[i].quantity < 0)
+			{
+				if(body.history[i].quantity + productCurrent.quantity < 0)
+				{
+					return {
+						message: 'Update quantity product fail',
+						success: false
+					};
+				}
+			}
+
+			body.history[i].quantity += productCurrent.quantity;
+			 await PRODUCT.findOneAndUpdate(
 				{ _id: body.history[i].id },
 				body.history[i],
 				{ new: true }
 			);
-			console.log(abc);
 		}
 
+		const iventoryHistory = new IVENTORYHISTORY(body);
+		await iventoryHistory.save();
 		return {
 			message: 'Successfully create iventory history',
 			success: true,
