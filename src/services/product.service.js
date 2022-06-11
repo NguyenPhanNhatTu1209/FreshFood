@@ -2,6 +2,7 @@ const USER = require('../models/User.model');
 const { defaultRoles } = require('../config/defineModel');
 const GROUPPRODUCT = require('../models/GroupProduct.model');
 const PRODUCT = require('../models/Product.model');
+const { json } = require('body-parser');
 
 exports.createProductAsync = async body => {
 	try {
@@ -129,7 +130,7 @@ exports.findAllProduct = async body => {
 			}).sort({createdAt: -1}).skip(Number(limit) * Number(skip) - Number(limit)).limit(Number(limit));
 			numberPage = Math.ceil(product.length/limit);
 		}
-
+		
 		return {
 			message: 'Successfully Get Product',
 			success: true,

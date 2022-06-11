@@ -15,6 +15,7 @@ const Product = new Schema(
 		sold: defaultModel.number,
 		priceDiscount: defaultModel.number,
 		starAVG: defaultModel.number,
+		quantityChange: defaultModel.number
 	},
 	{ timestamps: true }
 );
