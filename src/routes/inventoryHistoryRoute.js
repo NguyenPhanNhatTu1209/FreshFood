@@ -1,5 +1,5 @@
 const express = require('express');
-const Controller = require('../controllers/iventory.controller');
+const Controller = require('../controllers/inventory.controller');
 const SchemaValidateIventory = require('../validators/iventoryHistory.validator');
 const router = express.Router();
 const Validate = require('../validators');

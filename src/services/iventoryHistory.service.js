@@ -29,6 +29,7 @@ exports.createIventoryHistoryAsync = async body => {
 			}
 
 			body.history[i].quantity += productCurrent.quantity;
+			body.history[i].image = productCurrent.image[0];
 			 await PRODUCT.findOneAndUpdate(
 				{ _id: body.history[i].id },
 				body.history[i],

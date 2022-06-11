@@ -13,7 +13,7 @@ const discountRoute = require('./discountRoute');
 const groupQuestionRoute = require('./groupQuestionRoute');
 const quesitionRoute = require('./questionRoute');
 const answerRoute = require('./answerRoute');
-const iventoryRoute = require('./iventoryHistoryRoute');
+const iventoryRoute = require('./inventoryHistoryRoute');
 
 const router = express.Router();
 router.use('/user', useRoute);

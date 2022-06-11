@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const InventoryHistory = new Schema(
 	{
-		history: [{name: defaultModel.stringR, id: defaultModel.stringR, price: defaultModel.number, priceDiscount: defaultModel.number, quantity: defaultModel.number,}],
+		history: [{name: defaultModel.stringR, id: defaultModel.stringR, price: defaultModel.number, priceDiscount: defaultModel.number, quantity: defaultModel.number,image: defaultModel.string}],
 		idUser: defaultModel.stringR,
 		nameUser:  defaultModel.stringR
 	},
