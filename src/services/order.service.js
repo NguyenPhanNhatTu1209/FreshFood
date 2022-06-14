@@ -238,7 +238,9 @@ exports.GetOrderByUser = async body => {
 				orderCode: ordersSearch[i].orderCode,
 				createdAt: ordersSearch[i].createdAt,
 				updatedAt: ordersSearch[i].updatedAt,
-				checkEveluate: checkEveluate
+				checkEveluate: checkEveluate,
+				discountMoney: ordersSearch[i].discountMoney,
+				bonusMoney: ordersSearch[i].bonusMoney
 			};
 			orderResult.push(orderClone);
 		}

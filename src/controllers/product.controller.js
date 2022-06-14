@@ -174,7 +174,8 @@ exports.findDetailProduct = async (req, res, next) => {
 				updatedAt: resServices.data.updatedAt,
 				eveluates: resultEveluate,
 				starAVG: starAVG,
-				eveluateCount: eveluates.data.length
+				eveluateCount: eveluates.data.length,
+				priceDiscount: resServices.data.priceDiscount
 			};
 
 			return controller.sendSuccess(res, result, 200, resServices.message);
