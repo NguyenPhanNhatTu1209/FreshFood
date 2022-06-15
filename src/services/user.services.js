@@ -227,7 +227,8 @@ exports.forgotPassword = async body => {
 				};
 			}
 
-			const resultSendMail = await sendMail(mailOptions);
+			// const resultSendMail = await sendMail(mailOptions);
+			var resultSendMail = true;
 			if (resultSendMail != true) {
 				return {
 					message: 'Send Email Fail',
