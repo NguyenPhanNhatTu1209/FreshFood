@@ -111,7 +111,7 @@ exports.getAllQuestionByGroupAsync = async (idCustomer) => {
 				isTrueA: question.isTrueA,
 				isTrueB: question.isTrueB,
 				isTrueC: question.isTrueC,
-				isTrueD: question.isTrued,
+				isTrueD: question.isTrueD,
 				time: question.time,
 				_id: question.id,
 				title: question.title,
