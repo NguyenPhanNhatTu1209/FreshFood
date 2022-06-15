@@ -28,6 +28,7 @@ exports.createIventoryHistoryAsync = async body => {
 				}
 			}
 
+			var quantityUpdate = body.history[i].quantity;
 			body.history[i].quantity += productCurrent.quantity;
 			body.history[i].image = productCurrent.image[0];
 			 await PRODUCT.findOneAndUpdate(
@@ -35,6 +36,8 @@ exports.createIventoryHistoryAsync = async body => {
 				body.history[i],
 				{ new: true }
 			);
+			
+			body.history[i].quantity = quantityUpdate;
 		}
 
 		const iventoryHistory = new IVENTORYHISTORY(body);
