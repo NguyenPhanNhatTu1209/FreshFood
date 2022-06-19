@@ -65,13 +65,9 @@ exports.createOrderAsync = async (req, res, next) => {
 					productCurrent.message
 				);
 			}
-
+			
 			totalWeight =
 				totalWeight + cartCurrent.data.quantity * productCurrent.data.weight;
-			totalMoneyProduct =
-				totalMoneyProduct +
-				productCurrent.data.price * cartCurrent.data.quantity;
-			
 			if(productCurrent.data.priceDiscount != 0)
 			{
 				totalMoneyProduct =
