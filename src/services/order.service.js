@@ -332,3 +332,29 @@ exports.findOrderByIdAsync = async id => {
 		};
 	}
 };
+
+exports.getQuantityOrder = async id => {
+	try {
+		var listQuantityOrder = [];
+		for(var i=0;i<5;i++)
+		{
+			var body = {
+				customerId: id,
+				status: i
+			};
+			const order = await ORDER.find(body);
+			listQuantityOrder.push({status: i, quantityOrder: order.length});
+		}
+		return {
+			message: 'Successfully Get Quantity Order',
+			success: true,
+			data: listQuantityOrder
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			message: 'An error occurred',
+			success: false
+		};
+	}
+};

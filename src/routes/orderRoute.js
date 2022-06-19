@@ -39,4 +39,10 @@ router.get(
 	Controller.GetOrderByAdminAsync
 );
 
+router.get(
+	'/getQuantityOrder',
+	jwtServices.verify,
+	Controller.GetQuantityOrder
+);
+
 module.exports = router;

@@ -45,7 +45,7 @@ exports.createOrderAsync = async (req, res, next) => {
 			);
 
 			if (cartCurrent.success != true) {
-				return controller.sendSuccess(
+				return controller.sendSuccessError(
 					res,
 					cartCurrent.data,
 					300,
@@ -58,7 +58,7 @@ exports.createOrderAsync = async (req, res, next) => {
 			);
 
 			if (productCurrent.success != true) {
-				return controller.sendSuccess(
+				return controller.sendSuccessError(
 					res,
 					productCurrent.data,
 					300,
@@ -128,7 +128,7 @@ exports.createOrderAsync = async (req, res, next) => {
 			var discount = await discountService.CheckDiscountActive(req.value.body.idDiscount)
 			if(discount.data == null)
 			{
-				return controller.sendSuccess(
+				return controller.sendSuccessError(
 					res,
 					null,
 					300,
@@ -1037,13 +1037,40 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 				return controller.sendSuccess(res, updateOrder, 200, 'Success');
 			}
 		} else {
-			return controller.sendSuccess(
+			return controller.sendSuccessError(
 				res,
 				resServices.data,
 				300,
 				resServices.message
 			);
 		}
+	} catch (error) {
+		console.log(error);
+		return controller.sendError(res);
+	}
+};
+
+exports.GetQuantityOrder = async (req, res, next) => {
+	try {
+		const { decodeToken } = req.value.body;
+		const id = decodeToken.data.id;
+
+		const resServices = await orderServices.getQuantityOrder(id);
+		if (resServices.success) {
+			return controller.sendSuccess(
+				res,
+				resServices.data,
+				200,
+				resServices.message
+			);
+		}
+
+		return controller.sendSuccessError(
+			res,
+			resServices.data,
+			300,
+			resServices.message
+		);
 	} catch (error) {
 		console.log(error);
 		return controller.sendError(res);
