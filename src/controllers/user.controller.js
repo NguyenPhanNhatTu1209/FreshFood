@@ -312,7 +312,7 @@ exports.successVnPayOrder = async (req, res, next) => {
 	var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest('hex');
 
 	if (secureHash === signed) {
-		await ORDER.findOneAndUpdate(
+		var orderCurrent =  await ORDER.findOneAndUpdate(
 			{ _id: id },
 			{
 				typePayment: 'VnPay'
