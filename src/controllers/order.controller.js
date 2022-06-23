@@ -151,7 +151,7 @@ exports.createOrderAsync = async (req, res, next) => {
 				discountOrder = discount.data.maxDiscount
 
 			var numberUsedDiscont = discount.data.used + 1;
-			var updateDiscount=  await discountService.updateDiscountAsync(req.value.body.idDiscount, {quantity: numberUsedDiscont});
+			var updateDiscount=  await discountService.updateDiscountAsync(req.value.body.idDiscount, {used: numberUsedDiscont});
 			if(updateDiscount.success == false)
 				return controller.sendSuccess(
 					res,
