@@ -82,7 +82,7 @@ exports.createOrderAsync = async (req, res, next) => {
 			}
 
 			cartCurrent.data.status = defaultStatusCart.InActive;
-			cartCurrent.data.save();
+			await cartCurrent.data.save();
 			var cartPush = {
 				productId: productCurrent.data.id,
 				price: productCurrent.data.price,
