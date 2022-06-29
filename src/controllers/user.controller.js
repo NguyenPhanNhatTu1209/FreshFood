@@ -322,6 +322,7 @@ exports.successVnPayOrder = async (req, res, next) => {
 			}
 		);
 		
+		
 		var userCurrent = await USER.findById(orderCurrent.customerId);
 		userCurrent.point = userCurrent.point -  orderCurrent.bonusMoney;
 		await userCurrent.save();

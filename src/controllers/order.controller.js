@@ -85,7 +85,7 @@ exports.createOrderAsync = async (req, res, next) => {
 			await cartCurrent.data.save();
 			var cartPush = {
 				productId: productCurrent.data.id,
-				price: productCurrent.data.price,
+				price: productCurrent.data.priceDiscount != 0 ? productCurrent.data.priceDiscount : productCurrent.data.price,
 				quantity: cartCurrent.data.quantity,
 				weight: productCurrent.data.weight,
 				name: productCurrent.data.name,
@@ -790,7 +790,7 @@ exports.CreateOrderWithByNowAsync = async (req, res, next) => {
 
 		var productPush = {
 			productId: productCurrent.data.id,
-			price: productCurrent.data.price,
+			price: productCurrent.data.priceDiscount != 0 ? productCurrent.data.priceDiscount : productCurrent.data.price,
 			quantity: req.value.body.quantity,
 			weight: productCurrent.data.weight,
 			name: productCurrent.data.name,
