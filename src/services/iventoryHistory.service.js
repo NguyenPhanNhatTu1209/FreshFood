@@ -31,9 +31,15 @@ exports.createIventoryHistoryAsync = async body => {
 			var quantityUpdate = body.history[i].quantity;
 			body.history[i].quantity += productCurrent.quantity;
 			body.history[i].image = productCurrent.image[0];
+			var cloneProductUpdate = {
+				quantity: body.history[i].quantity,
+				price:  body.history[i].price,
+				priceDiscount: body.history[i].priceDiscount,
+			};
+
 			 await PRODUCT.findOneAndUpdate(
 				{ _id: body.history[i].id },
-				body.history[i],
+				cloneProductUpdate,
 				{ new: true }
 			);
 			
